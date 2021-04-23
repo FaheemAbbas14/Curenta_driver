@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
+
+
+        <TextView
+            android:id="@+id/txtheading"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:fontFamily="@font/archivobold"
+            android:text="Please fill W-9 &amp; I-9 forms"
+            android:textColor="@color/labelblue"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="40dp" />
+
+
+
+
+        <LinearLayout
+            android:id="@+id/llyW9Forms"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:weightSum="10"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/layouy_background"
+            android:fontFamily="@font/archivobold"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtheading" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8.5"
+                android:fontFamily="@font/archivobold"
+                android:textColor="@color/labelgrey"
+                android:textSize="20sp"
+                android:gravity="center|left"
+                android:paddingLeft="20dp"
+                android:text="W9 Forms " />
+
+            <ImageView
+                android:id="@+id/imgW9Forms"
+                android:layout_width="0dp"
+                android:layout_margin="18dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/uncompletedicon" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llyI9Forms"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:weightSum="10"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/layouy_background"
+            android:fontFamily="@font/archivobold"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llyW9Forms" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8.5"
+                android:fontFamily="@font/archivobold"
+                android:textColor="@color/labelgrey"
+                android:textSize="20sp"
+                android:gravity="center|left"
+                android:paddingLeft="20dp"
+                android:text="I9 Form " />
+
+            <ImageView
+                android:id="@+id/imgI9Forms"
+                android:layout_width="0dp"
+                android:layout_margin="18dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/uncompletedicon" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/imgNext"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llyI9Forms"
+            android:clickable="false"
+            app:srcCompat="@drawable/next_icon" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

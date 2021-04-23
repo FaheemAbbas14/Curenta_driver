@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
+
+
+        <TextView
+            android:id="@+id/txtheading"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:fontFamily="@font/archivobold"
+            android:text="Personal Information"
+            android:textColor="@color/labelgrey"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="40dp" />
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginLeft="28dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/archivobold"
+            android:text="Date of Birth"
+            android:textColor="@color/labelgrey"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtheading" />
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="60dp"
+            android:layout_marginRight="60dp"
+            android:fontFamily="@font/archivobold"
+            android:text="Gender"
+            android:textColor="@color/labelgrey"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtheading" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/Birthday"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            android:background="@drawable/rounded_textbox"
+            android:clickable="true"
+            android:editable="false"
+            android:focusable="false"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textColor="@color/labelgrey"
+            android:textColorHint="@color/labellightgrey"
+            android:textSize="18sp"
+            android:fontFamily="@font/archivoregular"
+            android:hint="MM - DD - YYYY"/>
+        <TextView
+            android:id="@+id/txtDOBError"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/archivoregular"
+            android:text=""
+            android:textColor="#F36"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/Birthday" />
+        <Spinner
+            android:id="@+id/gender"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:background="@drawable/rounded_textbox"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+
+        <TextView
+            android:id="@+id/txtStreet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginLeft="28dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/archivobold"
+            android:text="Street"
+            android:textColor="@color/labelgrey"
+            android:textSize="14sp"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtDOBError" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtStreet"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:background="@drawable/rounded_textbox"
+            android:ems="10"
+            android:singleLine="true"
+            android:paddingLeft="10dp"
+            android:textColor="@color/labelgrey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtStreet" />
+        <TextView
+            android:id="@+id/txtStreetError"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/archivoregular"
+            android:text=""
+            android:textColor="#F36"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edtStreet" />
+        <TextView
+            android:id="@+id/txtcity"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginLeft="28dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/archivobold"
+            android:text="State"
+            android:textColor="@color/labelgrey"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtStreetError" />
+
+        <Spinner
+
+            android:id="@+id/edtState"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:background="@drawable/rounded_textbox"
+            android:ems="10"
+            android:paddingLeft="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtcity" />
+
+        <TextView
+            android:id="@+id/txtState"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginLeft="28dp"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/archivobold"
+            android:text="City"
+            android:textColor="@color/labelgrey"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edtState" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+
+            android:id="@+id/edtCity"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/rounded_textbox"
+            android:fontFamily="@font/archivoregular"
+            android:hint=""
+            android:singleLine="true"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:textColor="@color/labelgrey"
+            android:textColorHint="@color/labellightgrey"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtState" />
+        <TextView
+            android:id="@+id/txtCityError"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/archivoregular"
+            android:text=""
+            android:textColor="#F36"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edtCity" />
+        <TextView
+            android:id="@+id/txtZipCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="60dp"
+            android:layout_marginRight="60dp"
+            android:fontFamily="@font/archivobold"
+            android:text="Zip Code"
+            android:textColor="@color/labelgrey"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edtState" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/edtZipCode"
+            android:layout_width="90dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            android:maxLength="6"
+            android:background="@drawable/rounded_textbox"
+            android:fontFamily="@font/archivoregular"
+            android:hint=""
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:inputType="number"
+            android:textColor="@color/labelgrey"
+            android:textColorHint="@color/labellightgrey"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtZipCode" />
+        <TextView
+            android:id="@+id/txtZipCodeError"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/archivoregular"
+            android:text=""
+            android:textColor="#F36"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/edtZipCode" />
+
+        <ImageView
+            android:id="@+id/imgProfilePic"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginStart="50dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginRight="50dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/camera_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtCityError" />
+
+        <ImageView
+            android:id="@+id/imgNext"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginRight="50dp"
+            android:clickable="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.384"
+            app:layout_constraintStart_toEndOf="@+id/imgProfilePic"
+            app:layout_constraintTop_toBottomOf="@+id/imgProfilePic"
+            app:srcCompat="@drawable/disabled_next" />
+
+        <TextView
+            android:id="@+id/textView11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:layout_marginEnd="50dp"
+            android:layout_marginRight="50dp"
+            android:fontFamily="@font/archivoregular"
+            android:text="Upload your Photo"
+            android:textColor="@color/labelgrey"
+            app:layout_constraintEnd_toStartOf="@+id/imgNext"
+            app:layout_constraintTop_toBottomOf="@+id/imgProfilePic" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

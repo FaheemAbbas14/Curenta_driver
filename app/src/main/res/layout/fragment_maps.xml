@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
+
+        <fragment
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="50dp" />
+
+
+        <ImageView
+            android:id="@+id/fab_nav"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_gravity="top|left"
+            android:layout_margin="@dimen/fab_margin"
+            android:background="@drawable/ic_drawer"
+            android:scaleType="centerCrop" />
+
+
+        <LinearLayout
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:background="@android:color/transparent"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/llStatus"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="bottom|center"
+                android:layout_margin="@dimen/fab_margin"
+                android:layout_marginBottom="220dp"
+                android:background="@drawable/round_grey_button"
+                android:gravity="center"
+                android:orientation="horizontal"
+
+                >
+
+                <Button
+                    android:id="@+id/fab"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="5dp"
+                    android:background="@drawable/whitecircle"
+                    android:fontFamily="@font/archivoregular"
+
+                    android:text="Go"
+                    android:textColor="@color/white"
+                    android:textSize="25sp" />
+
+                <com.rey.material.widget.ProgressView
+                    android:id="@+id/circular_progress"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_margin="4dp"
+                    app:cpd_strokeColor="@color/white"
+                    app:pv_autostart="true"
+                    app:pv_circular="true"
+                    app:pv_progressMode="indeterminate"
+                    app:pv_progressStyle="@style/Material.Drawable.CircularProgress" />
+            </RelativeLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/labellightgrey"
+                android:orientation="vertical">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llactionrequired"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center|left"
+                        android:layout_marginLeft="20dp"
+                        app:srcCompat="@drawable/arrowdown" />
+
+                    <TextView
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/archivobold"
+
+                        android:gravity="center"
+                        android:text="Actions Required"
+                        android:textColor="@color/labelgrey"
+                        android:textSize="15sp" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llonline"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="10">
+
+
+                    <TextView
+
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+
+                        android:layout_weight="8"
+                        android:fontFamily="@font/archivobold"
+                        android:gravity="center|right"
+                        android:paddingRight="50dp"
+                        android:text="You are online"
+                        android:textColor="@color/lightgreen"
+                        android:textSize="15sp" />
+
+                    <ImageView
+
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center|left"
+                        android:layout_weight="2"
+                        app:srcCompat="@drawable/nextgreenarrow" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llcovid"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center|left"
+                        android:layout_marginLeft="20dp"
+                        app:srcCompat="@drawable/covidicon" />
+
+                    <TextView
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/archivobold"
+                        android:gravity="center|left"
+                        android:paddingLeft="10dp"
+                        android:text="Confirm COVID-19 \nPrecautions"
+                        android:textColor="@color/labelblue"
+                        android:textSize="18sp" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/lltakephoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="55dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center|left"
+                        android:layout_marginLeft="30dp"
+                        app:srcCompat="@drawable/takephoto" />
+
+                    <TextView
+
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/archivobold"
+
+                        android:gravity="center|left"
+                        android:paddingLeft="15dp"
+                        android:text="Take a photo of yourself"
+                        android:textColor="@color/labelblue"
+                        android:textSize="16sp" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llRideinprogress"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@color/white"
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="10">
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="30dp"
+                        android:layout_gravity="center|left"
+                        android:layout_marginLeft="30dp"
+                        app:srcCompat="@drawable/rideinprogress" />
+
+                    <TextView
+
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="7.7"
+                        android:fontFamily="@font/archivobold"
+                        android:gravity="center"
+                        android:paddingLeft="15dp"
+                        android:text="Route in progress"
+                        android:textColor="@color/labelblue"
+                        android:textSize="16sp" />
+
+                    <ImageView
+
+                        android:layout_width="0dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center|left"
+                        android:layout_weight="2"
+                        app:srcCompat="@drawable/pink_next" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
+

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/rlMain"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:background="@color/labelblue">
+
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:id="@+id/llgradient"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/white_gradient_bg">
+
+                <include
+                    android:id="@+id/header"
+                    layout="@layout/header_content" />
+            </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+        </RelativeLayout>
+
+        <ScrollView
+            android:id="@+id/scrollview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="100dp"
+            android:background="@drawable/white_top_rounded">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_marginTop="30dp"
+                android:layout_height="match_parent">
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt1"
+                    layout_width="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:fontFamily="@font/archivobold"
+                    android:gravity="center"
+                    android:text="Thank you for using \nCurenta Driver App"
+                    android:textColor="@color/labelgrey"
+                    android:textSize="20sp"></androidx.appcompat.widget.AppCompatTextView>
+
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt2"
+                    layout_width="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/archivoregular"
+                    android:gravity="center"
+                    android:text="Please send us an email and one\n
+of our team will get back to you"
+                    android:textColor="@color/labellightgrey"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt1">
+
+                </androidx.appcompat.widget.AppCompatTextView>
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llemail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt2">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="80dp"
+                        android:layout_gravity="right"
+                        android:src="@drawable/email">
+                    </androidx.appcompat.widget.AppCompatImageView>
+                        <androidx.appcompat.widget.AppCompatTextView
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/archivoregular"
+                            android:textColor="@color/labelgrey"
+                            android:textSize="15sp"
+                            android:gravity="center"
+                            android:layout_gravity="right"
+                            android:text="Support@curenta.com">
+
+                        </androidx.appcompat.widget.AppCompatTextView>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/txt3"
+                    layout_width="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/archivoregular"
+                    android:gravity="center"
+                    android:text="Or you can call us on"
+                    android:textColor="@color/labellightgrey"
+                    android:textSize="15sp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/llemail">
+
+                </androidx.appcompat.widget.AppCompatTextView>
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llphone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt3">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="80dp"
+                        android:layout_gravity="right"
+                        android:src="@drawable/phone">
+                    </androidx.appcompat.widget.AppCompatImageView>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/archivoregular"
+                        android:textColor="@color/labelgrey"
+                        android:textSize="15sp"
+                        android:gravity="center"
+                        android:layout_gravity="right"
+                        android:text="Phone: (949) 688-7075">
+
+                    </androidx.appcompat.widget.AppCompatTextView>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llfax"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/llphone">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="80dp"
+                        android:layout_gravity="right"
+                        android:src="@drawable/fax">
+                    </androidx.appcompat.widget.AppCompatImageView>
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/archivoregular"
+                        android:textColor="@color/labelgrey"
+                        android:textSize="15sp"
+                        android:gravity="center"
+                        android:layout_gravity="right"
+                        android:text="Fax:      (949) 688-6617">
+
+                    </androidx.appcompat.widget.AppCompatTextView>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+    </RelativeLayout>
+</layout>

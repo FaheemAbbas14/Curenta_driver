@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        >
+
+
+        <TextView
+            android:id="@+id/txtheading"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:fontFamily="@font/archivobold"
+            android:text="Hello"
+            android:textColor="@color/labelgrey"
+            android:textSize="25sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="40dp" />
+
+        <TextView
+            android:id="@+id/txtLabel2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:fontFamily="@font/archivobold"
+            android:text="These are the steps you need to fill to complete your account"
+            android:textColor="@color/labelgrey"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtheading" />
+
+
+        <LinearLayout
+            android:id="@+id/llyPersonalInfo"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:weightSum="10"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="30dp"
+            android:background="@drawable/layouy_background"
+            android:fontFamily="@font/archivobold"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txtLabel2" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8.5"
+                android:fontFamily="@font/archivobold"
+                android:textColor="@color/labelgrey"
+                android:textSize="20sp"
+                android:gravity="center|left"
+                android:paddingLeft="20dp"
+                android:text="Personal Information" />
+
+            <ImageView
+                android:id="@+id/imgPI"
+                android:layout_width="0dp"
+                android:layout_margin="18dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/uncompletedicon" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llyDrivingLicense"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:weightSum="10"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/layouy_background"
+            android:fontFamily="@font/archivobold"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llyPersonalInfo" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8.5"
+                android:fontFamily="@font/archivobold"
+                android:textColor="@color/labelgrey"
+                android:textSize="20sp"
+                android:gravity="center|left"
+                android:paddingLeft="20dp"
+                android:text="Driving License" />
+
+            <ImageView
+                android:id="@+id/imgDL"
+                android:layout_width="0dp"
+                android:layout_margin="18dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/uncompletedicon" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llyVehicalInfo"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:weightSum="10"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/layouy_background"
+            android:fontFamily="@font/archivobold"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llyDrivingLicense" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8.5"
+                android:fontFamily="@font/archivobold"
+                android:textColor="@color/labelgrey"
+                android:textSize="20sp"
+                android:gravity="center|left"
+                android:paddingLeft="20dp"
+                android:text="Vehicle Information" />
+
+            <ImageView
+                android:id="@+id/imgVI"
+                android:layout_width="0dp"
+                android:layout_margin="18dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/uncompletedicon" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llyBGCheck"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:weightSum="10"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/layouy_background"
+            android:fontFamily="@font/archivobold"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llyVehicalInfo" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8.5"
+                android:fontFamily="@font/archivobold"
+                android:textColor="@color/labelgrey"
+                android:textSize="20sp"
+                android:gravity="center|left"
+                android:paddingLeft="20dp"
+                android:text="Background Check" />
+
+            <ImageView
+                android:id="@+id/imgBG"
+                android:layout_width="0dp"
+                android:layout_margin="18dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/uncompletedicon" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llyBankDetails"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:weightSum="10"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            android:background="@drawable/layouy_background"
+            android:fontFamily="@font/archivobold"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llyBGCheck" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8.5"
+                android:fontFamily="@font/archivobold"
+                android:textColor="@color/labelgrey"
+                android:textSize="20sp"
+                android:gravity="center|left"
+                android:paddingLeft="20dp"
+                android:text="Bank Details" />
+
+            <ImageView
+                android:id="@+id/imgBD"
+                android:layout_width="0dp"
+                android:layout_margin="18dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/uncompletedicon" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llyForms"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:weightSum="10"
+            android:visibility="gone"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/layouy_background"
+            android:fontFamily="@font/archivobold"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llyBankDetails" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8.5"
+                android:fontFamily="@font/archivobold"
+                android:textColor="@color/labelgrey"
+                android:textSize="20sp"
+                android:gravity="center|left"
+                android:paddingLeft="20dp"
+                android:text="Forms " />
+
+            <ImageView
+                android:id="@+id/imgForms"
+                android:layout_width="0dp"
+                android:layout_margin="18dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/uncompletedicon" />
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/llyHipa"
+            android:layout_width="0dp"
+            android:layout_height="60dp"
+            android:weightSum="10"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/layouy_background"
+            android:fontFamily="@font/archivobold"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.331"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llyForms" >
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="8.5"
+                android:fontFamily="@font/archivobold"
+                android:textColor="@color/labelgrey"
+                android:textSize="20sp"
+                android:gravity="center|left"
+                android:paddingLeft="20dp"
+                android:text="HIPAA Compliance " />
+
+            <ImageView
+                android:id="@+id/imgHP"
+                android:layout_width="0dp"
+                android:layout_margin="18dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:src="@drawable/uncompletedicon" />
+        </LinearLayout>
+        <ImageView
+            android:id="@+id/imgNext"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:layout_marginTop="50dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginRight="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/llyHipa"
+            android:clickable="false"
+            app:srcCompat="@drawable/next_icon" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

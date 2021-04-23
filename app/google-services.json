@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "1089148107134",
+    "project_id": "curenta-1612953586718",
+    "storage_bucket": "curenta-1612953586718.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1089148107134:android:41ee6dcb3722f3fd259b2f",
+        "android_client_info": {
+          "package_name": "com.curenta.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1089148107134-pel59dtln9ljv88c1vu47j6hp1mds7cv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.curenta.driver",
+            "certificate_hash": "01e6e280d8bbf73253fc28ea1cc54ea089b48dfa"
+          }
+        },
+        {
+          "client_id": "1089148107134-v0j88t1mvi2d4u9qesq50ns600a9u0ht.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.curenta.driver",
+            "certificate_hash": "67ba5935e346e555b4bc938a3d30401cd2f1ab9e"
+          }
+        },
+        {
+          "client_id": "1089148107134-1vplonqcic0dq4r36gn6omspp8mv3t4i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMwbeyCjFvr2lUiRpTKJ016P5MuIF30Lc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1089148107134-1vplonqcic0dq4r36gn6omspp8mv3t4i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
