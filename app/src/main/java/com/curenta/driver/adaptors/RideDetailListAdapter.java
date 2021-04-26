@@ -30,6 +30,7 @@ import com.curenta.driver.fragments.FragmentCancelOrder;
 import com.curenta.driver.fragments.FragmentMaps;
 import com.curenta.driver.fragments.FragmentTakePhoto;
 import com.curenta.driver.fragments.FragmentThankYouAction;
+import com.curenta.driver.fragments.FragmentTracking;
 import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.OrderPickupResponse;
 import com.curenta.driver.retrofit.apiDTO.RouteRequest;
@@ -147,6 +148,15 @@ public class RideDetailListAdapter extends SectioningAdapter {
 //        context.startActivity(mapIntent);
         Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
         context.startActivity(Intent.createChooser(intent, "Select application"));
+//        LatLng source = null;
+//        if (sectionIndex > 0) {
+//            source = getLocationFromAddress(context, sections.get(0).items.get(sectionIndex - 1).address);
+//        }
+//        LatLng destination = getLocationFromAddress(context, item.address);
+//        FragmentTracking fragmentTracking = new FragmentTracking();
+//        fragmentTracking.mDestination = destination;
+//        fragmentTracking.mOrigin = source;
+//        FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
         sections.get(0).items.get(sectionIndex).isArrived = true;
         notifyAllSectionsDataSetChanged();
     }

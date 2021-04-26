@@ -199,7 +199,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                 } else {
                                     //getRouteDetails();
                                     dialog.dismiss();
-                                    if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 1) {
+                                    if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
                                         if (getActivity().getSupportFragmentManager() != null) {
                                             getActivity().getSupportFragmentManager().popBackStack();
                                         }
@@ -261,7 +261,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                     FragmentUtils.getInstance().addFragment(getActivity(), fragmentRideDetail, R.id.fragContainer);
                                 } else {
                                     dialog.dismiss();
-                                    if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 1) {
+                                    if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
                                         if (getActivity().getSupportFragmentManager() != null) {
                                             getActivity().getSupportFragmentManager().popBackStack();
                                         }

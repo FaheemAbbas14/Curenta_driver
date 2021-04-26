@@ -389,7 +389,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(DashboardActivity.this, "Route update recieved from curenta", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(DashboardActivity.this, "Route update received from Curenta", Toast.LENGTH_SHORT).show();
 
                     }
                 });
@@ -711,7 +711,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         TextView title = (TextView) dialog.findViewById(R.id.txtTitle);
         TextView description = (TextView) dialog.findViewById(R.id.txtDescription);
         title.setText("Route cancelled!");
-        description.setText("Your assigned route has been cancelled by curenta");
+        description.setText("Your assigned route has been cancelled by Curenta");
         btnReopenId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
