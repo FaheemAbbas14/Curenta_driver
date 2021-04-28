@@ -1,5 +1,8 @@
 package com.curenta.driver.utilities;
 
+import android.util.Log;
+
+import com.curenta.driver.dto.AppElement;
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -34,7 +37,12 @@ public class DirectionsJSONParser {
                 /** Traversing all legs */
                 for(int j=0;j<jLegs.length();j++){
                     jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
-
+                    String distance = ( (JSONObject)jLegs.get(j)).getJSONObject("distance").getString("value");
+                    String duration = ( (JSONObject)jLegs.get(j)).getJSONObject("duration").getString("value");
+                    AppElement.durationtxt = ( (JSONObject)jLegs.get(j)).getJSONObject("duration").getString("text");
+                    AppElement.distance=Integer.parseInt(distance);
+                    AppElement.duration=Integer.parseInt(duration);
+                    Log.d("routesdata","distance "+distance+" duration "+duration);
                     /** Traversing all steps */
                     for(int k=0;k<jSteps.length();k++){
                         String polyline = "";

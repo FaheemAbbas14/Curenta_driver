@@ -2,7 +2,10 @@ package com.curenta.driver;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -46,6 +49,7 @@ import com.curenta.driver.fragments.FragmentRideDetail;
 import com.curenta.driver.fragments.FragmentRidePopup;
 import com.curenta.driver.fragments.FragmentStatus;
 import com.curenta.driver.fragments.FragmentTakePhoto;
+import com.curenta.driver.interfaces.ILatLngUpdate;
 import com.curenta.driver.interfaces.ILocationChange;
 import com.curenta.driver.interfaces.IRideNotification;
 import com.curenta.driver.retrofit.RetrofitClient;
@@ -56,6 +60,7 @@ import com.curenta.driver.retrofit.apiDTO.UpdateDRiverLocationRequest;
 import com.curenta.driver.retrofit.apiDTO.UpdateDriverStatusRequest;
 import com.curenta.driver.retrofit.apiDTO.UpdateDriverStatusResponse;
 import com.curenta.driver.retrofit.apiDTO.UpdateLocationResponse;
+import com.curenta.driver.services.GoogleService;
 import com.curenta.driver.utilities.FragmentUtils;
 import com.curenta.driver.utilities.GPSTracker;
 import com.curenta.driver.utilities.InternetChecker;
@@ -97,6 +102,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     GetRouteResponse response;
     ScheduledExecutorService mscheduler;
     private Socket mSocket;
+    public ILatLngUpdate iLocationChange;
 
     {
         try {
@@ -231,6 +237,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             e.printStackTrace();
         }
         updateDriverStatus();
+
+//        Intent locationService = new Intent(getApplicationContext(), GoogleService.class);
+//        startService(locationService);
+        RouteInprogressAPICall();
         //launchDismissDlg();
 //        if (AppElement.isCameOnline) {
 //            launchDismissDlg();
@@ -465,6 +475,13 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Log.d("location main", "changed");
         if (location != null) {
             updateLocation(location);
+            if (AppElement.Latitude != location.getLatitude() && AppElement.Longitude != location.getLongitude()) {
+                AppElement.Latitude = gpsTracker.getLatitude();
+                AppElement.Longitude = gpsTracker.getLongitude();
+                if (iLocationChange != null) {
+                    iLocationChange.locationChanged(new LatLng(location.getLatitude(), location.getLongitude()));
+                }
+            }
             //publishLocation();
         }
     }
@@ -487,6 +504,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
             AppElement.Latitude = gpsTracker.getLatitude();
             AppElement.Longitude = gpsTracker.getLongitude();
+
             String message = LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude();
             publishMessage(message);
             publishAPICall();
@@ -494,7 +512,21 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         }
     }
+    public void publishLocation(double latitude,double longitude) {
 
+        String rideInfoString = Preferences.getInstance().getString("rideInfoDto");
+
+        if ((!rideInfoString.equalsIgnoreCase("") || AppElement.routeId != null) && gpsTracker != null && AppElement.Latitude !=latitude && AppElement.Longitude != longitude) {
+
+            AppElement.Latitude = latitude;
+            AppElement.Longitude = latitude;
+            String message =  LoggedInUser.getInstance().driverId + "," + longitude + "," + latitude + "," + AppElement.routeId + "," + AppElement.orderId;
+            publishMessage(message);
+            publishAPICall();
+            Log.d(TAG, "updateDriverLocation " + LoggedInUser.getInstance().driverId + "," + longitude + "," + latitude + "," + AppElement.routeId + "," + AppElement.orderId);
+
+        }
+    }
     public static void publishAPICall() {
         RetrofitClient.changeApiBaseUrl(BuildConfig.logindevURL);
         UpdateDRiverLocationRequest requestDto = new UpdateDRiverLocationRequest(LoggedInUser.getInstance().driverId, gpsTracker.getLongitude(), gpsTracker.getLatitude());
@@ -563,6 +595,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     public void onResume() {
         super.onResume();
         Log.d("actictystate", "resume");
+       // registerReceiver(broadcastReceiver, new IntentFilter(GoogleService.str_receiver));
         getLocation();
        // Toast.makeText(this, "on resume", Toast.LENGTH_SHORT).show();
 //        if (AppElement.isCameOnline) {
@@ -766,5 +799,21 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                     }
                 });
     }
+//    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//
+//            double latitude = Double.valueOf(intent.getStringExtra("latutide"));
+//            double longitude = Double.valueOf(intent.getStringExtra("longitude"));
+//            publishLocation(latitude,longitude);
+//
+//
+//        }
+//    };
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+       // unregisterReceiver(broadcastReceiver);
+    }
 }

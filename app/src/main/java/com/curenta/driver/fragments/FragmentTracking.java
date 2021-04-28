@@ -1,7 +1,12 @@
 package com.curenta.driver.fragments;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -11,11 +16,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
+import com.curenta.driver.DashboardActivity;
 import com.curenta.driver.R;
 import com.curenta.driver.databinding.FragmentTrackingBinding;
+import com.curenta.driver.dto.AppElement;
+import com.curenta.driver.interfaces.ILatLngUpdate;
 import com.curenta.driver.interfaces.ILocationChange;
 import com.curenta.driver.utilities.DirectionsJSONParser;
 import com.curenta.driver.utilities.GPSTracker;
@@ -23,7 +32,11 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -43,17 +56,19 @@ import java.util.List;
 import static com.facebook.FacebookSdk.getApplicationContext;
 
 
-public class FragmentTracking extends Fragment implements ILocationChange, OnMapReadyCallback {
+public class FragmentTracking extends Fragment implements ILocationChange, OnMapReadyCallback, ILatLngUpdate {
 
+    private static final String TAG = "FragmentTRacking";
     FragmentTrackingBinding fragmentTrackingBinding;
     private GoogleMap mMap;
     static GPSTracker gpsTracker;
-
+    Marker currentLocationMarker;
     private MarkerOptions mMarkerOptions;
     public LatLng mOrigin;
     public LatLng currentLocation;
     public LatLng mDestination;
     private Polyline mPolyline;
+
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -61,6 +76,7 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
                 inflater, R.layout.fragment_tracking, container, false);
         fragmentTrackingBinding.header.txtLabel.setText("Tracking");
         fragmentTrackingBinding.header.imageView3.setVisibility(View.INVISIBLE);
+        ((DashboardActivity) getActivity()).iLocationChange = this;
         fragmentTrackingBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -91,6 +107,19 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
         mMap.getUiSettings().setZoomControlsEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.setMyLocationEnabled(true);
+        try {
+            // Customise the styling of the base map using a JSON object defined
+            // in a raw resource file.
+            boolean success = mMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(
+                            getActivity(), R.raw.mapstyle));
+
+            if (!success) {
+                Log.e(TAG, "Style parsing failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e(TAG, "Can't find style.", e);
+        }
         drawRoute();
     }
 
@@ -99,8 +128,16 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
         if (location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
+            if (currentLocationMarker != null) {
+                currentLocationMarker.remove();
+                ;
+            }
+            currentLocationMarker = mMap.addMarker(new MarkerOptions().position(currentLocation)
+                    // below line is use to add custom marker on our map.
+                    .icon(BitmapFromVector(getApplicationContext(), R.drawable.caricon)));
+
             mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 17));
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14));
 
         }
     }
@@ -118,22 +155,26 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
     private void drawRoute() {
         String url;
         // Getting URL to the Google Directions API
-        if (mOrigin != null) {
-            url = getDirectionsUrl(mOrigin, mDestination);
-        } else {
+        if (currentLocation != null && mDestination != null) {
             url = getDirectionsUrl(currentLocation, mDestination);
+
+
+            DownloadTask downloadTask = new DownloadTask();
+
+            // Start downloading json data from Google Directions API
+            downloadTask.execute(url);
         }
-
-
-        DownloadTask downloadTask = new DownloadTask();
-
-        // Start downloading json data from Google Directions API
-        downloadTask.execute(url);
     }
 
 
     private String getDirectionsUrl(LatLng origin, LatLng dest) {
 
+//        mMap.addMarker(new MarkerOptions()
+//                .position(origin)
+//                .title("A"));
+        mMap.addMarker(new MarkerOptions()
+                .position(dest)
+                .title("B"));
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
 
@@ -141,7 +182,7 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
         String str_dest = "destination=" + dest.latitude + "," + dest.longitude;
 
         // Key
-        String key = "key=AIzaSyCVsYq6Hz40X4Dfe0dalKHws-hD8dYD3hg";
+        String key = "key=AIzaSyDMP4GI8rW2KJ9cuTsRBpt6VoesB6oJmF4";
 
         // Building the parameters to the web service
         String parameters = str_origin + "&" + str_dest + "&" + key;
@@ -194,6 +235,25 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
             urlConnection.disconnect();
         }
         return data;
+    }
+
+    @Override
+    public void locationChanged(LatLng location) {
+        Log.d("latlng tracking", "changed");
+        mMap.clear();
+        currentLocation = location;
+        if (currentLocationMarker != null) {
+            currentLocationMarker.remove();
+            ;
+        }
+        currentLocationMarker = mMap.addMarker(new MarkerOptions().position(currentLocation)
+                // below line is use to add custom marker on our map.
+                .icon(BitmapFromVector(getApplicationContext(), R.drawable.caricon)));
+
+        mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
+        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14));
+        mOrigin = location;
+        drawRoute();
     }
 
     /**
@@ -282,8 +342,8 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
 
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
-                lineOptions.width(8);
-                lineOptions.color(Color.RED);
+                lineOptions.width(12);
+                lineOptions.color(Color.BLACK);
             }
 
             // Drawing polyline in the Google Map for the i-th route
@@ -292,9 +352,33 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
                     mPolyline.remove();
                 }
                 mPolyline = mMap.addPolyline(lineOptions);
+                fragmentTrackingBinding.txtdistance.setText((AppElement.distance / 1000) + " km");
+                fragmentTrackingBinding.txttime.setText(AppElement.durationtxt);
 
             } else
                 Toast.makeText(getApplicationContext(), "No route is found", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private BitmapDescriptor BitmapFromVector(Context context, int vectorResId) {
+        // below line is use to generate a drawable.
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+
+        // below line is use to set bounds to our vector drawable.
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+
+        // below line is use to create a bitmap for our
+        // drawable which we have added.
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+
+        // below line is use to add bitmap in our canvas.
+        Canvas canvas = new Canvas(bitmap);
+
+        // below line is use to draw our
+        // vector drawable in canvas.
+        vectorDrawable.draw(canvas);
+
+        // after generating our bitmap we are returning our bitmap.
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
 }

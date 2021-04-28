@@ -18,4 +18,7 @@ public class AppElement {
     public static double Longitude=0;
     public static boolean bothImageSelection=true;
    public static ContextWrapper cw;
+   public static int distance=0;
+   public static int duration=0;
+    public static String durationtxt="";
 }

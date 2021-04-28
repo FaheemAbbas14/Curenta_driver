@@ -38,10 +38,7 @@
             android:label="@string/title_activity_dashboard"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar"></activity>
-        <meta-data
-            android:name="pspdfkit_license_key"
-            android:value="qY7KoQ2F8Rnrkb-M2id8VpDN5CDvZ7E-azMo2kgmbn9qjFOpw9xyAN7eURu4SF8l4xPJTbagcPW8zIerPVko9TWihacLJ103eBty_ze-vqKthnITJseXFtjNKlwrVVm9THrXq66DYoPln3yKzwhRUqeOrhAQfSzyf5Hi9FqqS4caAQ-_uhv886kUIaBWTl-dfT1jK1r34cXzNHMMVgso7QSf8ERfXbJbqf4rdeUazFApi_tzVf78byqIMqCrLi3DfPdXdLy5xmGja5LN_2AqMW-yt7wC2CYxYw2-hR35S7tdtTSsi5KyLu97ZD4P8OV-8m7Nh7_fuiYxGXpvaKzHc7lt8BIuctddH2s7MM_t14t4tugyaQY8wwbqmCJ75czz85N-ukQFj-mlYoXlvazOOYVXo4DWNIQh-gf-p-JgnnK87q4KuWa50FrGK_qm_eXNMj-JJcpVJAWh-miLlPPxyg==" />
-        <meta-data
+         <meta-data
             android:name="com.google.android.actions"
             android:resource="@xml/file_paths" />
         <meta-data
@@ -49,7 +46,7 @@
             android:value="com.curenta.driver.NotificationServiceExtension" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyCVsYq6Hz40X4Dfe0dalKHws-hD8dYD3hg" />
+            android:value="AIzaSyCTzAS-YXj9IwAdRYK4HkAM6WUWQCMLK18" />
         <activity
             android:name="com.pspdfkit.ui.PdfActivity"
             android:windowSoftInputMode="adjustNothing" />
@@ -93,6 +90,7 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
+<!--        <service android:name=".services.GoogleService"></service>-->
     </application>
 
 </manifest>

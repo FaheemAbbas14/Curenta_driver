@@ -74,7 +74,7 @@ public class FragmentRideDetail extends Fragment {
             }
         });
         if (sections.size() == 0) {
-            if(getRouteResponse.data!=null) {
+            if(getRouteResponse!=null && getRouteResponse.data!=null) {
                 appendSection(getRouteResponse);
             }
         }

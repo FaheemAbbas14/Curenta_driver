@@ -12,8 +12,8 @@ android {
         applicationId "com.curenta.driver"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 15
-        versionName "1.2.1"
+        versionCode 19
+        versionName "1.2.4"
         manifestPlaceholders = [manifestApplicationId          : "${applicationId}",
                                 onesignal_app_id               : "0782162b-2e6e-4ebb-9825-af0af68eadeb",
                                 onesignal_google_project_number: "1089148107134"]
@@ -89,7 +89,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
     implementation platform('com.google.firebase:firebase-bom:26.4.0')
     implementation 'com.google.firebase:firebase-analytics'
-    implementation 'com.facebook.android:facebook-android-sdk:4.31.0'
+    implementation 'com.facebook.android:facebook-android-sdk:7.1.0'
     implementation 'com.github.bumptech.glide:glide:4.9.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.9.0'
     // Retrofit and OkHttp

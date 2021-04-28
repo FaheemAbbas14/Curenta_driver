@@ -1,28 +1,20 @@
 {
   "project_info": {
-    "project_number": "1089148107134",
-    "project_id": "curenta-1612953586718",
-    "storage_bucket": "curenta-1612953586718.appspot.com"
+    "project_number": "154617376987",
+    "project_id": "curenta-mobile-app",
+    "storage_bucket": "curenta-mobile-app.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1089148107134:android:41ee6dcb3722f3fd259b2f",
+        "mobilesdk_app_id": "1:154617376987:android:4af79ec7d824e988a29cfe",
         "android_client_info": {
           "package_name": "com.curenta.driver"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1089148107134-pel59dtln9ljv88c1vu47j6hp1mds7cv.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.curenta.driver",
-            "certificate_hash": "01e6e280d8bbf73253fc28ea1cc54ea089b48dfa"
-          }
-        },
-        {
-          "client_id": "1089148107134-v0j88t1mvi2d4u9qesq50ns600a9u0ht.apps.googleusercontent.com",
+          "client_id": "154617376987-ouj2fvsnspjc72mh0gim802al8puhmc7.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.curenta.driver",
@@ -30,21 +22,28 @@
           }
         },
         {
-          "client_id": "1089148107134-1vplonqcic0dq4r36gn6omspp8mv3t4i.apps.googleusercontent.com",
+          "client_id": "154617376987-imngfmrtmgl471cbio8usni2dm4ktn52.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBMwbeyCjFvr2lUiRpTKJ016P5MuIF30Lc"
+          "current_key": "AIzaSyBsrIMnKYdxQnNtRdkyldnSkRhucxBKU2U"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1089148107134-1vplonqcic0dq4r36gn6omspp8mv3t4i.apps.googleusercontent.com",
+              "client_id": "154617376987-imngfmrtmgl471cbio8usni2dm4ktn52.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "154617376987-0fjocb081qsnkf0269hmu5las1g6a7o1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.curetadriver.dev.curenta"
+              }
             }
           ]
         }

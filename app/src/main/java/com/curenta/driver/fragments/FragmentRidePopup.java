@@ -91,13 +91,18 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
         });
 
         if (rideInfoDto != null && rideInfoDto.routeId != null) {
-            fragmentRidePopupBinding.txtEndAddress.setText(rideInfoDto.endPoint);
-            fragmentRidePopupBinding.txtMiles.setText(rideInfoDto.distanceInMiles);
-            fragmentRidePopupBinding.txtMinutes.setText(rideInfoDto.totalMins);
-            fragmentRidePopupBinding.txtPayment.setText("$"+rideInfoDto.price);
-            fragmentRidePopupBinding.txtStartAddress.setText(rideInfoDto.startingPoint);
-            fragmentRidePopupBinding.txtStops.setText("" + (Integer.parseInt(rideInfoDto.stops) - 1) + " stops");
-            fragmentRidePopupBinding.txtTotalStops.setText("Total Stops: " + rideInfoDto.stops + " stops");
+            try {
+                fragmentRidePopupBinding.txtEndAddress.setText(rideInfoDto.endPoint);
+                fragmentRidePopupBinding.txtMiles.setText(rideInfoDto.distanceInMiles);
+                fragmentRidePopupBinding.txtMinutes.setText(rideInfoDto.totalMins);
+                fragmentRidePopupBinding.txtPayment.setText("$" + rideInfoDto.price);
+                fragmentRidePopupBinding.txtStartAddress.setText(rideInfoDto.startingPoint);
+                fragmentRidePopupBinding.txtStops.setText("" + (Integer.parseInt(rideInfoDto.stops) - 1) + " stops");
+                fragmentRidePopupBinding.txtTotalStops.setText("Total Stops: " + rideInfoDto.stops + " stops");
+            }
+            catch (Exception e){
+                FirebaseCrashlytics.getInstance().recordException(e);
+            }
         }
         Resources res = getResources();
         Drawable drawable = res.getDrawable(R.drawable.circular);
