@@ -140,19 +140,19 @@ public class RideDetailListAdapter extends SectioningAdapter {
 
 
     void onAddressClick(Order item, int sectionIndex) {
-//        LatLng location = getLocationFromAddress(context, item.address);
-//        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + location.latitude + "," + location.longitude);
-//        Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//        context.startActivity(Intent.createChooser(intent, "Select application"));
-        LatLng source = null;
-        if (sectionIndex > 0) {
-            source = getLocationFromAddress(context, sections.get(0).items.get(sectionIndex - 1).address);
-        }
-        LatLng destination = getLocationFromAddress(context, item.address);
-        FragmentTracking fragmentTracking = new FragmentTracking();
-        fragmentTracking.mDestination = destination;
-        fragmentTracking.mOrigin = source;
-        FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
+        LatLng location = getLocationFromAddress(context, item.address);
+        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + location.latitude + "," + location.longitude);
+        Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+        context.startActivity(Intent.createChooser(intent, "Select application"));
+//        LatLng source = null;
+//        if (sectionIndex > 0) {
+//            source = getLocationFromAddress(context, sections.get(0).items.get(sectionIndex - 1).address);
+//        }
+//        LatLng destination = getLocationFromAddress(context, item.address);
+//        FragmentTracking fragmentTracking = new FragmentTracking();
+//        fragmentTracking.mDestination = destination;
+//        fragmentTracking.mOrigin = source;
+//        FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
         sections.get(0).items.get(sectionIndex).isArrived = true;
         notifyAllSectionsDataSetChanged();
     }

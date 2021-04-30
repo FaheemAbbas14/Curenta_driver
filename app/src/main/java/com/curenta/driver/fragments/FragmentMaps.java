@@ -66,7 +66,7 @@ public class FragmentMaps extends Fragment implements ILocationChange, OnMapRead
 
     {
         try {
-            mSocket = IO.socket(BuildConfig.socketIOPath);
+            mSocket = IO.socket(BuildConfig.locationSocketIOPath);
             Log.d(TAG, "connecting socket io");
         } catch (URISyntaxException e) {
             Log.d(TAG, "connecting failed " + e.getMessage());

@@ -12,7 +12,7 @@ android {
         applicationId "com.curenta.driver"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 19
+        versionCode 21
         versionName "1.2.4"
         manifestPlaceholders = [manifestApplicationId          : "${applicationId}",
                                 onesignal_app_id               : "0782162b-2e6e-4ebb-9825-af0af68eadeb",
@@ -38,7 +38,8 @@ android {
             buildConfigField "String", "logindevURL", '"https://curentadispatcher.azurewebsites.net/"'
             buildConfigField "String", "curentaordertriagingURL", '"https://curentaordertriaging.azurewebsites.net/"'
             buildConfigField "String", "curentadispatcherURL", '"https://curentadispatcher.azurewebsites.net/"'
-            buildConfigField "String", "socketIOPath", '"https://curentadispatcher.azurewebsites.net/DriverLocationTrackingHub"'
+            buildConfigField "String", "locationSocketIOPath", '"https://curentadispatcher.azurewebsites.net/DriverLocationTrackingHub"'
+            buildConfigField "String", "notificationSocketIOPath", '"https://curentaordertriaging.azurewebsites.net/notificationHub"'
             buildConfigField "String", "onesignalappkey", '"7e69dde1-ec2b-4a2d-9bfc-fd4b1fc86fa6"'
         }
         debug {
@@ -53,7 +54,8 @@ android {
             buildConfigField "String", "logindevURL", '"https://curentadispatcher-tests.azurewebsites.net/"'
             buildConfigField "String", "curentaordertriagingURL", '"https://curentaordertriaging-test.azurewebsites.net/"'
             buildConfigField "String", "curentadispatcherURL", '"https://curentadispatcher-tests.azurewebsites.net/"'
-            buildConfigField "String", "socketIOPath", '"https://curentadispatcher-tests.azurewebsites.net/DriverLocationTrackingHub"'
+            buildConfigField "String", "locationSocketIOPath", '"https://curentadispatcher-tests.azurewebsites.net/DriverLocationTrackingHub"'
+            buildConfigField "String", "notificationSocketIOPath", '"https://curentaordertriaging-test.azurewebsites.net/notificationHub"'
             buildConfigField "String", "onesignalappkey", '"e9f872cd-421e-4ea6-b08a-5f9e35289f1e"'
         }
     }
@@ -112,7 +114,7 @@ dependencies {
     implementation 'org.zakariya.stickyheaders:stickyheaders:0.7.10'
     implementation 'com.google.firebase:firebase-crashlytics:17.1.1'
     implementation platform('com.google.firebase:firebase-bom:26.5.0')
-    implementation('io.socket:socket.io-client:2.0.0') {
+    implementation ('io.socket:socket.io-client:2.0.0') {
         exclude group: 'org.json', module: 'json'
     }
     implementation 'com.github.rey5137:material:1.2.2'

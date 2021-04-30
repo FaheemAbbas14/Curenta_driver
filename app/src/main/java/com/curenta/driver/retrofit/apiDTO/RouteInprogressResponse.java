@@ -1,6 +1,5 @@
 package com.curenta.driver.retrofit.apiDTO;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -12,27 +11,13 @@ public class RouteInprogressResponse {
     public String responseMessage;
     public Data data;
     public Object exceptionMessage;
-    public class PatientAddress{
-        public int addressId;
-        public String address;
-        public String street;
-        public String city;
-        public String state;
-        public String zipCode;
-        public Object addressType;
-        public int patientIdRef;
-        public boolean status;
-        public boolean isDefault;
-        public Object updateBy;
-    }
-
     public class Patient{
         public int patientId;
         public String fname;
         public String lname;
         public String dob;
         public String phonenumber;
-        public Object email;
+        public String email;
         public Object userIdRef;
         public String createDate;
         public String updateDate;
@@ -75,17 +60,17 @@ public class RouteInprogressResponse {
         public Object deliveryType;
         public Object deliveryAddress;
         public String patientType;
-        public Object nurseIdRef;
-        public List<PatientAddress> patientAddresses;
+        public int nurseIdRef;
+        public List<Object> patientAddresses;
     }
 
     public class RouteOrder{
         public String orderId;
         public int patientIdRef;
-        public Object patientEmail;
+        public String patientEmail;
         public Object patientGuidCurentaRef;
         public Object patientIdPioneerRxRef;
-        public Object nurseIdRef;
+        public int nurseIdRef;
         public int facilityIdRef;
         public String orderNumber;
         public String orderSource;
@@ -114,9 +99,9 @@ public class RouteInprogressResponse {
         public Object mainDiagnosis;
         public Object poolGroupIdRef;
         public Object deadlineDate;
-        public Object cancelledBy;
-        public Object cancelledById;
-        public Object cancelReason;
+        public String cancelledBy;
+        public int cancelledById;
+        public String cancelReason;
         public int eta;
     }
 
@@ -140,7 +125,7 @@ public class RouteInprogressResponse {
         public String pickupAddressId;
     }
 
-    public class Data{
+    public class RouteData{
         public String routeId;
         public String routeName;
         public int assignedDriverIdRef;
@@ -149,9 +134,9 @@ public class RouteInprogressResponse {
         public String routeUpdateDate;
         public Object completionDate;
         public double price;
-        public double pricePerMile;
+        public int pricePerMile;
         public boolean isRoundTrip;
-        public float returnTripPrice;
+        public int returnTripPrice;
         public int returnTripDistance;
         public int returnTripDuration;
         public int notificationsSent;
@@ -166,8 +151,14 @@ public class RouteInprogressResponse {
         public Object cancelledById;
         public Object cancelReason;
     }
-
-
-
+    public class Update{
+        public String appVersion;
+        public String updateType;
+        public String platformType;
+    }
+    public class Data{
+        public RouteData routeData;
+        public List<Update> updates;
+    }
 
 }

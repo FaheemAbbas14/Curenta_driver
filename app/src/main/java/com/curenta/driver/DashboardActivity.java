@@ -2,16 +2,14 @@ package com.curenta.driver;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Location;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -60,7 +58,6 @@ import com.curenta.driver.retrofit.apiDTO.UpdateDRiverLocationRequest;
 import com.curenta.driver.retrofit.apiDTO.UpdateDriverStatusRequest;
 import com.curenta.driver.retrofit.apiDTO.UpdateDriverStatusResponse;
 import com.curenta.driver.retrofit.apiDTO.UpdateLocationResponse;
-import com.curenta.driver.services.GoogleService;
 import com.curenta.driver.utilities.FragmentUtils;
 import com.curenta.driver.utilities.GPSTracker;
 import com.curenta.driver.utilities.InternetChecker;
@@ -74,7 +71,9 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 
-import java.net.URISyntaxException;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.text.DecimalFormat;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -83,8 +82,8 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import io.socket.client.IO;
 import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 import static com.curenta.driver.MainApplication.getContext;
 
@@ -97,20 +96,15 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     private GoogleMap mMap;
     static GPSTracker gpsTracker;
     static String TAG = "SocketIO";
-
+    private Socket locationSocket;
+    private Socket notificationSocket;
     RideInfoDto rideInfoDto;
     GetRouteResponse response;
     ScheduledExecutorService mscheduler;
-    private Socket mSocket;
-    public ILatLngUpdate iLocationChange;
 
-    {
-        try {
-            mSocket = IO.socket(BuildConfig.socketIOPath);
-        } catch (URISyntaxException e) {
-            Log.d(TAG, e.getMessage());
-        }
-    }
+    public ILatLngUpdate iLocationChange;
+    int version;
+
 
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
@@ -121,7 +115,34 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         View headerView = activityDashboardBinding.navView.getHeaderView(0);
         TextView navUsername = (TextView) headerView.findViewById(R.id.txtUsername);
         profilePic = (ImageView) headerView.findViewById(R.id.imgUserPhoto);
-        mSocket.connect();
+        MainApplication app = (MainApplication) getApplication();
+        locationSocket = app.getLocationSocket();
+        ;
+        notificationSocket = app.getNotificationSocket();
+
+        if (locationSocket.connected()) {
+            Log.d("sockets", "location socket connected");
+        }
+        if (notificationSocket.connected()) {
+            Log.d("sockets", "notification socket connected");
+        }
+        notificationSocket.on("DriverNotifications", new Emitter.Listener() {
+            @Override
+            public void call(Object... args) {
+                JSONObject data = (JSONObject) args[0];
+                Log.d("sockets", "data recieved " + data.toString());
+
+            }
+        });
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            String appversion = pInfo.versionName;
+            appversion = appversion.replace(".", "");
+            version = Integer.parseInt(appversion);
+            Log.d("version", "version " + version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         mscheduler =
                 Executors.newSingleThreadScheduledExecutor();
 
@@ -252,7 +273,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     public void onDestroy() {
         super.onDestroy();
 
-        mSocket.disconnect();
 
     }
 
@@ -488,7 +508,14 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     public void publishMessage(String message) {
         try {
-            mSocket.emit("updateDriverLocation", message);
+            JSONObject poisonObject = new JSONObject();
+            try {
+
+                poisonObject.put("updateDriverLocation", message);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+            locationSocket.emit("updateDriverLocation", poisonObject);
             Log.d(TAG, "updateDriverLocation socket success");
         } catch (Exception e) {
             Log.d(TAG, "updateDriverLocation socket failure3 " + e.getLocalizedMessage());
@@ -512,21 +539,23 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         }
     }
-    public void publishLocation(double latitude,double longitude) {
+
+    public void publishLocation(double latitude, double longitude) {
 
         String rideInfoString = Preferences.getInstance().getString("rideInfoDto");
 
-        if ((!rideInfoString.equalsIgnoreCase("") || AppElement.routeId != null) && gpsTracker != null && AppElement.Latitude !=latitude && AppElement.Longitude != longitude) {
+        if ((!rideInfoString.equalsIgnoreCase("") || AppElement.routeId != null) && gpsTracker != null && AppElement.Latitude != latitude && AppElement.Longitude != longitude) {
 
             AppElement.Latitude = latitude;
             AppElement.Longitude = latitude;
-            String message =  LoggedInUser.getInstance().driverId + "," + longitude + "," + latitude + "," + AppElement.routeId + "," + AppElement.orderId;
+            String message = LoggedInUser.getInstance().driverId + "," + longitude + "," + latitude + "," + AppElement.routeId + "," + AppElement.orderId;
             publishMessage(message);
             publishAPICall();
             Log.d(TAG, "updateDriverLocation " + LoggedInUser.getInstance().driverId + "," + longitude + "," + latitude + "," + AppElement.routeId + "," + AppElement.orderId);
 
         }
     }
+
     public static void publishAPICall() {
         RetrofitClient.changeApiBaseUrl(BuildConfig.logindevURL);
         UpdateDRiverLocationRequest requestDto = new UpdateDRiverLocationRequest(LoggedInUser.getInstance().driverId, gpsTracker.getLongitude(), gpsTracker.getLatitude());
@@ -573,11 +602,32 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                     @Override
                     public void onSuccess(RouteInprogressResponse responseData) {
                         Log.d("Routeinprogress", "success ");
+                        if (responseData.data != null) {
+                            for (RouteInprogressResponse.Update update : responseData.data.updates) {
+                                if(update.platformType.equalsIgnoreCase("ANDRIOD")){
+                                   String appCloudVersion=update.appVersion.replace(".","");
+                                    int appVersion = Integer.parseInt(appCloudVersion);
+                                    if (appVersion > version) {
+                                        boolean forceUpdate = false;
+                                        if (update.updateType.equalsIgnoreCase("FORCE")) {
+                                            forceUpdate = true;
+                                        }
+                                        if (!update.updateType.equalsIgnoreCase("NORMAL")) {
+                                            launchUpdateDismissDlg(forceUpdate);
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
                         if (responseData.responseCode == 1) {
 
                             if (responseData.data != null) {
-                                AppElement.routeId = responseData.data.routeId;
-                                getRouteDetails(responseData.data.routeId, false, false, true);
+                                if (responseData.data.routeData != null) {
+                                    AppElement.routeId = responseData.data.routeData.routeId;
+                                    getRouteDetails(responseData.data.routeData.routeId, false, false, true);
+                                }
+
                             }
                         }
                     }
@@ -595,9 +645,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     public void onResume() {
         super.onResume();
         Log.d("actictystate", "resume");
-       // registerReceiver(broadcastReceiver, new IntentFilter(GoogleService.str_receiver));
+        // registerReceiver(broadcastReceiver, new IntentFilter(GoogleService.str_receiver));
         getLocation();
-       // Toast.makeText(this, "on resume", Toast.LENGTH_SHORT).show();
+        // Toast.makeText(this, "on resume", Toast.LENGTH_SHORT).show();
 //        if (AppElement.isCameOnline) {
 //            launchDismissDlg();
 //        }
@@ -627,8 +677,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                             rideInfoDto = new RideInfoDto();
                                         }
                                         DecimalFormat df = new DecimalFormat("0.00");
-                                        double totalDistance = responseData.data.distance + responseData.data.returnTripDistance;
-                                        double totalDuration = responseData.data.duration + responseData.data.returnTripDuration;
+//                                        double totalDistance = responseData.data.distance + responseData.data.returnTripDistance;
+//                                        double totalDuration = responseData.data.duration + responseData.data.returnTripDuration;
+                                        double totalDistance = responseData.data.distance;
+                                        double totalDuration = responseData.data.duration;
                                         double distance = (totalDistance / 1000) * 0.621371;
                                         double duration = totalDuration / 60;
                                         distance = Double.parseDouble(df.format(distance));
@@ -762,19 +814,19 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         dialog.show();
 
     }
+
     public void updateDriverStatus() {
         RetrofitClient.changeApiBaseUrl(BuildConfig.curentadispatcherURL);
         String status;
-        if(LoggedInUser.getInstance().isOnline){
-            status="Active";
+        if (LoggedInUser.getInstance().isOnline) {
+            status = "Active";
+        } else {
+            status = "Inactive";
         }
-        else{
-            status="Inactive";
-        }
-        UpdateDriverStatusRequest requestDTO = new UpdateDriverStatusRequest(LoggedInUser.getInstance().driverId,status);
+        UpdateDriverStatusRequest requestDTO = new UpdateDriverStatusRequest(LoggedInUser.getInstance().driverId, status);
         Gson gson = new Gson();
         String request = gson.toJson(requestDTO);
-        Log.d("UpdateDriverStatus", "request "+request);
+        Log.d("UpdateDriverStatus", "request " + request);
         RetrofitClient.getAPIClient().updateDriverStatus(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -785,9 +837,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                         if (responseData.responseCode == 1) {
                             Log.d("UpdateDriverStatus", "success ");
 
-                        }
-                        else{
-                            Log.d("UpdateDriverStatus", "failure "+responseData.responseMessage);
+                        } else {
+                            Log.d("UpdateDriverStatus", "failure " + responseData.responseMessage);
                         }
                     }
 
@@ -814,6 +865,49 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     @Override
     protected void onPause() {
         super.onPause();
-       // unregisterReceiver(broadcastReceiver);
+        // unregisterReceiver(broadcastReceiver);
+    }
+
+    @SuppressLint("ResourceAsColor")
+    public void launchUpdateDismissDlg(boolean forceUpdate) {
+
+        Dialog dialog = new Dialog(this, android.R.style.Theme_Dialog);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(R.layout.forec_update_popup);
+        dialog.setCanceledOnTouchOutside(true);
+        TextView txtUpdate = (TextView) dialog.findViewById(R.id.txtupdate);
+        TextView txtCancel = (TextView) dialog.findViewById(R.id.txtCancel);
+        if (forceUpdate) {
+            txtCancel.setEnabled(false);
+            txtCancel.setTextColor(R.color.labelgrey);
+        }
+        txtCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
+
+        txtUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                } catch (android.content.ActivityNotFoundException anfe) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                }
+
+            }
+        });
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        dialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.show();
+
     }
 }

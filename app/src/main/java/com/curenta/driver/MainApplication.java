@@ -13,12 +13,19 @@ import com.curenta.driver.dto.UserInfo;
 import com.curenta.driver.interfaces.IRideNotification;
 import com.curenta.driver.utilities.Preferences;
 
+
 import com.google.gson.Gson;
 import com.onesignal.OSNotification;
 import com.onesignal.OneSignal;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.net.URISyntaxException;
+
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
 
 
 /**
@@ -28,7 +35,47 @@ public class MainApplication extends Application {
     private String ONESIGNAL_APP_ID = "0782162b-2e6e-4ebb-9825-af0af68eadeb";
     private static Context sContext;
     static IRideNotification iRideNotification;
+    private Socket locationSocket;
+    private Socket notificationSocket;
+    {
+        try {
+            IO.Options options = new IO.Options();
+            locationSocket = IO.socket(BuildConfig.locationSocketIOPath,options);
+            locationSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                 Log.d("sockets","location socket connected");
+                }
 
+            }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Log.d("sockets","location socket disconnected");
+                }
+            }).on("error", new Emitter.Listener() {
+                @Override
+                public void call(Object... args) {
+                    Log.d("sockets","location socket error");
+                }
+            });
+
+            locationSocket.connect();
+
+        } catch (URISyntaxException e) {
+            //Log.d("sockets","location socket failure "+e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+    {
+        try {
+            notificationSocket = IO.socket(BuildConfig.notificationSocketIOPath);
+
+            // Log.d("sockets","notification socket connected");
+        } catch (URISyntaxException e) {
+            // Log.d("sockets","notification socket failure "+e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
     @Override
     public void onCreate() {
         super.onCreate();
@@ -46,6 +93,9 @@ public class MainApplication extends Application {
             disableNotifications();
             Log.d("onesignalnotifications", "notifications disabled");
         }
+       // locationSocket.connect();
+        notificationSocket.connect();
+
         // OneSignal Initialization
      setupOnseSignal();
 
@@ -138,7 +188,12 @@ public class MainApplication extends Application {
         AppElement.cw=new ContextWrapper(this);
 
     }
-
+    public Socket getLocationSocket(){
+        return locationSocket;
+    }
+    public Socket getNotificationSocket(){
+        return notificationSocket;
+    }
     public static void setupOnseSignal() {
 
         OneSignal.initWithContext(getContext());
