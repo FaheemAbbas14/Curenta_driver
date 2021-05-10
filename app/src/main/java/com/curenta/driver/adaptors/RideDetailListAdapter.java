@@ -75,7 +75,22 @@ public class RideDetailListAdapter extends SectioningAdapter {
         public boolean isCancled = false;
         public boolean isArrived;
         public String orderId;
+        public double latitude;
+        public double longitude;
 
+
+        public Order(String name, String address, String buttonText, boolean isFocused, boolean isCompleted, boolean isArrived, String orderId, boolean isCancled, double latitude, double longitude) {
+            this.name = name;
+            this.address = address;
+            this.buttonText = buttonText;
+            this.isFocused = isFocused;
+            this.isCompleted = isCompleted;
+            this.isCancled = isCancled;
+            this.isArrived = isArrived;
+            this.orderId = orderId;
+            this.latitude = latitude;
+            this.longitude = longitude;
+        }
         public Order(String name, String address, String buttonText, boolean isFocused, boolean isCompleted, boolean isArrived, String orderId, boolean isCancled) {
             this.name = name;
             this.address = address;
@@ -140,21 +155,27 @@ public class RideDetailListAdapter extends SectioningAdapter {
 
 
     void onAddressClick(Order item, int sectionIndex) {
-        LatLng location = getLocationFromAddress(context, item.address);
-        Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + location.latitude + "," + location.longitude);
-        Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-        context.startActivity(Intent.createChooser(intent, "Select application"));
-//        LatLng source = null;
-//        if (sectionIndex > 0) {
-//            source = getLocationFromAddress(context, sections.get(0).items.get(sectionIndex - 1).address);
+//        LatLng location = getLocationFromAddress(context, item.latitude,item.longitude);
+//        if(location!=null) {
+//            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + location.latitude + "," + location.longitude);
+//            Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+//            context.startActivity(Intent.createChooser(intent, "Select application"));
 //        }
-//        LatLng destination = getLocationFromAddress(context, item.address);
-//        FragmentTracking fragmentTracking = new FragmentTracking();
-//        fragmentTracking.mDestination = destination;
-//        fragmentTracking.mOrigin = source;
-//        FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
-        sections.get(0).items.get(sectionIndex).isArrived = true;
-        notifyAllSectionsDataSetChanged();
+        LatLng source = null;
+        if (sectionIndex > 0) {
+            source = getLocationFromAddress(context, sections.get(0).items.get(sectionIndex - 1).latitude,sections.get(0).items.get(sectionIndex - 1).longitude);
+        }
+        LatLng destination = getLocationFromAddress(context, item.latitude,item.longitude);
+        FragmentTracking fragmentTracking = new FragmentTracking();
+        fragmentTracking.mDestination = destination;
+        fragmentTracking.mOrigin = source;
+        fragmentTracking.order=item;
+        fragmentTracking.sections=sections;
+        fragmentTracking.index=sectionIndex;
+        FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
+            sections.get(0).items.get(sectionIndex).isArrived = true;
+            notifyAllSectionsDataSetChanged();
+
     }
 
     void onCancelClick(Order item, int sectionIndex) {
@@ -168,26 +189,8 @@ public class RideDetailListAdapter extends SectioningAdapter {
         notifyAllSectionsDataSetChanged();
     }
 
-    public LatLng getLocationFromAddress(Context context, String strAddress) {
-
-        Geocoder coder = new Geocoder(context);
-        List<Address> address;
-        LatLng p1 = null;
-
-        try {
-            // May throw an IOException
-            address = coder.getFromLocationName(strAddress, 5);
-            if (address == null) {
-                return null;
-            }
-
-            Address location = address.get(0);
-            p1 = new LatLng(location.getLatitude(), location.getLongitude());
-
-        } catch (IOException ex) {
-
-            ex.printStackTrace();
-        }
+    public LatLng getLocationFromAddress(Context context, double latitude,double longitude) {
+        LatLng p1 = new LatLng(latitude, longitude);
 
         return p1;
     }

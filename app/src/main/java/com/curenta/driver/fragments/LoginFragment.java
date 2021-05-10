@@ -92,7 +92,7 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
                     String deviceId = Helper.getDeviceId(getApplicationContext());
                     UserInfo.getInstance().deviceId = deviceId;
                 }
-                if(UserInfo.getInstance().fcmToken.equalsIgnoreCase("test")){
+                if(UserInfo.getInstance().fcmToken!=null && UserInfo.getInstance().fcmToken.equalsIgnoreCase("test")){
                     MainApplication.setupOnseSignal();
                 }
                 SetValidation();

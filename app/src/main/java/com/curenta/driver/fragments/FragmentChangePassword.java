@@ -118,7 +118,9 @@ public class FragmentChangePassword extends Fragment {
                                     String loggedInUserGson = gson.toJson(loggedInUser);
                                     Preferences.getInstance().setString("loggedInUser", loggedInUserGson);
                                     Log.d("changePasswordAPICall", "success " + response.toString());
-
+                                    fragmentChangePasswordBinding.edtoldPassword.setText("");
+                                    fragmentChangePasswordBinding.edtPassword.setText("");
+                                    fragmentChangePasswordBinding.edtCnfPassword.setText("");
                                     Toast.makeText(getActivity().getApplicationContext(), "Password successfully updated", Toast.LENGTH_SHORT).show();
 
 

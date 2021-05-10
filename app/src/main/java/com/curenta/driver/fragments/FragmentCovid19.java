@@ -47,6 +47,7 @@ public class FragmentCovid19 extends Fragment {
                     ((DashboardActivity) getActivity()).checkOnline();
                     AppElement.isCameOnline = false;
                     MainApplication.enableNotifications();
+                    ((DashboardActivity) getActivity()).updateDriverStatus(true);
                     //((DashboardActivity) getActivity()).launchDismissDlg();
                 }
             }

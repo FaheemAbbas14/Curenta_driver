@@ -59,8 +59,9 @@ public class FragmentThankYouAction extends Fragment {
             @Override
             public void onClick(View v) {
                 if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
-                    getActivity().getSupportFragmentManager().popBackStack();
-                    getActivity().getSupportFragmentManager().popBackStack();
+                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount()-1; i++) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
                     if (isCompleted) {
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
@@ -74,8 +75,9 @@ public class FragmentThankYouAction extends Fragment {
                     ((DashboardActivity) getActivity()).checkRide();
 
                 } else if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
-                    getActivity().getSupportFragmentManager().popBackStack();
-                    getActivity().getSupportFragmentManager().popBackStack();
+                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount()-1; i++) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
                 } else {
                     getActivity().getSupportFragmentManager().popBackStack();
                     getActivity().getSupportFragmentManager().popBackStack();
@@ -90,6 +92,7 @@ public class FragmentThankYouAction extends Fragment {
                         ((DashboardActivity) getActivity()).checkOnline();
                         AppElement.isCameOnline = false;
                         MainApplication.enableNotifications();
+                        ((DashboardActivity) getActivity()).updateDriverStatus(true);
                     }
                 }
             }

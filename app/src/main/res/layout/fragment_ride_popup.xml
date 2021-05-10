@@ -48,7 +48,7 @@
                 android:weightSum="10">
 
                 <TextView
-                    android:id="@+id/txtMinutes"
+                    android:id="@+id/txtMiles"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="3"
@@ -65,7 +65,7 @@
                     android:layout_weight="5"
                     android:fontFamily="@font/archivoregular"
                     android:gravity="bottom|left"
-                    android:text="min in total"
+                    android:text="Miles"
                     android:textColor="@color/labelgrey"
                     android:textSize="18sp" />
 
@@ -234,7 +234,7 @@
                 android:weightSum="10">
 
                 <TextView
-                    android:id="@+id/txtMiles"
+                    android:id="@+id/txtMinutes"
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="4"
@@ -276,7 +276,7 @@
                     android:fontFamily="@font/archivobold"
                     android:gravity="center"
                     android:layout_marginLeft="10dp"
-                    android:text="Miles"
+                    android:text="min in total"
                     android:textColor="@color/labellightgrey"
                     android:textSize="15sp" />
 

@@ -38,7 +38,7 @@ public class FragmentStatus extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 checkStatus(isChecked);
                 LoggedInUser.getInstance().isOnline = isChecked;
-                ((DashboardActivity) getActivity()).updateDriverStatus();
+                ((DashboardActivity) getActivity()).updateDriverStatus(false);
             }
         });
         checkStatus(LoggedInUser.getInstance().isOnline);

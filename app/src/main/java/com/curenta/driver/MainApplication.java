@@ -14,6 +14,10 @@ import com.curenta.driver.interfaces.IRideNotification;
 import com.curenta.driver.utilities.Preferences;
 
 
+import com.github.anrwatchdog.ANRError;
+import com.github.anrwatchdog.ANRWatchDog;
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.onesignal.OSNotification;
 import com.onesignal.OneSignal;
@@ -186,7 +190,17 @@ public class MainApplication extends Application {
         OneSignal.pauseInAppMessages(true);
         OneSignal.setLocationShared(false);
         AppElement.cw=new ContextWrapper(this);
-
+        new ANRWatchDog().start();
+        if (BuildConfig.DEBUG == false) {
+            new ANRWatchDog(10000 /*timeout*/).start();
+        }
+        new ANRWatchDog().setIgnoreDebugger(true).start();
+        new ANRWatchDog().setANRListener(new ANRWatchDog.ANRListener() {
+            @Override
+            public void onAppNotResponding(ANRError error) {
+                FirebaseCrashlytics.getInstance().log("ANR: "+error.getMessage());
+            }
+        }).start();
     }
     public Socket getLocationSocket(){
         return locationSocket;

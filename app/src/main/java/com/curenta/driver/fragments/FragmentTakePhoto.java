@@ -83,6 +83,7 @@ public class FragmentTakePhoto extends Fragment {
         fragmentTakePhotoBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });

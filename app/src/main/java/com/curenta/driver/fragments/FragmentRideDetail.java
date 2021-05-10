@@ -101,7 +101,7 @@ public class FragmentRideDetail extends Fragment {
             pickText = "Order Pickup Completed";
 
         }
-        section.items.add(new RideDetailListAdapter.Order(data.data.pickupAddress.name, data.data.pickupAddress.fullAddress, pickText, isPickupFocused, isPickupCompleted, false, data.data.pickupAddress.pickupAddressId,false));
+        section.items.add(new RideDetailListAdapter.Order(data.data.pickupAddress.name, data.data.pickupAddress.fullAddress, pickText, isPickupFocused, isPickupCompleted, false, data.data.pickupAddress.pickupAddressId,false,data.data.pickupAddress.latitude,data.data.pickupAddress.longitude));
         int client = 0;
         for (GetRouteResponse.RouteOrder routeOrder : data.data.routeOrders) {
             client++;
@@ -124,7 +124,7 @@ public class FragmentRideDetail extends Fragment {
                 isOrderfocused = true;
                 isAnyFocused = true;
             }
-            section.items.add(new RideDetailListAdapter.Order(routeOrder.patientName, routeOrder.deliveryAddress, buttonText, isOrderfocused, isOrdercompleted, false, routeOrder.orderId,isCancelled));
+            section.items.add(new RideDetailListAdapter.Order(routeOrder.patientName, routeOrder.deliveryAddress, buttonText, isOrderfocused, isOrdercompleted, false, routeOrder.orderId,isCancelled,routeOrder.latitude,routeOrder.longitude));
 
         }
 

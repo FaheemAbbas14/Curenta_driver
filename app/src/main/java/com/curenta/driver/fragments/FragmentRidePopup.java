@@ -118,7 +118,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                 int progress = (counter / 6) * 10;
                 fragmentRidePopupBinding.circularProgressbar.setProgress(progress);
                 fragmentRidePopupBinding.txtcounter.setText("" + counter);
-                if ((progress <1 ||counter < 1) && isPopupactive) {
+                if ((progress <0 ||counter <= 0) && isPopupactive) {
                     try {
                         if (((AppCompatActivity) getContext()).getSupportFragmentManager() != null) {
                             ((AppCompatActivity) getContext()).getSupportFragmentManager().popBackStack();

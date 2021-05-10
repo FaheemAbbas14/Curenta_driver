@@ -257,7 +257,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        updateDriverStatus();
+        updateDriverStatus(false);
 
 //        Intent locationService = new Intent(getApplicationContext(), GoogleService.class);
 //        startService(locationService);
@@ -285,11 +285,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             rideInfoDto = gson.fromJson(rideInfoString, RideInfoDto.class);
             AppElement.routeId = rideInfoDto.routeId;
             getRouteDetails(rideInfoDto.routeId, false, false, false);
-
+            activityDashboardBinding.appBarMain.contentMain.llonline.setEnabled(false);
         } else {
 //            if (LoggedInUser.getInstance().isOnline) {
 //                RouteInprogressAPICall();
 //            }
+            activityDashboardBinding.appBarMain.contentMain.llonline.setEnabled(true);
             activityDashboardBinding.appBarMain.contentMain.llRideinprogress.setVisibility(View.GONE);
         }
     }
@@ -474,7 +475,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.setMyLocationEnabled(true);
     }
@@ -716,6 +717,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                             activityDashboardBinding.appBarMain.contentMain.llRideinprogress.setVisibility(View.VISIBLE);
 
                                         }
+                                        checkRide();
                                     } else {
 
                                         Preferences.getInstance().setString("rideInfoDto", "");
@@ -815,40 +817,47 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     }
 
-    public void updateDriverStatus() {
-        RetrofitClient.changeApiBaseUrl(BuildConfig.curentadispatcherURL);
-        String status;
-        if (LoggedInUser.getInstance().isOnline) {
-            status = "Active";
-        } else {
-            status = "Inactive";
-        }
-        UpdateDriverStatusRequest requestDTO = new UpdateDriverStatusRequest(LoggedInUser.getInstance().driverId, status);
-        Gson gson = new Gson();
-        String request = gson.toJson(requestDTO);
-        Log.d("UpdateDriverStatus", "request " + request);
-        RetrofitClient.getAPIClient().updateDriverStatus(request)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(new DisposableSingleObserver<UpdateDriverStatusResponse>() {
-                    @Override
-                    public void onSuccess(UpdateDriverStatusResponse responseData) {
+    public void updateDriverStatus(boolean force) {
+        String rideInfoString = Preferences.getInstance().getString("rideInfoDto");
+        if (rideInfoString.equalsIgnoreCase("") || force) {
+            RetrofitClient.changeApiBaseUrl(BuildConfig.curentadispatcherURL);
+            String status;
+            if (!rideInfoString.equalsIgnoreCase("") && force) {
+                status = "Busy";
+                checkRide();
+            }
+            else if (LoggedInUser.getInstance().isOnline) {
+                status = "Active";
+            } else {
+                status = "Inactive";
+            }
+            UpdateDriverStatusRequest requestDTO = new UpdateDriverStatusRequest(LoggedInUser.getInstance().driverId, status);
+            Gson gson = new Gson();
+            String request = gson.toJson(requestDTO);
+            Log.d("UpdateDriverStatus", "request " + request);
+            RetrofitClient.getAPIClient().updateDriverStatus(request)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribeWith(new DisposableSingleObserver<UpdateDriverStatusResponse>() {
+                        @Override
+                        public void onSuccess(UpdateDriverStatusResponse responseData) {
 
-                        if (responseData.responseCode == 1) {
-                            Log.d("UpdateDriverStatus", "success ");
+                            if (responseData.responseCode == 1) {
+                                Log.d("UpdateDriverStatus", "success ");
 
-                        } else {
-                            Log.d("UpdateDriverStatus", "failure " + responseData.responseMessage);
+                            } else {
+                                Log.d("UpdateDriverStatus", "failure " + responseData.responseMessage);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        //  dialog.dismiss();
-                        Log.d("UpdateDriverStatus", "failed " + e.toString());
-                        //  Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                        @Override
+                        public void onError(Throwable e) {
+                            //  dialog.dismiss();
+                            Log.d("UpdateDriverStatus", "failed " + e.toString());
+                            //  Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        }
     }
 //    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 //        @Override

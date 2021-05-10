@@ -2,19 +2,21 @@ package com.curenta.driver.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.RelativeLayout;
 
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
@@ -22,11 +24,14 @@ import androidx.fragment.app.Fragment;
 
 import com.curenta.driver.DashboardActivity;
 import com.curenta.driver.R;
+import com.curenta.driver.adaptors.RideDetailListAdapter;
 import com.curenta.driver.databinding.FragmentTrackingBinding;
 import com.curenta.driver.dto.AppElement;
+import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.interfaces.ILatLngUpdate;
 import com.curenta.driver.interfaces.ILocationChange;
 import com.curenta.driver.utilities.DirectionsJSONParser;
+import com.curenta.driver.utilities.FragmentUtils;
 import com.curenta.driver.utilities.GPSTracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -49,6 +54,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -59,6 +65,9 @@ import static com.facebook.FacebookSdk.getApplicationContext;
 public class FragmentTracking extends Fragment implements ILocationChange, OnMapReadyCallback, ILatLngUpdate {
 
     private static final String TAG = "FragmentTRacking";
+    public RideDetailListAdapter.Order order;
+    public int index;
+    public ArrayList<RideDetailListAdapter.Section> sections;
     FragmentTrackingBinding fragmentTrackingBinding;
     private GoogleMap mMap;
     static GPSTracker gpsTracker;
@@ -68,24 +77,64 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
     public LatLng currentLocation;
     public LatLng mDestination;
     private Polyline mPolyline;
-
+    View mapView;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentTrackingBinding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_tracking, container, false);
-        fragmentTrackingBinding.header.txtLabel.setText("Tracking");
-        fragmentTrackingBinding.header.imageView3.setVisibility(View.INVISIBLE);
+        if (index == 0) {
+            fragmentTrackingBinding.btnText.setText("Order Pickup");
+            fragmentTrackingBinding.txtTitle.setText("You are on way to Pharmacy");
+        } else {
+            fragmentTrackingBinding.btnText.setText("Deliver");
+            fragmentTrackingBinding.txtTitle.setText("You are on way to Address Client " + index);
+        }
+        if (order != null) {
+            fragmentTrackingBinding.txtAddress.setText(order.address);
+        }
+//        fragmentTrackingBinding.header.txtLabel.setText("Tracking");
+//        fragmentTrackingBinding.header.imageView3.setVisibility(View.INVISIBLE);
         ((DashboardActivity) getActivity()).iLocationChange = this;
-        fragmentTrackingBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
+        fragmentTrackingBinding.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         });
+        fragmentTrackingBinding.llReached.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentTakePhoto fragmentTakePhoto = new FragmentTakePhoto();
+                if (index == 0) {
+                    fragmentTakePhoto.enumPictureType = EnumPictureType.ORDER_PICKUP;
+                } else if (index == sections.size() - 1) {
+                    fragmentTakePhoto.enumPictureType = EnumPictureType.ORDER_COMPLETED;
+                } else {
+                    fragmentTakePhoto.enumPictureType = EnumPictureType.ORDER_DELIVER;
+                }
+
+                fragmentTakePhoto.order = order;
+                fragmentTakePhoto.sections = sections;
+                fragmentTakePhoto.index = index;
+                fragmentTakePhoto.routeId = AppElement.routeId;
+                FragmentUtils.getInstance().addFragment(getActivity(), fragmentTakePhoto, R.id.fragContainer);
+            }
+        });
+        fragmentTrackingBinding.btnNavigate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mDestination != null) {
+                    Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + mDestination.latitude + "," + mDestination.longitude);
+                    Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+                    getActivity().startActivity(Intent.createChooser(intent, "Select application"));
+                }
+            }
+        });
         SupportMapFragment mapFragment = (SupportMapFragment) this.getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        mapView = mapFragment.getView();
         getLocation();
         return fragmentTrackingBinding.getRoot();
     }
@@ -104,7 +153,7 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mMap.getUiSettings().setZoomControlsEnabled(true);
+        mMap.getUiSettings().setZoomControlsEnabled(false);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
         mMap.setMyLocationEnabled(true);
         try {
@@ -120,6 +169,18 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
         } catch (Resources.NotFoundException e) {
             Log.e(TAG, "Can't find style.", e);
         }
+        if (mMap != null &&
+                mapView.findViewById(Integer.parseInt("1")) != null) {
+            // Get the button view
+            View locationButton = ((View) mapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
+            // and next place it, on bottom right (as Google Maps app)
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)
+                    locationButton.getLayoutParams();
+            // position on right bottom
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            layoutParams.setMargins(0, 0, 30, 80);
+        }
         drawRoute();
     }
 
@@ -127,28 +188,18 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
     public void updateLocation(Location location) {
         if (location != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
-            if (currentLocationMarker != null) {
-                currentLocationMarker.remove();
-                ;
-            }
-            currentLocationMarker = mMap.addMarker(new MarkerOptions().position(currentLocation)
-                    // below line is use to add custom marker on our map.
-                    .icon(BitmapFromVector(getApplicationContext(), R.drawable.caricon)));
 
-            mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
-            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 14));
 
         }
     }
 
     @Override
     public void locationChanged(Location location) {
-        Log.d("location tracking", "changed");
+        Log.d("locationtracking", "changed");
         if (location != null) {
             currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             updateLocation(location);
-
+            locationChanged(currentLocation);
         }
     }
 
@@ -239,7 +290,7 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
 
     @Override
     public void locationChanged(LatLng location) {
-        Log.d("latlng tracking", "changed");
+        Log.d("latlngtracking", "changed");
         mMap.clear();
         currentLocation = location;
         if (currentLocationMarker != null) {
@@ -320,43 +371,52 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
         protected void onPostExecute(List<List<HashMap<String, String>>> result) {
             ArrayList<LatLng> points = null;
             PolylineOptions lineOptions = null;
+            if (result != null) {
+                // Traversing through all the routes
+                for (int i = 0; i < result.size(); i++) {
+                    points = new ArrayList<LatLng>();
+                    lineOptions = new PolylineOptions();
 
-            // Traversing through all the routes
-            for (int i = 0; i < result.size(); i++) {
-                points = new ArrayList<LatLng>();
-                lineOptions = new PolylineOptions();
+                    // Fetching i-th route
+                    List<HashMap<String, String>> path = result.get(i);
 
-                // Fetching i-th route
-                List<HashMap<String, String>> path = result.get(i);
+                    // Fetching all the points in i-th route
+                    for (int j = 0; j < path.size(); j++) {
+                        HashMap<String, String> point = path.get(j);
 
-                // Fetching all the points in i-th route
-                for (int j = 0; j < path.size(); j++) {
-                    HashMap<String, String> point = path.get(j);
+                        double lat = Double.parseDouble(point.get("lat"));
+                        double lng = Double.parseDouble(point.get("lng"));
+                        LatLng position = new LatLng(lat, lng);
 
-                    double lat = Double.parseDouble(point.get("lat"));
-                    double lng = Double.parseDouble(point.get("lng"));
-                    LatLng position = new LatLng(lat, lng);
+                        points.add(position);
+                    }
 
-                    points.add(position);
+                    // Adding all the points in the route to LineOptions
+                    lineOptions.addAll(points);
+                    lineOptions.width(12);
+                    lineOptions.color(Color.BLACK);
                 }
 
-                // Adding all the points in the route to LineOptions
-                lineOptions.addAll(points);
-                lineOptions.width(12);
-                lineOptions.color(Color.BLACK);
+                // Drawing polyline in the Google Map for the i-th route
+                if (lineOptions != null) {
+                    if (mPolyline != null) {
+                        mPolyline.remove();
+                    }
+                    mPolyline = mMap.addPolyline(lineOptions);
+                    double distance = (AppElement.distance / 1000) * 0.621371;
+                    DecimalFormat df = new DecimalFormat("0.00");
+                    distance = Double.parseDouble(df.format(distance));
+                    if (distance > 1) {
+                        fragmentTrackingBinding.txtdistance.setText(distance + " Miles");
+                    } else {
+                        fragmentTrackingBinding.txtdistance.setText(distance + " Mile");
+                    }
+
+                    fragmentTrackingBinding.txttime.setText(AppElement.durationtxt);
+
+                }
+                //Toast.makeText(getApplicationContext(), "No route is found", Toast.LENGTH_LONG).show();
             }
-
-            // Drawing polyline in the Google Map for the i-th route
-            if (lineOptions != null) {
-                if (mPolyline != null) {
-                    mPolyline.remove();
-                }
-                mPolyline = mMap.addPolyline(lineOptions);
-                fragmentTrackingBinding.txtdistance.setText((AppElement.distance / 1000) + " km");
-                fragmentTrackingBinding.txttime.setText(AppElement.durationtxt);
-
-            } else
-                Toast.makeText(getApplicationContext(), "No route is found", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -380,5 +440,17 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
 
         // after generating our bitmap we are returning our bitmap.
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        ((DashboardActivity) getActivity()).iLocationChange = null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ((DashboardActivity) getActivity()).iLocationChange = null;
     }
 }
