@@ -49,4 +49,7 @@
     <string name="menu_gallery">Gallery</string>
     <string name="menu_slideshow">Slideshow</string>
     <string name="covid_link"><u>Confirm COVID-19 Precautions page</u>.</string>
+    <string name="access_token" translatable="false">pk.eyJ1IjoiZmFoZWVtLWFiYmFzLWN1cnJlbnRhIiwiYSI6ImNrb3U5NTl6dDBnZmsyd2s3ZW16NThtOHMifQ.i-ybu5H5DRpLs9qBOCOW_g</string>
+    <string name="user_location_permission_explanation">This app needs location permissions to show its functionality.</string>
+    <string name="user_location_permission_not_granted">You didn\'t grant location permissions.</string>
 </resources>

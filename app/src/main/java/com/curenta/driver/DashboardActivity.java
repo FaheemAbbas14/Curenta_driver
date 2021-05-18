@@ -43,6 +43,7 @@ import com.curenta.driver.fragments.FragmentContactUs;
 import com.curenta.driver.fragments.FragmentCovid19;
 import com.curenta.driver.fragments.FragmentEarningSimpleLIst;
 import com.curenta.driver.fragments.FragmentMyAccount;
+import com.curenta.driver.fragments.FragmentNavigation;
 import com.curenta.driver.fragments.FragmentRideDetail;
 import com.curenta.driver.fragments.FragmentRidePopup;
 import com.curenta.driver.fragments.FragmentStatus;
@@ -284,7 +285,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             Gson gson = new Gson();
             rideInfoDto = gson.fromJson(rideInfoString, RideInfoDto.class);
             AppElement.routeId = rideInfoDto.routeId;
-            getRouteDetails(rideInfoDto.routeId, false, false, false);
+          //  getRouteDetails(rideInfoDto.routeId, false, false, false);
             activityDashboardBinding.appBarMain.contentMain.llonline.setEnabled(false);
         } else {
 //            if (LoggedInUser.getInstance().isOnline) {
@@ -318,6 +319,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 // check selected menu item's id and replace a Fragment Accordingly
         if (itemId == R.id.covid19) {
             FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentCovid19(), R.id.fragContainer);
+           // FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentNavigation(), R.id.fragContainer);
+
         } else if (itemId == R.id.contactus) {
             FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentContactUs(), R.id.fragContainer);
 
@@ -726,8 +729,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                     }
                                 } else {
                                     if (getSupportFragmentManager().getBackStackEntryCount() > 1) {
-                                        if (getSupportFragmentManager() != null) {
-                                            getSupportFragmentManager().popBackStack();
+                                        try {
+                                            if (getSupportFragmentManager() != null) {
+                                                getSupportFragmentManager().popBackStack();
+                                            }
+                                        } catch(IllegalStateException ex) {
+
                                         }
                                         Log.d("getRouteCall", "fail " + responseData.toString());
                                         Toast.makeText(getApplicationContext(), responseData.responseMessage, Toast.LENGTH_SHORT).show();
@@ -737,9 +744,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
                             @Override
                             public void onError(Throwable e) {
+                                try {
+                                    if (getSupportFragmentManager() != null) {
+                                        getSupportFragmentManager().popBackStack();
+                                    }
+                                } catch(IllegalStateException ex) {
 
-                                if (getSupportFragmentManager() != null) {
-                                    getSupportFragmentManager().popBackStack();
                                 }
                                 Log.d("getRouteCall", "failed " + e.toString());
                                 Toast.makeText(getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();

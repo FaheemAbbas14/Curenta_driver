@@ -12,8 +12,8 @@ android {
         applicationId "com.curenta.driver"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 24
-        versionName "1.2.7"
+        versionCode 25
+        versionName "1.2.8"
         manifestPlaceholders = [manifestApplicationId          : "${applicationId}",
                                 onesignal_app_id               : "0782162b-2e6e-4ebb-9825-af0af68eadeb",
                                 onesignal_google_project_number: "1089148107134"]
@@ -119,6 +119,5 @@ dependencies {
     }
     implementation 'com.github.rey5137:material:1.2.2'
     implementation 'com.github.anrwatchdog:anrwatchdog:1.4.0'
-//    implementation 'com.pspdfkit:pspdfkit:6.6.0'
-//    implementation 'com.github.barteksc:android-pdf-viewer:2.0.3'
+    implementation 'com.mapbox.mapboxsdk:mapbox-android-navigation-ui:0.42.6'
 }

@@ -22,9 +22,8 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
-        maven {
-            url 'https://customers.pspdfkit.com/maven/'
-        }
+        maven { url 'https://mapbox.bintray.com/mapbox' }
+
     }
 }
 

@@ -259,8 +259,12 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                     FragmentRideDetail fragmentRideDetail = new FragmentRideDetail();
                                     fragmentRideDetail.getRouteResponse = response;
                                     fragmentRideDetail.routeId = rideInfoDto.routeId;
-                                    if (getActivity().getSupportFragmentManager() != null) {
-                                        getActivity().getSupportFragmentManager().popBackStack();
+                                    try {
+                                        if (getActivity().getSupportFragmentManager() != null) {
+                                            getActivity().getSupportFragmentManager().popBackStack();
+                                        }
+                                    } catch(IllegalStateException ex) {
+
                                     }
                                     isPopupactive = false;
                                     FragmentUtils.getInstance().addFragment(getActivity(), fragmentRideDetail, R.id.fragContainer);

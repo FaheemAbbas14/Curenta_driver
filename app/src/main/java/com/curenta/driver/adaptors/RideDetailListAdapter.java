@@ -5,11 +5,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
-import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,9 +24,9 @@ import com.curenta.driver.dto.AppElement;
 import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.fragments.FragmentCancelOrder;
 import com.curenta.driver.fragments.FragmentMaps;
+import com.curenta.driver.fragments.FragmentNavigation;
 import com.curenta.driver.fragments.FragmentTakePhoto;
 import com.curenta.driver.fragments.FragmentThankYouAction;
-import com.curenta.driver.fragments.FragmentTracking;
 import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.OrderPickupResponse;
 import com.curenta.driver.retrofit.apiDTO.RouteRequest;
@@ -42,9 +38,7 @@ import com.google.gson.Gson;
 
 import org.zakariya.stickyheaders.SectioningAdapter;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -91,6 +85,7 @@ public class RideDetailListAdapter extends SectioningAdapter {
             this.latitude = latitude;
             this.longitude = longitude;
         }
+
         public Order(String name, String address, String buttonText, boolean isFocused, boolean isCompleted, boolean isArrived, String orderId, boolean isCancled) {
             this.name = name;
             this.address = address;
@@ -163,18 +158,27 @@ public class RideDetailListAdapter extends SectioningAdapter {
 //        }
         LatLng source = null;
         if (sectionIndex > 0) {
-            source = getLocationFromAddress(context, sections.get(0).items.get(sectionIndex - 1).latitude,sections.get(0).items.get(sectionIndex - 1).longitude);
+            source = getLocationFromAddress(context, sections.get(0).items.get(sectionIndex - 1).latitude, sections.get(0).items.get(sectionIndex - 1).longitude);
         }
-        LatLng destination = getLocationFromAddress(context, item.latitude,item.longitude);
-        FragmentTracking fragmentTracking = new FragmentTracking();
-        fragmentTracking.mDestination = destination;
-        fragmentTracking.mOrigin = source;
-        fragmentTracking.order=item;
-        fragmentTracking.sections=sections;
-        fragmentTracking.index=sectionIndex;
-        FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
-            sections.get(0).items.get(sectionIndex).isArrived = true;
-            notifyAllSectionsDataSetChanged();
+        LatLng destination = getLocationFromAddress(context, item.latitude, item.longitude);
+//        FragmentTracking fragmentTracking = new FragmentTracking();
+//        fragmentTracking.mDestination = destination;
+//        fragmentTracking.mOrigin = source;
+//        fragmentTracking.order=item;
+//        fragmentTracking.sections=sections;
+//        fragmentTracking.index=sectionIndex;
+//        FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
+
+        FragmentNavigation fragmentNavigation = new FragmentNavigation();
+        fragmentNavigation.mDestination = destination;
+        fragmentNavigation.mOrigin = source;
+        fragmentNavigation.order = item;
+        fragmentNavigation.sections = sections;
+        fragmentNavigation.index = sectionIndex;
+        FragmentUtils.getInstance().addFragment(context, fragmentNavigation, R.id.fragContainer);
+
+        sections.get(0).items.get(sectionIndex).isArrived = true;
+        notifyAllSectionsDataSetChanged();
 
     }
 
@@ -189,7 +193,7 @@ public class RideDetailListAdapter extends SectioningAdapter {
         notifyAllSectionsDataSetChanged();
     }
 
-    public LatLng getLocationFromAddress(Context context, double latitude,double longitude) {
+    public LatLng getLocationFromAddress(Context context, double latitude, double longitude) {
         LatLng p1 = new LatLng(latitude, longitude);
 
         return p1;
