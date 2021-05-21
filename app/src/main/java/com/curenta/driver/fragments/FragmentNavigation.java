@@ -30,6 +30,8 @@ import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -257,11 +259,29 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
 // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
 // Activate the MapboxMap LocationComponent to show user location
-// Adding in LocationComponentOptions is also an optional parameter
+            // Adding in LocationComponentOptions is also an optional parameter
             locationComponent = mapboxMap.getLocationComponent();
             locationComponent.activateLocationComponent(getContext(), loadedMapStyle);
             locationComponent.setLocationComponentEnabled(true);
-// Set the component's camera mode
+
+            // Create and customize the LocationComponent's options
+//            LocationComponentOptions customLocationComponentOptions = LocationComponentOptions.builder(getActivity())
+//                    .foregroundDrawable(R.drawable.caricon)
+//                    .build();
+
+
+            // Get an instance of the component
+            locationComponent = mapboxMap.getLocationComponent();
+
+            LocationComponentActivationOptions locationComponentActivationOptions =
+                    LocationComponentActivationOptions.builder(getActivity(), loadedMapStyle)
+//                            .locationComponentOptions(customLocationComponentOptions)
+                            .build();
+
+            // Activate with options
+            locationComponent.activateLocationComponent(locationComponentActivationOptions);
+
+            // Set the component's camera mode
             locationComponent.setCameraMode(CameraMode.TRACKING);
         } else {
             permissionsManager = new PermissionsManager(this);

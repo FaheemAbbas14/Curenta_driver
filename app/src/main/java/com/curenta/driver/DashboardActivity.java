@@ -157,7 +157,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Gson gson = new Gson();
         LoggedInUser loggedInUser = LoggedInUser.getInstance();
         LoggedInUser userDTO = gson.fromJson(logedInUser, LoggedInUser.class);
-        loggedInUser.setInstance(userDTO);
+        if(userDTO!=null) {
+            loggedInUser.setInstance(userDTO);
+        }
         navUsername.setText(loggedInUser.fname + " " + loggedInUser.lname);
 
         loadProfilePic();
