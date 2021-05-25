@@ -28,6 +28,7 @@ import com.curenta.driver.interfaces.ILocationChange;
 import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.AcceptRideResponse;
 import com.curenta.driver.retrofit.apiDTO.GetRouteResponse;
+import com.curenta.driver.retrofit.apiDTO.GetRoutesResponse;
 import com.curenta.driver.retrofit.apiDTO.RideAcceptRequest;
 import com.curenta.driver.retrofit.apiDTO.RouteRequest;
 import com.curenta.driver.utilities.FragmentUtils;
@@ -71,7 +72,22 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
             public void onClick(View v) {
                 isPopupactive = false;
 
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        try {
+                            if (getActivity().getSupportFragmentManager() != null) {
+                                getActivity().getSupportFragmentManager().popBackStack();
+                            }
+                        } catch(IllegalStateException ex) {
+
+                        }
+                        catch(Exception ex) {
+
+                        }
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
 
                 Log.d("totalFragments", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
             }
@@ -101,6 +117,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                 fragmentRidePopupBinding.txtTotalStops.setText("Total Stops: " + rideInfoDto.stops + " stops");
             }
             catch (Exception e){
+                Toast.makeText(getContext(),"Accepting route failed.Please try again",Toast.LENGTH_SHORT).show();
                 FirebaseCrashlytics.getInstance().recordException(e);
             }
         }
@@ -120,11 +137,23 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                 fragmentRidePopupBinding.txtcounter.setText("" + counter);
                 if ((progress <0 ||counter <= 0) && isPopupactive) {
                     try {
-                        if (((AppCompatActivity) getContext()).getSupportFragmentManager() != null) {
-                            ((AppCompatActivity) getContext()).getSupportFragmentManager().popBackStack();
+                        if (getActivity().getSupportFragmentManager() != null) {
+                            try {
+                                if (getActivity().getSupportFragmentManager() != null) {
+                                    getActivity().getSupportFragmentManager().popBackStack();
+                                }
+                            } catch(IllegalStateException ex) {
+
+                            }
+                            catch(Exception ex) {
+
+                            }
                         }
-                    } catch (Exception e) {
-                        FirebaseCrashlytics.getInstance().recordException(e);
+                    } catch(IllegalStateException ex) {
+
+                    }
+                    catch(Exception ex) {
+
                     }
 
                 }
@@ -152,7 +181,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
 
     @SuppressLint("MissingPermission")
     public void updateLocation(Location location) {
-        if (location != null) {
+        if (location != null && mMap!=null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
@@ -205,8 +234,20 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                     //getRouteDetails();
                                     dialog.dismiss();
                                     if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                                        if (getActivity().getSupportFragmentManager() != null) {
-                                            getActivity().getSupportFragmentManager().popBackStack();
+                                        try {
+                                            if (getActivity().getSupportFragmentManager() != null) {
+                                                try {
+                                                    if (getActivity().getSupportFragmentManager() != null) {
+                                                        getActivity().getSupportFragmentManager().popBackStack();
+                                                    }
+                                                } catch(IllegalStateException ex) {
+
+                                                }
+                                                catch(Exception ex) {
+
+                                                } }
+                                        } catch(IllegalStateException ex) {
+
                                         }
                                         Log.d("getRouteCall", "fail " + response.toString());
                                         Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
@@ -218,8 +259,21 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                             @Override
                             public void onError(Throwable e) {
                                 dialog.dismiss();
-                                if (getActivity().getSupportFragmentManager() != null) {
-                                    getActivity().getSupportFragmentManager().popBackStack();
+                                try {
+                                    if (getActivity().getSupportFragmentManager() != null) {
+                                        try {
+                                            if (getActivity().getSupportFragmentManager() != null) {
+                                                getActivity().getSupportFragmentManager().popBackStack();
+                                            }
+                                        } catch(IllegalStateException ex) {
+
+                                        }
+                                        catch(Exception ex) {
+
+                                        }
+                                    }
+                                } catch(IllegalStateException ex) {
+
                                 }
                                 Log.d("acceptRideCall", "failed " + e.toString());
                                 Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
@@ -239,15 +293,12 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
         try {
             boolean isInternetConnected = InternetChecker.isInternetAvailable();
             if (isInternetConnected) {
-                RouteRequest requestDTO = new RouteRequest(rideInfoDto.routeId);
-                Gson gson = new Gson();
-                String request = gson.toJson(requestDTO);
-                RetrofitClient.getAPIClient().getRoute(request)
+                RetrofitClient.getAPIClient().getRoutes(rideInfoDto.routeId,true,true,true)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<GetRouteResponse>() {
+                        .subscribeWith(new DisposableSingleObserver<GetRoutesResponse>() {
                             @Override
-                            public void onSuccess(GetRouteResponse response) {
+                            public void onSuccess(GetRoutesResponse response) {
                                 dialog.dismiss();
                                 if (response.responseCode == 1  && response.data!=null) {
                                     AppElement.routeId = rideInfoDto.routeId;
@@ -261,21 +312,40 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                     fragmentRideDetail.routeId = rideInfoDto.routeId;
                                     try {
                                         if (getActivity().getSupportFragmentManager() != null) {
-                                            getActivity().getSupportFragmentManager().popBackStack();
+
+                                                if (getActivity().getSupportFragmentManager() != null) {
+                                                    getActivity().getSupportFragmentManager().popBackStack();
+                                                }
+
+
                                         }
                                     } catch(IllegalStateException ex) {
+
+                                    }
+                                    catch(Exception ex) {
 
                                     }
                                     isPopupactive = false;
                                     FragmentUtils.getInstance().addFragment(getActivity(), fragmentRideDetail, R.id.fragContainer);
                                 } else {
                                     dialog.dismiss();
+                                    try {
                                     if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
                                         if (getActivity().getSupportFragmentManager() != null) {
-                                            getActivity().getSupportFragmentManager().popBackStack();
+
+                                                if (getActivity().getSupportFragmentManager() != null) {
+                                                    getActivity().getSupportFragmentManager().popBackStack();
+                                                }
+
                                         }
                                         Log.d("getRouteCall", "fail " + response.toString());
                                         Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
+                                    }
+                                    } catch(IllegalStateException ex) {
+
+                                    }
+                                    catch(Exception ex) {
+
                                     }
                                 }
                             }
@@ -283,8 +353,19 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                             @Override
                             public void onError(Throwable e) {
                                 dialog.dismiss();
-                                if (getActivity().getSupportFragmentManager() != null) {
-                                    getActivity().getSupportFragmentManager().popBackStack();
+                                try {
+                                    if (getActivity().getSupportFragmentManager() != null) {
+
+                                            if (getActivity().getSupportFragmentManager() != null) {
+                                                getActivity().getSupportFragmentManager().popBackStack();
+                                            }
+
+                                    }
+                                } catch(IllegalStateException ex) {
+
+                                }
+                                catch(Exception ex) {
+
                                 }
                                 Log.d("getRouteCall", "failed " + e.toString());
                                 Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();

@@ -52,7 +52,17 @@ public class FragmentThankYouAction extends Fragment {
         fragmentThankYouActionBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
             }
         });
         fragmentThankYouActionBinding.btnSubmit.setOnClickListener(new View.OnClickListener() {
@@ -60,27 +70,76 @@ public class FragmentThankYouAction extends Fragment {
             public void onClick(View v) {
                 if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
                     for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount()-1; i++) {
-                        getActivity().getSupportFragmentManager().popBackStack();
+                        try {
+                            if (getActivity().getSupportFragmentManager() != null) {
+                                getActivity().getSupportFragmentManager().popBackStack();
+
+                            }
+                        } catch(IllegalStateException ex) {
+
+                        }
+                        catch(Exception ex) {
+
+                        }
                     }
                     if (isCompleted) {
-                        getActivity().getSupportFragmentManager().popBackStack();
+                        try {
+                            if (getActivity().getSupportFragmentManager() != null) {
+                                getActivity().getSupportFragmentManager().popBackStack();
+
+                            }
+                        } catch(IllegalStateException ex) {
+
+                        }
+                        catch(Exception ex) {
+
+                        }
                     }
                 } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
 
                     Preferences.getInstance().setString("rideInfoDto", "");
                     Log.d("fragmentCount", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
                     for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                        getActivity().getSupportFragmentManager().popBackStack();
+                        try {
+                            if (getActivity().getSupportFragmentManager() != null) {
+                                getActivity().getSupportFragmentManager().popBackStack();
+
+                            }
+                        } catch(IllegalStateException ex) {
+
+                        }
+                        catch(Exception ex) {
+
+                        }
                     }
                     ((DashboardActivity) getActivity()).checkRide();
 
                 } else if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
                     for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount()-1; i++) {
-                        getActivity().getSupportFragmentManager().popBackStack();
+                        try {
+                            if (getActivity().getSupportFragmentManager() != null) {
+                                getActivity().getSupportFragmentManager().popBackStack();
+
+                            }
+                        } catch(IllegalStateException ex) {
+
+                        }
+                        catch(Exception ex) {
+
+                        }
                     }
                 } else {
-                    getActivity().getSupportFragmentManager().popBackStack();
-                    getActivity().getSupportFragmentManager().popBackStack();
+                    try {
+                        if (getActivity().getSupportFragmentManager() != null) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                    } catch(IllegalStateException ex) {
+
+                    }
+                    catch(Exception ex) {
+
+                    }
                     //getActivity().getSupportFragmentManager().popBackStack();
                     LoggedInUser.getInstance().isSelfie = true;
                     if (LoggedInUser.getInstance().isSelfie && LoggedInUser.getInstance().isCovidPassed) {

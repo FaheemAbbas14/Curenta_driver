@@ -29,7 +29,16 @@ public class FragmentStatus extends Fragment {
             @Override
             public void onClick(View v) {
                 ((DashboardActivity) getActivity()).checkOnline();
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
             }
         });
         fragmentStatusBinding.chStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

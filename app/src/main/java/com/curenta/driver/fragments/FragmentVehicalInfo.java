@@ -190,7 +190,16 @@ public class FragmentVehicalInfo extends Fragment {
                 }
                 checkComplete(true);
                 if (UserInfo.getInstance().isVehicalInfoCompleted) {
-                    getActivity().getSupportFragmentManager().popBackStack();
+                    try {
+                        if (getActivity().getSupportFragmentManager() != null) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                    } catch(IllegalStateException ex) {
+
+                    }
+                    catch(Exception ex) {
+
+                    }
                 }
 
             }

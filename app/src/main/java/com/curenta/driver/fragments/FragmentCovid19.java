@@ -32,13 +32,31 @@ public class FragmentCovid19 extends Fragment {
         fragmentCovid19Binding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
             }
         });
         fragmentCovid19Binding.btnReadyDrive.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
                 LoggedInUser.getInstance().isCovidPassed = true;
                 if (LoggedInUser.getInstance().isSelfie && LoggedInUser.getInstance().isCovidPassed) {
                     AppElement.isCameOnline = true;

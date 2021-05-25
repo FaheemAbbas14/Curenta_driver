@@ -157,6 +157,7 @@ public class MainApplication extends Application {
 
             try {
                 notoficationid = data.getString("NotificationId");
+                AppElement.routeId = data.getString("RouteId");
                 Log.d("onesignalnotifications", "notoficationid " + notoficationid);
             } catch (JSONException e) {
                 e.printStackTrace();

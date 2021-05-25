@@ -158,7 +158,16 @@ public class FragmentPersonalInfo extends Fragment implements AdapterView.OnItem
             public void onClick(View v) {
                 checkCompletion(true);
                 if (UserInfo.getInstance().isPersonalInfoCompleted) {
-                    getActivity().getSupportFragmentManager().popBackStack();
+                    try {
+                        if (getActivity().getSupportFragmentManager() != null) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                    } catch(IllegalStateException ex) {
+
+                    }
+                    catch(Exception ex) {
+
+                    }
                 } else {
                    // Toast.makeText(getContext(), "Please fill all information", Toast.LENGTH_SHORT).show();
                 }

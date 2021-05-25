@@ -30,7 +30,16 @@ public class FragmentHIPAA extends Fragment {
             @Override
             public void onClick(View v) {
                 UserInfo.getInstance().isHIPAACompleted=true;
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
             }
         });
         return fragmentHIPAABinding.getRoot();

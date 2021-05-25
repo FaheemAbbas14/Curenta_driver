@@ -22,6 +22,7 @@ import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.CancelRouteRequest;
 import com.curenta.driver.retrofit.apiDTO.CancelRouteResponse;
 import com.curenta.driver.retrofit.apiDTO.GetRouteResponse;
+import com.curenta.driver.retrofit.apiDTO.GetRoutesResponse;
 import com.curenta.driver.utilities.FragmentUtils;
 import com.curenta.driver.utilities.InternetChecker;
 import com.curenta.driver.utilities.Preferences;
@@ -41,7 +42,7 @@ public class FragmentRideDetail extends Fragment {
     RideDetailListAdapter rideDetailListAdopter;
     public static final boolean SHOW_ADAPTER_POSITIONS = true;
     ArrayList<RideDetailListAdapter.Section> sections = new ArrayList<>();
-    public GetRouteResponse getRouteResponse;
+    public GetRoutesResponse getRouteResponse;
     public String routeId;
     boolean isAnyFocused = false;
     ProgressDialog dialog;
@@ -55,7 +56,16 @@ public class FragmentRideDetail extends Fragment {
             @Override
             public void onClick(View v) {
                 for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                    getActivity().getSupportFragmentManager().popBackStack();
+                    try {
+                        if (getActivity().getSupportFragmentManager() != null) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                    } catch(IllegalStateException ex) {
+
+                    }
+                    catch(Exception ex) {
+
+                    }
                 }
                 ((DashboardActivity) getActivity()).checkRide();
             }
@@ -87,45 +97,50 @@ public class FragmentRideDetail extends Fragment {
         return fragmentRideDetailBinding.getRoot();
     }
 
-    public void appendSection(GetRouteResponse data) {
+    public void appendSection(GetRoutesResponse data) {
         RideDetailListAdapter.Section section = new RideDetailListAdapter.Section();
         //apending pickup
         boolean isPickupCompleted = false;
         boolean isPickupFocused = true;
         isAnyFocused = true;
         String pickText = "Order Pickup";
-        if (data.data.routeStatus.equalsIgnoreCase("PickedUp")) {
+        if (data.data.get(0).routeStatus.equalsIgnoreCase("InRoute")) {
             isPickupCompleted = true;
             isPickupFocused = false;
             isAnyFocused = false;
             pickText = "Order Pickup Completed";
 
         }
-        section.items.add(new RideDetailListAdapter.Order(data.data.pickupAddress.name, data.data.pickupAddress.fullAddress, pickText, isPickupFocused, isPickupCompleted, false, data.data.pickupAddress.pickupAddressId,false,data.data.pickupAddress.latitude,data.data.pickupAddress.longitude));
+        section.items.add(new RideDetailListAdapter.Order(data.data.get(0).pickupAddress.name, data.data.get(0).pickupAddress.fullAddress, pickText, isPickupFocused, isPickupCompleted, false, data.data.get(0).pickupAddress.pickupAddressId,false,data.data.get(0).pickupAddress.latitude,data.data.get(0).pickupAddress.longitude,""));
         int client = 0;
-        for (GetRouteResponse.RouteOrder routeOrder : data.data.routeOrders) {
-            client++;
-            boolean isOrdercompleted = false;
-            boolean isOrderfocused = false;
-            boolean isCancelled = false;
-            String buttonText = "Deliver";
-            if (routeOrder.currentStatus.equalsIgnoreCase("Delivered")) {
-                isOrdercompleted = true;
-                buttonText = "Delivered";
+        for (int i=0;i<data.data.size();i++){
+//            for (int j=0;j<data.data.get(i).routeSteps.size();j++){
+                for (GetRoutesResponse.RouteStep routeStep : data.data.get(i).routeSteps) {
+                    client++;
+                    boolean isOrdercompleted = false;
+                    boolean isOrderfocused = false;
+                    boolean isCancelled = false;
+                    String buttonText = "Deliver";
+                    if (routeStep.orders.get(0).orderStatus.equalsIgnoreCase("Delivered")) {
+                        isOrdercompleted = true;
+                        buttonText = "Delivered";
 
-            }
-            if (routeOrder.currentStatus.equalsIgnoreCase("UNDELIVERED")) {
-                isOrdercompleted = true;
-                isCancelled=true;
-                buttonText = "Canceled";
+                    }
+                    if (routeStep.orders.get(0).orderStatus.equalsIgnoreCase("UNDELIVERED")) {
+                        isOrdercompleted = true;
+                        isCancelled=true;
+                        buttonText = "Canceled";
 
-            }
-            if (isPickupCompleted != false && !isOrdercompleted && !isAnyFocused) {
-                isOrderfocused = true;
-                isAnyFocused = true;
-            }
-            section.items.add(new RideDetailListAdapter.Order(routeOrder.patientName, routeOrder.deliveryAddress, buttonText, isOrderfocused, isOrdercompleted, false, routeOrder.orderId,isCancelled,routeOrder.latitude,routeOrder.longitude));
+                    }
+                    if (isPickupCompleted != false && !isOrdercompleted && !isAnyFocused) {
+                        isOrderfocused = true;
+                        isAnyFocused = true;
+                    }
+                    section.items.add(new RideDetailListAdapter.Order(routeStep.orders.get(0).patientName, routeStep.orders.get(0).deliveryAddress, buttonText, isOrderfocused, isOrdercompleted, false, routeStep.orders.get(0).orderId,isCancelled,routeStep.orders.get(0).latitude,routeStep.orders.get(0).longitude,routeStep.routeStepsId));
 
+                }
+
+            //}
         }
 
         sections.add(section);

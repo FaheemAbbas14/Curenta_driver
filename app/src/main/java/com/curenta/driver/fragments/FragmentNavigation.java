@@ -91,26 +91,35 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
         fragmentNavigationBinding.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
             }
         });
         fragmentNavigationBinding.llReached.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentTakePhoto fragmentTakePhoto = new FragmentTakePhoto();
+                FragmentConfirmDelivery fragmentConfirmDelivery = new FragmentConfirmDelivery();
                 if (index == 0) {
-                    fragmentTakePhoto.enumPictureType = EnumPictureType.ORDER_PICKUP;
+                    fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_PICKUP;
                 } else if (index == sections.size() - 1) {
-                    fragmentTakePhoto.enumPictureType = EnumPictureType.ORDER_COMPLETED;
+                    fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_COMPLETED;
                 } else {
-                    fragmentTakePhoto.enumPictureType = EnumPictureType.ORDER_DELIVER;
+                    fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_DELIVER;
                 }
 
-                fragmentTakePhoto.order = order;
-                fragmentTakePhoto.sections = sections;
-                fragmentTakePhoto.index = index;
-                fragmentTakePhoto.routeId = AppElement.routeId;
-                FragmentUtils.getInstance().addFragment(getActivity(), fragmentTakePhoto, R.id.fragContainer);
+                fragmentConfirmDelivery.order = order;
+                fragmentConfirmDelivery.sections = sections;
+                fragmentConfirmDelivery.index = index;
+                fragmentConfirmDelivery.routeId = AppElement.routeId;
+                FragmentUtils.getInstance().addFragment(getActivity(), fragmentConfirmDelivery, R.id.fragContainer);
             }
         });
         fragmentNavigationBinding.mapView.getMapAsync(this);
@@ -143,13 +152,15 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
         fragmentNavigationBinding.btnNavigate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean simulateRoute = false;
-                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                        .directionsRoute(currentRoute)
-                        .shouldSimulateRoute(simulateRoute)
-                        .build();
+                if(currentRoute!=null) {
+                    boolean simulateRoute = false;
+                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                            .directionsRoute(currentRoute)
+                            .shouldSimulateRoute(simulateRoute)
+                            .build();
 // Call this method with Context from within an Activity
-                NavigationLauncher.startNavigation(getActivity(), options);
+                    NavigationLauncher.startNavigation(getActivity(), options);
+                }
             }
         });
         mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
@@ -183,17 +194,22 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
     }
 
     private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
-        loadedMapStyle.addImage("destination-icon-id",
-                BitmapFactory.decodeResource(this.getResources(), R.drawable.mapbox_marker_icon_default));
-        GeoJsonSource geoJsonSource = new GeoJsonSource("destination-source-id");
-        loadedMapStyle.addSource(geoJsonSource);
-        SymbolLayer destinationSymbolLayer = new SymbolLayer("destination-symbol-layer-id", "destination-source-id");
-        destinationSymbolLayer.withProperties(
-                iconImage("destination-icon-id"),
-                iconAllowOverlap(true),
-                iconIgnorePlacement(true)
-        );
-        loadedMapStyle.addLayer(destinationSymbolLayer);
+        try {
+            loadedMapStyle.addImage("destination-icon-id",
+                    BitmapFactory.decodeResource(this.getResources(), R.drawable.mapbox_marker_icon_default));
+            GeoJsonSource geoJsonSource = new GeoJsonSource("destination-source-id");
+            loadedMapStyle.addSource(geoJsonSource);
+            SymbolLayer destinationSymbolLayer = new SymbolLayer("destination-symbol-layer-id", "destination-source-id");
+            destinationSymbolLayer.withProperties(
+                    iconImage("destination-icon-id"),
+                    iconAllowOverlap(true),
+                    iconIgnorePlacement(true)
+            );
+            loadedMapStyle.addLayer(destinationSymbolLayer);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
 

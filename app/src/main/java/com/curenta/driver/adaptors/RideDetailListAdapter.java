@@ -23,7 +23,7 @@ import com.curenta.driver.R;
 import com.curenta.driver.dto.AppElement;
 import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.fragments.FragmentCancelOrder;
-import com.curenta.driver.fragments.FragmentMaps;
+import com.curenta.driver.fragments.FragmentConfirmDelivery;
 import com.curenta.driver.fragments.FragmentNavigation;
 import com.curenta.driver.fragments.FragmentTakePhoto;
 import com.curenta.driver.fragments.FragmentThankYouAction;
@@ -69,11 +69,12 @@ public class RideDetailListAdapter extends SectioningAdapter {
         public boolean isCancled = false;
         public boolean isArrived;
         public String orderId;
+        public String routeStepId;
         public double latitude;
         public double longitude;
 
 
-        public Order(String name, String address, String buttonText, boolean isFocused, boolean isCompleted, boolean isArrived, String orderId, boolean isCancled, double latitude, double longitude) {
+        public Order(String name, String address, String buttonText, boolean isFocused, boolean isCompleted, boolean isArrived, String orderId, boolean isCancled, double latitude, double longitude,String routeStepId) {
             this.name = name;
             this.address = address;
             this.buttonText = buttonText;
@@ -84,6 +85,7 @@ public class RideDetailListAdapter extends SectioningAdapter {
             this.orderId = orderId;
             this.latitude = latitude;
             this.longitude = longitude;
+            this.routeStepId = routeStepId;
         }
 
         public Order(String name, String address, String buttonText, boolean isFocused, boolean isCompleted, boolean isArrived, String orderId, boolean isCancled) {
@@ -202,13 +204,13 @@ public class RideDetailListAdapter extends SectioningAdapter {
     void onActionClicked(Order item, int sectionIndex) {
         // Toast.makeText(MainApplication.getContext(), "Action clicked " + sectionIndex, Toast.LENGTH_SHORT).show();
         if (sectionIndex == 0) {
-            FragmentTakePhoto fragmentTakePhoto = new FragmentTakePhoto();
-            fragmentTakePhoto.enumPictureType = EnumPictureType.ORDER_PICKUP;
-            fragmentTakePhoto.order = item;
-            fragmentTakePhoto.sections = sections;
-            fragmentTakePhoto.index = sectionIndex;
-            fragmentTakePhoto.routeId = routeId;
-            FragmentUtils.getInstance().addFragment(context, fragmentTakePhoto, R.id.fragContainer);
+            FragmentConfirmDelivery fragmentConfirmDelivery = new FragmentConfirmDelivery();
+            fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_PICKUP;
+            fragmentConfirmDelivery.order = item;
+            fragmentConfirmDelivery.sections = sections;
+            fragmentConfirmDelivery.index = sectionIndex;
+            fragmentConfirmDelivery.routeId = routeId;
+            FragmentUtils.getInstance().addFragment(context, fragmentConfirmDelivery, R.id.fragContainer);
 //            FragmentTakePhoto fragmentTakePhoto = new FragmentTakePhoto();
 //            fragmentTakePhoto.enumPictureType = EnumPictureType.ORDER_PICKUP;
 //            fragmentTakePhoto.order = item;
@@ -218,21 +220,21 @@ public class RideDetailListAdapter extends SectioningAdapter {
 //            FragmentUtils.getInstance().addFragment(context, fragmentTakePhoto, R.id.fragContainer);
             // orderPicup(rideInfoDto.routeId, sectionIndex);
         } else if (sectionIndex == sections.size() - 1) {
-            FragmentTakePhoto fragmentTakePhoto = new FragmentTakePhoto();
-            fragmentTakePhoto.enumPictureType = EnumPictureType.ORDER_COMPLETED;
-            fragmentTakePhoto.order = item;
-            fragmentTakePhoto.routeId = routeId;
-            fragmentTakePhoto.sections = sections;
-            fragmentTakePhoto.index = sectionIndex;
-            FragmentUtils.getInstance().addFragment(context, fragmentTakePhoto, R.id.fragContainer);
+            FragmentConfirmDelivery fragmentConfirmDelivery = new FragmentConfirmDelivery();
+            fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_COMPLETED;
+            fragmentConfirmDelivery.order = item;
+            fragmentConfirmDelivery.routeId = routeId;
+            fragmentConfirmDelivery.sections = sections;
+            fragmentConfirmDelivery.index = sectionIndex;
+            FragmentUtils.getInstance().addFragment(context, fragmentConfirmDelivery, R.id.fragContainer);
         } else {
-            FragmentTakePhoto fragmentTakePhoto = new FragmentTakePhoto();
-            fragmentTakePhoto.enumPictureType = EnumPictureType.ORDER_DELIVER;
-            fragmentTakePhoto.order = item;
-            fragmentTakePhoto.sections = sections;
-            fragmentTakePhoto.index = sectionIndex;
-            fragmentTakePhoto.routeId = routeId;
-            FragmentUtils.getInstance().addFragment(context, fragmentTakePhoto, R.id.fragContainer);
+            FragmentConfirmDelivery fragmentConfirmDelivery = new FragmentConfirmDelivery();
+            fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_DELIVER;
+            fragmentConfirmDelivery.order = item;
+            fragmentConfirmDelivery.sections = sections;
+            fragmentConfirmDelivery.index = sectionIndex;
+            fragmentConfirmDelivery.routeId = routeId;
+            FragmentUtils.getInstance().addFragment(context, fragmentConfirmDelivery, R.id.fragContainer);
         }
 
     }
@@ -289,7 +291,7 @@ public class RideDetailListAdapter extends SectioningAdapter {
             ivh.heading.setTextColor(ContextCompat.getColor(context, R.color.blue));
             ivh.topLayout.setBackgroundResource(R.color.focus);
             ivh.action.setBackgroundResource(R.drawable.grey_rounded);
-            FragmentMaps.publishLocation();
+
         }
         if (s.items.get(itemIndex).isArrived) {
             ivh.action.setBackgroundResource(R.drawable.blue_rounded);

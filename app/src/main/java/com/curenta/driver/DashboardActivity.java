@@ -12,6 +12,9 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +42,7 @@ import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.dto.RideInfoDto;
 import com.curenta.driver.dto.UserInfo;
 import com.curenta.driver.enums.EnumPictureType;
+import com.curenta.driver.fragments.FragmentConfirmDelivery;
 import com.curenta.driver.fragments.FragmentContactUs;
 import com.curenta.driver.fragments.FragmentCovid19;
 import com.curenta.driver.fragments.FragmentEarningSimpleLIst;
@@ -53,6 +57,7 @@ import com.curenta.driver.interfaces.ILocationChange;
 import com.curenta.driver.interfaces.IRideNotification;
 import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.GetRouteResponse;
+import com.curenta.driver.retrofit.apiDTO.GetRoutesResponse;
 import com.curenta.driver.retrofit.apiDTO.RouteInprogressResponse;
 import com.curenta.driver.retrofit.apiDTO.RouteRequest;
 import com.curenta.driver.retrofit.apiDTO.UpdateDRiverLocationRequest;
@@ -100,7 +105,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     private Socket locationSocket;
     private Socket notificationSocket;
     RideInfoDto rideInfoDto;
-    GetRouteResponse response;
+    GetRoutesResponse response;
     ScheduledExecutorService mscheduler;
 
     public ILatLngUpdate iLocationChange;
@@ -236,7 +241,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 if (response != null && response.data != null) {
                     FragmentRideDetail fragmentRideDetail = new FragmentRideDetail();
                     fragmentRideDetail.getRouteResponse = response;
-                    fragmentRideDetail.routeId = response.data.routeId;
+                    fragmentRideDetail.routeId = response.data.get(0).routeId;
                     FragmentUtils.getInstance().addFragment(DashboardActivity.this, fragmentRideDetail, R.id.fragContainer);
                 }
 
@@ -321,7 +326,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 // check selected menu item's id and replace a Fragment Accordingly
         if (itemId == R.id.covid19) {
             FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentCovid19(), R.id.fragContainer);
-           // FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentNavigation(), R.id.fragContainer);
+           // FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentConfirmDelivery(), R.id.fragContainer);
 
         } else if (itemId == R.id.contactus) {
             FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentContactUs(), R.id.fragContainer);
@@ -361,7 +366,13 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             finish();
         } else {
             checkRide();
-            getSupportFragmentManager().popBackStack();
+            try {
+                if (getSupportFragmentManager() != null) {
+                    getSupportFragmentManager().popBackStack();
+                }
+            } catch(IllegalStateException ex) {
+
+            }
         }
 
     }
@@ -400,7 +411,13 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
             } else {
                 for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                    getSupportFragmentManager().popBackStack();
+                    try {
+                        if (getSupportFragmentManager() != null) {
+                            getSupportFragmentManager().popBackStack();
+                        }
+                    } catch(IllegalStateException ex) {
+
+                    }
                 }
 
                 runOnUiThread(new Runnable() {
@@ -415,7 +432,13 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         } else {
             for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                getSupportFragmentManager().popBackStack();
+                try {
+                    if (getSupportFragmentManager() != null) {
+                        getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
             }
             if (id == 4) {
                 RouteInprogressAPICall();
@@ -530,7 +553,22 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     }
 
     public void publishLocation() {
-        gpsTracker.getLocation();
+        Thread thread = new Thread(){
+            public void run(){
+                Looper.prepare();//Call looper.prepare()
+
+                Handler mHandler = new Handler() {
+                    public void handleMessage(Message msg) {
+                        gpsTracker.getLocation();
+                    }
+                };
+
+                Looper.loop();
+            }
+        };
+        thread.start();
+
+
         String rideInfoString = Preferences.getInstance().getString("rideInfoDto");
 
         if ((!rideInfoString.equalsIgnoreCase("") || AppElement.routeId != null) && gpsTracker != null && AppElement.Latitude != gpsTracker.getLatitude() && AppElement.Longitude != gpsTracker.getLongitude()) {
@@ -664,20 +702,19 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         try {
             boolean isInternetConnected = InternetChecker.isInternetAvailable();
             if (isInternetConnected) {
-                RouteRequest requestDTO = new RouteRequest(routeId);
-                Gson gson = new Gson();
-                String request = gson.toJson(requestDTO);
+                Log.d("getRouteCall", "success " + routeId);
+
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().getRoute(request)
+                RetrofitClient.getAPIClient().getRoutes(routeId,true,true,true)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<GetRouteResponse>() {
+                        .subscribeWith(new DisposableSingleObserver<GetRoutesResponse>() {
                             @Override
-                            public void onSuccess(GetRouteResponse responseData) {
+                            public void onSuccess(GetRoutesResponse responseData) {
+                                Log.d("getRouteCall", "success " + responseData.toString());
 
-                                if (responseData.responseCode == 1) {
-                                    Log.d("getRouteCall", "success " + responseData.toString());
-                                    if (!responseData.data.routeStatus.equalsIgnoreCase("Completed") && responseData.data.routeOrders.size() > 0) {
+                                if (responseData.responseCode == 1&& responseData.data!=null && responseData.data.size()>0 && responseData.data.get(0).routeSteps!=null && responseData.data.get(0).routeSteps.size()>0) {
+                                    if (!responseData.data.get(0).routeStatus.equalsIgnoreCase("Completed") && responseData.data.get(0).routeSteps.get(0).orders.size() > 0) {
                                         response = responseData;
                                         if (rideInfoDto == null) {
                                             rideInfoDto = new RideInfoDto();
@@ -685,22 +722,22 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                         DecimalFormat df = new DecimalFormat("0.00");
 //                                        double totalDistance = responseData.data.distance + responseData.data.returnTripDistance;
 //                                        double totalDuration = responseData.data.duration + responseData.data.returnTripDuration;
-                                        double totalDistance = responseData.data.distance;
-                                        double totalDuration = responseData.data.duration;
+                                        double totalDistance = responseData.data.get(0).outboundDistance;
+                                        double totalDuration = responseData.data.get(0).outboundDuration;
                                         double distance = (totalDistance / 1000) * 0.621371;
                                         double duration = totalDuration / 60;
                                         distance = Double.parseDouble(df.format(distance));
                                         duration = Double.parseDouble(df.format(duration));
-                                        rideInfoDto.routeId = responseData.data.routeId;
+                                        rideInfoDto.routeId = responseData.data.get(0).routeId;
                                         rideInfoDto.distanceInMiles = "" + distance;
-                                        if (responseData.data.routeOrders.size() > 0) {
-                                            rideInfoDto.endPoint = responseData.data.routeOrders.get(responseData.data.routeOrders.size() - 1).deliveryAddress;
+                                        if (responseData.data.get(0).routeSteps.get(0).orders.size() > 0) {
+                                            rideInfoDto.endPoint = responseData.data.get(0).routeSteps.get(0).orders.get(responseData.data.get(0).routeSteps.get(0).orders.size() - 1).deliveryAddress;
                                         }
-                                        rideInfoDto.startingPoint = "" + responseData.data.pickupAddress.name;
-                                        rideInfoDto.price = "" + responseData.data.price;
-                                        rideInfoDto.stops = "" + responseData.data.routeOrders.size();
+                                        rideInfoDto.startingPoint = "" + responseData.data.get(0).pickupAddress.name;
+                                        rideInfoDto.price = "" + responseData.data.get(0).totalPrice;
+                                        rideInfoDto.stops = "" + responseData.data.get(0).stepCount;
                                         rideInfoDto.totalMins = "" + duration;
-                                        rideInfoDto.routeName = "" + responseData.data.routeName;
+                                        rideInfoDto.routeName = "" + responseData.data.get(0).routeName;
                                         if (isDriverAssigned) {
                                             Gson gson = new Gson();
                                             String rideInfoDtoGson = gson.toJson(rideInfoDto);
@@ -716,7 +753,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                         } else if (isRouteUpdated) {
                                             FragmentRideDetail fragmentRideDetail = new FragmentRideDetail();
                                             fragmentRideDetail.getRouteResponse = response;
-                                            fragmentRideDetail.routeId = response.data.routeId;
+                                            fragmentRideDetail.routeId = response.data.get(0).routeId;
                                             FragmentUtils.getInstance().addFragment(DashboardActivity.this, fragmentRideDetail, R.id.fragContainer);
                                         } else {
                                             activityDashboardBinding.appBarMain.contentMain.llRideinprogress.setVisibility(View.VISIBLE);

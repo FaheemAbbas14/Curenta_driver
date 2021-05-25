@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Toast;
 
 import androidx.databinding.DataBindingUtil;
@@ -22,17 +23,17 @@ import androidx.fragment.app.Fragment;
 import com.curenta.driver.BuildConfig;
 import com.curenta.driver.DashboardActivity;
 import com.curenta.driver.R;
+import com.curenta.driver.adaptors.ImageAdapter;
 import com.curenta.driver.adaptors.RideDetailListAdapter;
-import com.curenta.driver.databinding.FragmentTakePhotoBinding;
+import com.curenta.driver.databinding.FragmentConfirmDeliveryBinding;
 import com.curenta.driver.dto.AppElement;
+import com.curenta.driver.dto.ImageModel;
 import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.ConfirmDeliveryResponse;
 import com.curenta.driver.retrofit.apiDTO.ConfirmOrderResponse;
-import com.curenta.driver.retrofit.apiDTO.DriverAPIResponse;
 import com.curenta.driver.utilities.FragmentUtils;
-import com.curenta.driver.utilities.ImageConverter;
 import com.curenta.driver.utilities.InternetChecker;
 import com.curenta.driver.utilities.Utility;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -52,8 +53,12 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 
 
-public class FragmentTakePhoto extends Fragment {
-    FragmentTakePhotoBinding fragmentTakePhotoBinding;
+public class FragmentConfirmDelivery extends Fragment {
+
+    FragmentConfirmDeliveryBinding fragmentConfirmDeliveryBinding;
+    ArrayList<Bitmap> images;
+    ArrayList<Uri> imagesURIs;
+    ArrayList<ImageModel> arrayList;
     private static final int CAPTURE_PICCODE = 989;
     Bitmap bitmap;
     Uri imageUri;
@@ -63,64 +68,74 @@ public class FragmentTakePhoto extends Fragment {
     public RideDetailListAdapter.Order order;
     public ArrayList<RideDetailListAdapter.Section> sections = new ArrayList<>();
     public int index = 0;
+    ImageAdapter adpter;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        fragmentTakePhotoBinding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_take_photo, container, false);
-
-        fragmentTakePhotoBinding.header.txtLabel.setText("Identity Confirmation");
-        if (enumPictureType != EnumPictureType.DRIVER_SELFIE) {
-            fragmentTakePhotoBinding.header.mainLayout.setVisibility(View.INVISIBLE);
-            fragmentTakePhotoBinding.txtLabel3.setVisibility(View.INVISIBLE);
-        }
+        fragmentConfirmDeliveryBinding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_confirm_delivery, container, false);
+        arrayList = new ArrayList<>();
+        images=new ArrayList<>();
+        imagesURIs=new ArrayList<>();
+        setDataAdopter();
         if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
-            fragmentTakePhotoBinding.txtLabel2.setText("Please take a photo for orders, which confirm that you received orders");
+            fragmentConfirmDeliveryBinding.txtLabel2.setText("Please take a photo for orders, which confirm that you received orders");
         } else if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
-            fragmentTakePhotoBinding.txtLabel2.setText("Once our Client received medication Please take Photo of receipt and continue your way to the rest of the Clients");
+            fragmentConfirmDeliveryBinding.txtLabel2.setText("Once our Client received medication Please take Photo of receipt and continue your way to the rest of the Clients");
         } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
-            fragmentTakePhotoBinding.txtLabel2.setText("Once our Client received medication Please take Photo of receipt and continue your way to the rest of the Clients");
+            fragmentConfirmDeliveryBinding.txtLabel2.setText("Once our Client received medication Please take Photo of receipt and continue your way to the rest of the Clients");
         }
-        fragmentTakePhotoBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
+        fragmentConfirmDeliveryBinding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+              if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
+                    confirmPickup();
 
-                try {
-                    if (getActivity().getSupportFragmentManager() != null) {
-                        getActivity().getSupportFragmentManager().popBackStack();
-                    }
-                } catch(IllegalStateException ex) {
-
-                }
-                catch(Exception ex) {
-
+                } else {
+                    RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
+                    confirmDelivery();
                 }
             }
         });
-        fragmentTakePhotoBinding.lltop.setOnClickListener(new View.OnClickListener() {
+
+        //item click listner
+        fragmentConfirmDeliveryBinding.gridview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onClick(View v) {
-                cameraIntent();
+            public void onItemClick(AdapterView parent, View view, int position, long id) {
+                boolean isClickable = arrayList.get(position).isClickable();
+                if (isClickable) {
+                    cameraIntent();
+                }
             }
         });
-
-        fragmentTakePhotoBinding.btnSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                cameraIntent();
-            }
-        });
-
-        return fragmentTakePhotoBinding.getRoot();
+        return fragmentConfirmDeliveryBinding.getRoot();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d("actictystate", "resume");
-
-        // Toast.makeText(getContext(), "on resume", Toast.LENGTH_SHORT).show();
-
+    private void setDataAdopter() {
+        Bitmap myLogo = BitmapFactory.decodeResource(getActivity().getResources(), R.drawable.addphoto);
+        arrayList.clear();
+        for (int i = 0; i < images.size(); i++) {
+            ImageModel imagemodel = new ImageModel();
+            imagemodel.setmThumbIds(images.get(i));
+            imagemodel.setClickable(false);
+            //add in array list
+            arrayList.add(imagemodel);
+        }
+        ImageModel imagemodel = new ImageModel();
+        imagemodel.setmThumbIds(myLogo);
+        imagemodel.setClickable(true);
+        //add in array list
+        arrayList.add(imagemodel);
+        adpter = new ImageAdapter(getContext(), arrayList);
+        fragmentConfirmDeliveryBinding.gridview.setAdapter(adpter);
+        adpter.notifyDataSetChanged();
+        if (images.size()>0) {
+            fragmentConfirmDeliveryBinding.btnSubmit.setBackgroundResource(R.drawable.blue_rounded);
+            fragmentConfirmDeliveryBinding.btnSubmit.setEnabled(true);
+        } else {
+            fragmentConfirmDeliveryBinding.btnSubmit.setBackgroundResource(R.drawable.grey_rounded);
+            fragmentConfirmDeliveryBinding.btnSubmit.setEnabled(false);
+        }
     }
 
     private void cameraIntent() {
@@ -168,18 +183,10 @@ public class FragmentTakePhoto extends Fragment {
                             e.printStackTrace();
                         }
                     }
-                    Bitmap circularBitmap = ImageConverter.getCroppedBitmap(bitmap);
-
-                    if (enumPictureType == EnumPictureType.DRIVER_SELFIE) {
-                        RetrofitClient.changeApiBaseUrl(BuildConfig.logindevURL);
-                        uploadSelfie();
-                    } else if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
-                        confirmPickup();
-
-                    } else {
-                        RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                        confirmDelivery();
-                    }
+                    //add in array list
+                    images.add(bitmap);
+                    imagesURIs.add(imageUri);
+                    setDataAdopter();
 
 
                 }
@@ -201,69 +208,6 @@ public class FragmentTakePhoto extends Fragment {
                 break;
         }
     }
-
-    public Uri getImageUri(Context inContext, Bitmap inImage) {
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
-        return Uri.parse(path);
-    }
-
-    public void uploadSelfie() {
-        try {
-            boolean isInternetConnected = InternetChecker.isInternetAvailable();
-            if (isInternetConnected) {
-                dialog = new ProgressDialog(getContext(), R.style.AppCompatAlertDialogStyle);
-                dialog.setMessage("Please wait...");
-                dialog.setIndeterminate(true);
-                dialog.setCancelable(false);
-                dialog.show();
-                LoggedInUser user = LoggedInUser.getInstance();
-                File selfiePic = new File(imageUri.getPath());
-                MultipartBody.Part selfiebody = MultipartBody.Part.createFormData("DriverSelfiefile", selfiePic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
-                        selfiePic));
-                RequestBody driverId = RequestBody.create(MediaType.parse("text/plain"),
-                        "" + user.driverId);
-                Log.d("selfieAPICall", " driver id " + user.driverId);
-                RetrofitClient.changeApiBaseUrl(BuildConfig.curentadispatcherURL);
-                RetrofitClient.getAPIClient().uploadSelfie(selfiebody, driverId)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<DriverAPIResponse>() {
-                            @Override
-                            public void onSuccess(DriverAPIResponse response) {
-                                dialog.dismiss();
-                                if (response.responseCode == 1) {
-                                    Log.d("selfieAPICall", "success " + response.toString());
-                                    //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
-                                    FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
-                                    fragmentThankYouAction.enumPictureType = EnumPictureType.DRIVER_SELFIE;
-                                    FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
-
-                                } else {
-                                    Log.d("selfieAPICall", "fail " + response.toString());
-                                    Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
-
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                dialog.dismiss();
-                                Log.d("selfieAPICall", "failed " + e.toString());
-                                Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
-
-            }
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
-            Log.d("loginAPICall", "failed " + e.toString());
-        }
-    }
-
     public void confirmDelivery() {
         try {
             boolean isInternetConnected = InternetChecker.isInternetAvailable();
@@ -274,17 +218,22 @@ public class FragmentTakePhoto extends Fragment {
                 dialog.setCancelable(false);
                 dialog.show();
                 LoggedInUser user = LoggedInUser.getInstance();
-                File ConfirmDeliveryPic = new File(imageUri.getPath());
-                MultipartBody.Part ConfirmDeliveryImage = MultipartBody.Part.createFormData("ConfirmDeliveryImage", ConfirmDeliveryPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
-                        ConfirmDeliveryPic));
+
                 RequestBody routeStepId = RequestBody.create(MediaType.parse("text/plain"),
                         "" + order.routeStepId);
                 RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
                         "" + routeId);
 //                RequestBody orderId = RequestBody.create(MediaType.parse("text/plain"),
 //                        "" + order.orderId);
-                Log.d("deliveryAPICall", " routeID " + routeId+" routeStepId " + order.routeStepId);
-                MultipartBody.Part[] pics = {ConfirmDeliveryImage};
+                Log.d("deliveryAPICall", " routeID " + routeId + " routeStepId " + order.routeStepId);
+                MultipartBody.Part[] pics =new MultipartBody.Part[images.size()];
+                for (int i = 0; i < images.size(); i++) {
+                    File ConfirmDeliveryPic = new File(imagesURIs.get(i).getPath());
+                    MultipartBody.Part ConfirmDeliveryImage = MultipartBody.Part.createFormData("ConfirmDeliveryImage", ConfirmDeliveryPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
+                            ConfirmDeliveryPic));
+                    pics[i]=ConfirmDeliveryImage;
+                }
+
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
                 RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId)
                         .subscribeOn(Schedulers.io())
@@ -323,11 +272,9 @@ public class FragmentTakePhoto extends Fragment {
                                 } else {
                                     if (response.responseMessage.equalsIgnoreCase("no order found")) {
                                         ((DashboardActivity) getActivity()).cancelNotification(1);
-                                    }
-                                    else if (response.responseMessage.equalsIgnoreCase("Route does not exist")) {
+                                    } else if (response.responseMessage.equalsIgnoreCase("Route does not exist")) {
                                         ((DashboardActivity) getActivity()).cancelNotification(2);
-                                    }
-                                    else {
+                                    } else {
                                         Log.d("deliveryAPICall", "fail " + response.toString());
                                         Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
                                     }
@@ -415,4 +362,5 @@ public class FragmentTakePhoto extends Fragment {
             Log.d("pickupAPICall", "failed " + e.toString());
         }
     }
+
 }

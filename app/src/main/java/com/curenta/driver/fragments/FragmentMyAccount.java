@@ -79,7 +79,7 @@ public class FragmentMyAccount extends Fragment {
     Uri imageUri;
     ProgressDialog dialog;
     boolean isFromCamera;
-
+    String state;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentMyAccountBinding = DataBindingUtil.inflate(
@@ -249,7 +249,16 @@ public class FragmentMyAccount extends Fragment {
         fragmentMyAccountBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
             }
         });
         fragmentMyAccountBinding.llCamera.setOnClickListener(new View.OnClickListener() {
@@ -312,10 +321,8 @@ public class FragmentMyAccount extends Fragment {
         fragmentMyAccountBinding.txtState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String item = parent.getItemAtPosition(position).toString();
-
-                UserInfo.getInstance().state = item;
-
+                state = parent.getItemAtPosition(position).toString();
+                checkChange();
             }
 
             @Override
@@ -562,6 +569,7 @@ public class FragmentMyAccount extends Fragment {
 
     public void checkChange() {
         boolean isAnyChange = false;
+        LoggedInUser user=LoggedInUser.getInstance();
         String phoneNumber = LoggedInUser.getInstance().mobile;
         phoneNumber = phoneNumber.replaceAll("\\) ", "\\)");
         if (!LoggedInUser.getInstance().fname.equalsIgnoreCase(fragmentMyAccountBinding.txtfName.getText().toString())) {
@@ -576,7 +584,8 @@ public class FragmentMyAccount extends Fragment {
         if (!LoggedInUser.getInstance().street.equalsIgnoreCase(fragmentMyAccountBinding.txtStreet.getText().toString())) {
             isAnyChange = true;
         }
-        if (!LoggedInUser.getInstance().state.equalsIgnoreCase(UserInfo.getInstance().state)) {
+        if (!user.state.equalsIgnoreCase(state)) {
+            UserInfo.getInstance().state = state;
             isAnyChange = true;
         }
         if (!LoggedInUser.getInstance().city.equalsIgnoreCase(fragmentMyAccountBinding.txtCity.getText().toString())) {

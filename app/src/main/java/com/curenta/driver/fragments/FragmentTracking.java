@@ -99,7 +99,17 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
         fragmentTrackingBinding.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
             }
         });
         fragmentTrackingBinding.llReached.setOnClickListener(new View.OnClickListener() {

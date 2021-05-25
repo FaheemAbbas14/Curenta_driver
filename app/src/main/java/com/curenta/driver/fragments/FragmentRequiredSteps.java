@@ -365,7 +365,16 @@ public class FragmentRequiredSteps extends Fragment {
                                     Log.d("registrationAPICall", "success " + response.toString());
                                     UserInfo.getInstance().instance=null;
                                     for (int i = 0; i <getActivity().getSupportFragmentManager().getBackStackEntryCount() ; i++) {
-                                        getActivity().getSupportFragmentManager().popBackStack();
+                                        try {
+                                            if (getActivity().getSupportFragmentManager() != null) {
+                                                getActivity().getSupportFragmentManager().popBackStack();
+                                            }
+                                        } catch(IllegalStateException ex) {
+
+                                        }
+                                        catch(Exception ex) {
+
+                                        }
                                     }
                                     if(user.w9Uri!=null){
                                         deleteForms(user.w9Uri);

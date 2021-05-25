@@ -63,7 +63,16 @@ public class FragmentCancelOrder extends Fragment {
         fragmentCancelOrderBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
             }
         });
         if (cancelTYpe == 1) {
@@ -86,7 +95,7 @@ public class FragmentCancelOrder extends Fragment {
                         if (cancelTYpe == 1) {
                             cancelRoute(routeId);
                         } else {
-                            cancelRoute(routeId, order.orderId);
+                            cancelRoute(routeId, order.routeStepId);
                         }
                     }
                 } else {
@@ -94,7 +103,7 @@ public class FragmentCancelOrder extends Fragment {
                         cancelRoute(routeId);
                     } else {
                         if(order!=null) {
-                            cancelRoute(routeId, order.orderId);
+                            cancelRoute(routeId, order.routeStepId);
                         }
                     }
                 }
@@ -143,7 +152,7 @@ public class FragmentCancelOrder extends Fragment {
         return fragmentCancelOrderBinding.getRoot();
     }
 
-    private void cancelRoute(String routeId, String orderId) {
+    private void cancelRoute(String routeId, String routeStepId) {
         try {
             boolean isInternetConnected = InternetChecker.isInternetAvailable();
             if (isInternetConnected) {
@@ -159,7 +168,7 @@ public class FragmentCancelOrder extends Fragment {
                     reason = fragmentCancelOrderBinding.editText.getText().toString();
                 }
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, orderId, "" + LoggedInUser.getInstance().driverId, reason);
+                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId,LoggedInUser.getInstance().email, reason);
                 Gson gson = new Gson();
                 String request = gson.toJson(requestDTO);
                 RetrofitClient.getAPIClient().cancelRouteOrder(request)
@@ -219,7 +228,7 @@ public class FragmentCancelOrder extends Fragment {
                     reason = fragmentCancelOrderBinding.editText.getText().toString();
                 }
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                CancelRouteRequest requestDTO = new CancelRouteRequest(routeId, "" + LoggedInUser.getInstance().driverId, reason);
+                CancelRouteRequest requestDTO = new CancelRouteRequest(routeId, reason, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email);
                 Gson gson = new Gson();
                 String request = gson.toJson(requestDTO);
                 RetrofitClient.getAPIClient().cancelRoute(request)
@@ -281,12 +290,30 @@ public class FragmentCancelOrder extends Fragment {
 
                 if (cancelTYpe == 1) {
                     for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                        getActivity().getSupportFragmentManager().popBackStack();
+                        try {
+                            if (getActivity().getSupportFragmentManager() != null) {
+                                getActivity().getSupportFragmentManager().popBackStack();
+                            }
+                        } catch(IllegalStateException ex) {
+
+                        }
+                        catch(Exception ex) {
+
+                        }
                     }
                 } else {
                     if (index < sections.get(0).items.size() - 1) {
                         sections.get(0).items.get(index + 1).isFocused = true;
-                        getActivity().getSupportFragmentManager().popBackStack();
+                        try {
+                            if (getActivity().getSupportFragmentManager() != null) {
+                                getActivity().getSupportFragmentManager().popBackStack();
+                            }
+                        } catch(IllegalStateException ex) {
+
+                        }
+                        catch(Exception ex) {
+
+                        }
                     } else {
 
                         FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();

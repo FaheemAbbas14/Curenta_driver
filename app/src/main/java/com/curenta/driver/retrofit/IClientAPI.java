@@ -8,9 +8,11 @@ import com.curenta.driver.retrofit.apiDTO.CancelRouteResponse;
 import com.curenta.driver.retrofit.apiDTO.ChangePasswordResponse;
 import com.curenta.driver.retrofit.apiDTO.CheckEmailResponse;
 import com.curenta.driver.retrofit.apiDTO.ConfirmDeliveryResponse;
+import com.curenta.driver.retrofit.apiDTO.ConfirmOrderResponse;
 import com.curenta.driver.retrofit.apiDTO.DriverAPIResponse;
 import com.curenta.driver.retrofit.apiDTO.EarningAPIResponse;
 import com.curenta.driver.retrofit.apiDTO.GetRouteResponse;
+import com.curenta.driver.retrofit.apiDTO.GetRoutesResponse;
 import com.curenta.driver.retrofit.apiDTO.OTPResponse;
 import com.curenta.driver.retrofit.apiDTO.OrderPickupResponse;
 import com.curenta.driver.retrofit.apiDTO.RouteInprogressResponse;
@@ -92,20 +94,19 @@ public interface IClientAPI {
     Single<GetRouteResponse> getRoute(@Body String userString);
 
     @Multipart
-    @POST("/api/Route/PickupOrders")
+    @POST("/api/Route/PickupRoute")
     Single<ConfirmDeliveryResponse> orderPickupWithImage(@Part MultipartBody.Part pickupConfirmationImage,
                                                     @Part("routeId") RequestBody routeId
     );
 
     @Multipart
-    @POST("/api/Route/confirmDelivery")
-    Single<ConfirmDeliveryResponse> confirmDelivery(@Part MultipartBody.Part DriverSelfiefile,
-                                                    @Part("RouteId") RequestBody RouteId,
-                                                    @Part("OrderId") RequestBody OrderId,
-                                                    @Part("DriverId") RequestBody DriverId
+    @POST("/api/Route/ConfirmOrder")
+    Single<ConfirmOrderResponse> confirmDelivery(@Part MultipartBody.Part[] DriverSelfiefile,
+                                                 @Part("routeId") RequestBody RouteId,
+                                                 @Part("RouteStepId") RequestBody RouteStepId
     );
     @Headers("Content-Type: application/json")
-    @POST("api/Route/PickupOrders")
+    @POST("api/Route/PickupRoute")
     Single<OrderPickupResponse> orderPickup(@Body String userString);
     @Headers("Content-Type: application/json")
     @POST("api/Driver/GetDriverEarnings")
@@ -127,11 +128,10 @@ public interface IClientAPI {
     @POST("/api/Route/CancelRoute")
     Single<CancelRouteResponse> cancelRoute(@Body String userString);
 
-
-
     @Headers("Content-Type: application/json")
-    @HTTP(method = "DELETE", path = "api/Route/DeleteRouteOrder/", hasBody = true)
+    @POST("/api/Route/CancelRouteOrder")
     Single<CancelRouteResponse> cancelRouteOrder(@Body String userString);
+
 
     @Headers("Content-Type: application/json")
     @POST("/api/Driver/SendOTP")
@@ -148,4 +148,9 @@ public interface IClientAPI {
     @Headers("Content-Type: application/json")
     @PUT("/api/Driver/UpdateDriverStatus")
     Single<UpdateDriverStatusResponse> updateDriverStatus(@Body String userString);
+    @GET("api/Route/GetRoutes")
+    Single<GetRoutesResponse> getRoutes(@Query("RouteId") String RouteId,
+                                        @Query("PickupAddress") boolean PickupAddress,
+                                        @Query("Order") boolean Order,
+                                        @Query("RouteStep") boolean RouteStep);
 }

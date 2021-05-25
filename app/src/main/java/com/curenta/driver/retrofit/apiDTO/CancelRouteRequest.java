@@ -5,15 +5,16 @@ package com.curenta.driver.retrofit.apiDTO;
  */
 public class CancelRouteRequest {
     public String routeId;
-    public String userDriverId;
-    public String cancelledBy="DRIVER";
+    public String userType="DRIVER";
     public String cancelReason="";
+    public int userId;
+    public String userEmail;
 
 
-
-    public CancelRouteRequest(String routeId, String userDriverId, String cancelReason) {
+    public CancelRouteRequest(String routeId, String cancelReason, int userId, String userEmail) {
         this.routeId = routeId;
-        this.userDriverId = userDriverId;
         this.cancelReason = cancelReason;
+        this.userId = userId;
+        this.userEmail = userEmail;
     }
 }

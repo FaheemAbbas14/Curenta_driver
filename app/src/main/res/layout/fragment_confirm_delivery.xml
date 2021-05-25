@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:weightSum="10">
+
+
+        <GridView
+            android:id="@+id/gridview"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_margin="10dp"
+            android:layout_weight="9.7"
+            android:horizontalSpacing="10dp"
+            android:numColumns="auto_fit"
+            android:verticalSpacing="10dp" />
+
+        <TextView
+            android:id="@+id/txtLabel2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:fontFamily="@font/archivoregular"
+            android:gravity="bottom|left"
+            android:text="Once our Client recevied medication Please take Photo of receipt and continue your way to the rest of the Clients"
+            android:textColor="@color/labelgrey"
+            android:textSize="13sp" />
+
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/blue_rounded"
+            android:fontFamily="@font/archivobold"
+            android:gravity="center"
+            android:text="Submit"
+            android:textColor="@color/white" />
+    </LinearLayout>
+</layout>

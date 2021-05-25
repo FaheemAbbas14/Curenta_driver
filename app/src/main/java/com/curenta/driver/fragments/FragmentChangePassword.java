@@ -42,7 +42,16 @@ public class FragmentChangePassword extends Fragment {
         fragmentChangePasswordBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
             }
         });
         fragmentChangePasswordBinding.imgNext.setOnClickListener(new View.OnClickListener() {
