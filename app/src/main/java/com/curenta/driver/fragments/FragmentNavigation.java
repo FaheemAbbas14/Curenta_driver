@@ -91,7 +91,16 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
         fragmentNavigationBinding.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch (Exception e){
+
+                }
             }
         });
         fragmentNavigationBinding.llReached.setOnClickListener(new View.OnClickListener() {

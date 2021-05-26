@@ -84,7 +84,16 @@ public class FragmentTakePhoto extends Fragment {
             @Override
             public void onClick(View v) {
 
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch (Exception e){
+
+                }
             }
         });
         fragmentTakePhotoBinding.lltop.setOnClickListener(new View.OnClickListener() {

@@ -55,7 +55,16 @@ public class FragmentRideDetail extends Fragment {
             @Override
             public void onClick(View v) {
                 for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                    getActivity().getSupportFragmentManager().popBackStack();
+                    try {
+                        if (getActivity().getSupportFragmentManager() != null) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                    } catch(IllegalStateException ex) {
+
+                    }
+                    catch (Exception e){
+
+                    }
                 }
                 ((DashboardActivity) getActivity()).checkRide();
             }

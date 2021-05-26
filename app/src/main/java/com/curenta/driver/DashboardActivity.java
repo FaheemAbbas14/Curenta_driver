@@ -12,6 +12,9 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -361,7 +364,16 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             finish();
         } else {
             checkRide();
-            getSupportFragmentManager().popBackStack();
+            try {
+                if (getSupportFragmentManager() != null) {
+                    getSupportFragmentManager().popBackStack();
+                }
+            } catch(IllegalStateException ex) {
+
+            }
+            catch (Exception e){
+
+            }
         }
 
     }
@@ -400,7 +412,16 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
             } else {
                 for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                    getSupportFragmentManager().popBackStack();
+                    try {
+                        if (getSupportFragmentManager() != null) {
+                            getSupportFragmentManager().popBackStack();
+                        }
+                    } catch(IllegalStateException ex) {
+
+                    }
+                    catch (Exception e){
+
+                    }
                 }
 
                 runOnUiThread(new Runnable() {
@@ -415,7 +436,16 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         } else {
             for (int i = 0; i < getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                getSupportFragmentManager().popBackStack();
+                try {
+                    if (getSupportFragmentManager() != null) {
+                        getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch (Exception e){
+
+                }
             }
             if (id == 4) {
                 RouteInprogressAPICall();
@@ -530,7 +560,20 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     }
 
     public void publishLocation() {
-        gpsTracker.getLocation();
+        Thread thread = new Thread(){
+            public void run(){
+                Looper.prepare();//Call looper.prepare()
+
+                Handler mHandler = new Handler() {
+                    public void handleMessage(Message msg) {
+                        gpsTracker.getLocation();
+                    }
+                };
+
+                Looper.loop();
+            }
+        };
+        thread.start();
         String rideInfoString = Preferences.getInstance().getString("rideInfoDto");
 
         if ((!rideInfoString.equalsIgnoreCase("") || AppElement.routeId != null) && gpsTracker != null && AppElement.Latitude != gpsTracker.getLatitude() && AppElement.Longitude != gpsTracker.getLongitude()) {
@@ -738,6 +781,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                         } catch(IllegalStateException ex) {
 
                                         }
+                                        catch (Exception e){
+
+                                        }
                                         Log.d("getRouteCall", "fail " + responseData.toString());
                                         Toast.makeText(getApplicationContext(), responseData.responseMessage, Toast.LENGTH_SHORT).show();
                                     }
@@ -751,6 +797,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                         getSupportFragmentManager().popBackStack();
                                     }
                                 } catch(IllegalStateException ex) {
+
+                                }
+                                catch (Exception ex){
 
                                 }
                                 Log.d("getRouteCall", "failed " + e.toString());

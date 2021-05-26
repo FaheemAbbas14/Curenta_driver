@@ -71,7 +71,16 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
             public void onClick(View v) {
                 isPopupactive = false;
 
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch (Exception e){
+
+                }
 
                 Log.d("totalFragments", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
             }
@@ -205,8 +214,15 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                     //getRouteDetails();
                                     dialog.dismiss();
                                     if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                                        if (getActivity().getSupportFragmentManager() != null) {
-                                            getActivity().getSupportFragmentManager().popBackStack();
+                                        try {
+                                            if (getActivity().getSupportFragmentManager() != null) {
+                                                getActivity().getSupportFragmentManager().popBackStack();
+                                            }
+                                        } catch(IllegalStateException ex) {
+
+                                        }
+                                        catch (Exception e){
+
                                         }
                                         Log.d("getRouteCall", "fail " + response.toString());
                                         Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
@@ -218,8 +234,15 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                             @Override
                             public void onError(Throwable e) {
                                 dialog.dismiss();
-                                if (getActivity().getSupportFragmentManager() != null) {
-                                    getActivity().getSupportFragmentManager().popBackStack();
+                                try {
+                                    if (getActivity().getSupportFragmentManager() != null) {
+                                        getActivity().getSupportFragmentManager().popBackStack();
+                                    }
+                                } catch(IllegalStateException ex) {
+
+                                }
+                                catch (Exception ex){
+
                                 }
                                 Log.d("acceptRideCall", "failed " + e.toString());
                                 Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
@@ -266,13 +289,23 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                     } catch(IllegalStateException ex) {
 
                                     }
+                                    catch (Exception e){
+
+                                    }
                                     isPopupactive = false;
                                     FragmentUtils.getInstance().addFragment(getActivity(), fragmentRideDetail, R.id.fragContainer);
                                 } else {
                                     dialog.dismiss();
                                     if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                                        if (getActivity().getSupportFragmentManager() != null) {
-                                            getActivity().getSupportFragmentManager().popBackStack();
+                                        try {
+                                            if (getActivity().getSupportFragmentManager() != null) {
+                                                getActivity().getSupportFragmentManager().popBackStack();
+                                            }
+                                        } catch(IllegalStateException ex) {
+
+                                        }
+                                        catch (Exception e){
+
                                         }
                                         Log.d("getRouteCall", "fail " + response.toString());
                                         Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
@@ -283,8 +316,15 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                             @Override
                             public void onError(Throwable e) {
                                 dialog.dismiss();
-                                if (getActivity().getSupportFragmentManager() != null) {
-                                    getActivity().getSupportFragmentManager().popBackStack();
+                                try {
+                                    if (getActivity().getSupportFragmentManager() != null) {
+                                        getActivity().getSupportFragmentManager().popBackStack();
+                                    }
+                                } catch(IllegalStateException ex) {
+
+                                }
+                                catch (Exception ex){
+
                                 }
                                 Log.d("getRouteCall", "failed " + e.toString());
                                 Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();

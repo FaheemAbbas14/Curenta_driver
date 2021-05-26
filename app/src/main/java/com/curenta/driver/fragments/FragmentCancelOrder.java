@@ -63,7 +63,16 @@ public class FragmentCancelOrder extends Fragment {
         fragmentCancelOrderBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                try {
+                    if (getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch (Exception e){
+
+                }
             }
         });
         if (cancelTYpe == 1) {
@@ -286,7 +295,16 @@ public class FragmentCancelOrder extends Fragment {
                 } else {
                     if (index < sections.get(0).items.size() - 1) {
                         sections.get(0).items.get(index + 1).isFocused = true;
-                        getActivity().getSupportFragmentManager().popBackStack();
+                        try {
+                            if (getActivity().getSupportFragmentManager() != null) {
+                                getActivity().getSupportFragmentManager().popBackStack();
+                            }
+                        } catch(IllegalStateException ex) {
+
+                        }
+                        catch (Exception e){
+
+                        }
                     } else {
 
                         FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
