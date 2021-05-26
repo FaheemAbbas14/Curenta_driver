@@ -229,7 +229,7 @@ public class FragmentConfirmDelivery extends Fragment {
                 MultipartBody.Part[] pics =new MultipartBody.Part[images.size()];
                 for (int i = 0; i < images.size(); i++) {
                     File ConfirmDeliveryPic = new File(imagesURIs.get(i).getPath());
-                    MultipartBody.Part ConfirmDeliveryImage = MultipartBody.Part.createFormData("ConfirmDeliveryImage", ConfirmDeliveryPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
+                    MultipartBody.Part ConfirmDeliveryImage = MultipartBody.Part.createFormData("ConfirmOrderImage", ConfirmDeliveryPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
                             ConfirmDeliveryPic));
                     pics[i]=ConfirmDeliveryImage;
                 }
@@ -308,14 +308,18 @@ public class FragmentConfirmDelivery extends Fragment {
                 dialog.setCancelable(false);
                 dialog.show();
                 LoggedInUser user = LoggedInUser.getInstance();
-                File ConfirmPickupPic = new File(imageUri.getPath());
-                MultipartBody.Part ConfirmPickupmage = MultipartBody.Part.createFormData("pickupConfirmationImage", ConfirmPickupPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
-                        ConfirmPickupPic));
+                MultipartBody.Part[] pics =new MultipartBody.Part[images.size()];
+                for (int i = 0; i < images.size(); i++) {
+                    File ConfirmDeliveryPic = new File(imagesURIs.get(i).getPath());
+                    MultipartBody.Part ConfirmDeliveryImage = MultipartBody.Part.createFormData("pickupProofImage", ConfirmDeliveryPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
+                            ConfirmDeliveryPic));
+                    pics[i]=ConfirmDeliveryImage;
+                }
 
                 RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
                         "" + routeId);
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().orderPickupWithImage(ConfirmPickupmage, routeID)
+                RetrofitClient.getAPIClient().orderPickupWithImage(pics, routeID)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<ConfirmDeliveryResponse>() {

@@ -95,7 +95,7 @@ public interface IClientAPI {
 
     @Multipart
     @POST("/api/Route/PickupRoute")
-    Single<ConfirmDeliveryResponse> orderPickupWithImage(@Part MultipartBody.Part pickupConfirmationImage,
+    Single<ConfirmDeliveryResponse> orderPickupWithImage(@Part MultipartBody.Part[] pickupConfirmationImage,
                                                     @Part("routeId") RequestBody routeId
     );
 

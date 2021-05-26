@@ -67,10 +67,9 @@ public class FragmentCancelOrder extends Fragment {
                     if (getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
-                } catch(IllegalStateException ex) {
+                } catch (IllegalStateException ex) {
 
-                }
-                catch(Exception ex) {
+                } catch (Exception ex) {
 
                 }
             }
@@ -102,7 +101,7 @@ public class FragmentCancelOrder extends Fragment {
                     if (cancelTYpe == 1) {
                         cancelRoute(routeId);
                     } else {
-                        if(order!=null) {
+                        if (order != null) {
                             cancelRoute(routeId, order.routeStepId);
                         }
                     }
@@ -163,12 +162,12 @@ public class FragmentCancelOrder extends Fragment {
                 dialog.show();
                 int radioButtonID = fragmentCancelOrderBinding.radio.getCheckedRadioButtonId();
                 RadioButton radioButton = (RadioButton) fragmentCancelOrderBinding.radio.findViewById(radioButtonID);
-                reason= (String) radioButton.getText();
+                reason = (String) radioButton.getText();
                 if (reason.equals("Other")) {
                     reason = fragmentCancelOrderBinding.editText.getText().toString();
                 }
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId,LoggedInUser.getInstance().email, reason);
+                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, reason);
                 Gson gson = new Gson();
                 String request = gson.toJson(requestDTO);
                 RetrofitClient.getAPIClient().cancelRouteOrder(request)
@@ -183,7 +182,7 @@ public class FragmentCancelOrder extends Fragment {
                                     sections.get(0).items.get(index).isCompleted = true;
                                     sections.get(0).items.get(index).isCancled = true;
                                     Log.d("cancelRoute", "index " + index + " size " + (sections.get(0).items.size() - 1));
-                             launchDismissDlg();
+                                    launchDismissDlg();
 
 
                                 } else {
@@ -223,7 +222,7 @@ public class FragmentCancelOrder extends Fragment {
                 dialog.show();
                 int radioButtonID = fragmentCancelOrderBinding.radio2.getCheckedRadioButtonId();
                 RadioButton radioButton = (RadioButton) fragmentCancelOrderBinding.radio2.findViewById(radioButtonID);
-                reason= (String) radioButton.getText();
+                reason = (String) radioButton.getText();
                 if (reason.equals("Other")) {
                     reason = fragmentCancelOrderBinding.editText.getText().toString();
                 }
@@ -243,7 +242,7 @@ public class FragmentCancelOrder extends Fragment {
                                     Preferences.getInstance().setString("rideInfoDto", "");
                                     launchDismissDlg();
                                     ((DashboardActivity) getActivity()).checkRide();
-                                   // Toast.makeText(getActivity().getApplicationContext(), "Route canceled", Toast.LENGTH_SHORT).show();
+                                    // Toast.makeText(getActivity().getApplicationContext(), "Route canceled", Toast.LENGTH_SHORT).show();
 
                                 } else {
                                     Log.d("cancelRoute", "fail " + response);
@@ -289,18 +288,19 @@ public class FragmentCancelOrder extends Fragment {
             public void onClick(View v) {
 
                 if (cancelTYpe == 1) {
-                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                        try {
+                    try {
+                        for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
+
                             if (getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
                             }
-                        } catch(IllegalStateException ex) {
-
                         }
-                        catch(Exception ex) {
+                    } catch (IllegalStateException ex) {
 
-                        }
+                    } catch (Exception ex) {
+
                     }
+
                 } else {
                     if (index < sections.get(0).items.size() - 1) {
                         sections.get(0).items.get(index + 1).isFocused = true;
@@ -308,10 +308,9 @@ public class FragmentCancelOrder extends Fragment {
                             if (getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
                             }
-                        } catch(IllegalStateException ex) {
+                        } catch (IllegalStateException ex) {
 
-                        }
-                        catch(Exception ex) {
+                        } catch (Exception ex) {
 
                         }
                     } else {

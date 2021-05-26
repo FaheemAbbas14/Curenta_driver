@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case 101:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     deviceId();
                     Utility.checkPermission(MainActivity.this);
 

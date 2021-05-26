@@ -57,10 +57,9 @@ public class FragmentThankYouAction extends Fragment {
                         getActivity().getSupportFragmentManager().popBackStack();
 
                     }
-                } catch(IllegalStateException ex) {
+                } catch (IllegalStateException ex) {
 
-                }
-                catch(Exception ex) {
+                } catch (Exception ex) {
 
                 }
             }
@@ -69,16 +68,15 @@ public class FragmentThankYouAction extends Fragment {
             @Override
             public void onClick(View v) {
                 if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
-                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount()-1; i++) {
+                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount() - 1; i++) {
                         try {
                             if (getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
 
                             }
-                        } catch(IllegalStateException ex) {
+                        } catch (IllegalStateException ex) {
 
-                        }
-                        catch(Exception ex) {
+                        } catch (Exception ex) {
 
                         }
                     }
@@ -88,43 +86,41 @@ public class FragmentThankYouAction extends Fragment {
                                 getActivity().getSupportFragmentManager().popBackStack();
 
                             }
-                        } catch(IllegalStateException ex) {
+                        } catch (IllegalStateException ex) {
 
-                        }
-                        catch(Exception ex) {
+                        } catch (Exception ex) {
 
                         }
                     }
                 } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
+                    try {
+                        Preferences.getInstance().setString("rideInfoDto", "");
+                        Log.d("fragmentCount", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
+                        for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
 
-                    Preferences.getInstance().setString("rideInfoDto", "");
-                    Log.d("fragmentCount", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
-                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                        try {
                             if (getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
 
                             }
-                        } catch(IllegalStateException ex) {
-
                         }
-                        catch(Exception ex) {
+                    } catch (IllegalStateException ex) {
 
-                        }
+                    } catch (Exception ex) {
+
                     }
+
                     ((DashboardActivity) getActivity()).checkRide();
 
                 } else if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
-                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount()-1; i++) {
+                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount() - 1; i++) {
                         try {
                             if (getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
 
                             }
-                        } catch(IllegalStateException ex) {
+                        } catch (IllegalStateException ex) {
 
-                        }
-                        catch(Exception ex) {
+                        } catch (Exception ex) {
 
                         }
                     }
@@ -134,10 +130,9 @@ public class FragmentThankYouAction extends Fragment {
                             getActivity().getSupportFragmentManager().popBackStack();
                             getActivity().getSupportFragmentManager().popBackStack();
                         }
-                    } catch(IllegalStateException ex) {
+                    } catch (IllegalStateException ex) {
 
-                    }
-                    catch(Exception ex) {
+                    } catch (Exception ex) {
 
                     }
                     //getActivity().getSupportFragmentManager().popBackStack();

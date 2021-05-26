@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
@@ -27,10 +26,8 @@ import com.curenta.driver.dto.RideInfoDto;
 import com.curenta.driver.interfaces.ILocationChange;
 import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.AcceptRideResponse;
-import com.curenta.driver.retrofit.apiDTO.GetRouteResponse;
 import com.curenta.driver.retrofit.apiDTO.GetRoutesResponse;
 import com.curenta.driver.retrofit.apiDTO.RideAcceptRequest;
-import com.curenta.driver.retrofit.apiDTO.RouteRequest;
 import com.curenta.driver.utilities.FragmentUtils;
 import com.curenta.driver.utilities.GPSTracker;
 import com.curenta.driver.utilities.InternetChecker;
@@ -54,7 +51,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
     GPSTracker gpsTracker;
     int counter = 60;
     private Handler handler = new Handler(Looper.getMainLooper());
-
+    boolean isRideAccepted = false;
     public RideInfoDto rideInfoDto;
     boolean isPopupactive = true;
     ProgressDialog dialog;
@@ -78,14 +75,13 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                             if (getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
                             }
-                        } catch(IllegalStateException ex) {
+                        } catch (IllegalStateException ex) {
 
-                        }
-                        catch(Exception ex) {
+                        } catch (Exception ex) {
 
                         }
                     }
-                } catch(IllegalStateException ex) {
+                } catch (IllegalStateException ex) {
 
                 }
 
@@ -95,6 +91,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
         fragmentRidePopupBinding.btnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                isRideAccepted = true;
                 if (rideInfoDto != null && rideInfoDto.routeId != null) {
                     RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
 
@@ -115,9 +112,8 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                 fragmentRidePopupBinding.txtStartAddress.setText(rideInfoDto.startingPoint);
                 fragmentRidePopupBinding.txtStops.setText("" + (Integer.parseInt(rideInfoDto.stops) - 1) + " stops");
                 fragmentRidePopupBinding.txtTotalStops.setText("Total Stops: " + rideInfoDto.stops + " stops");
-            }
-            catch (Exception e){
-                Toast.makeText(getContext(),"Accepting route failed.Please try again",Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                Toast.makeText(getContext(), "Accepting route failed.Please try again", Toast.LENGTH_SHORT).show();
                 FirebaseCrashlytics.getInstance().recordException(e);
             }
         }
@@ -132,32 +128,32 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
         final int delay = 1000;
         handler.postDelayed(new Runnable() {
             public void run() {
-                int progress = (counter / 6) * 10;
-                fragmentRidePopupBinding.circularProgressbar.setProgress(progress);
-                fragmentRidePopupBinding.txtcounter.setText("" + counter);
-                if ((progress <0 ||counter <= 0) && isPopupactive) {
-                    try {
-                        if (getActivity().getSupportFragmentManager() != null) {
-                            try {
-                                if (getActivity().getSupportFragmentManager() != null) {
-                                    getActivity().getSupportFragmentManager().popBackStack();
+                if(!isRideAccepted) {
+                    int progress = (counter / 6) * 10;
+                    fragmentRidePopupBinding.circularProgressbar.setProgress(progress);
+                    fragmentRidePopupBinding.txtcounter.setText("" + counter);
+                    if ((progress < 0 || counter <= 0) && isPopupactive) {
+                        try {
+                            if (getActivity().getSupportFragmentManager() != null) {
+                                try {
+                                    if (getActivity().getSupportFragmentManager() != null) {
+                                        getActivity().getSupportFragmentManager().popBackStack();
+                                    }
+                                } catch (IllegalStateException ex) {
+
+                                } catch (Exception ex) {
+
                                 }
-                            } catch(IllegalStateException ex) {
-
                             }
-                            catch(Exception ex) {
+                        } catch (IllegalStateException ex) {
 
-                            }
+                        } catch (Exception ex) {
+
                         }
-                    } catch(IllegalStateException ex) {
 
                     }
-                    catch(Exception ex) {
-
-                    }
-
+                    counter--;
                 }
-                counter--;
                 handler.postDelayed(this, delay);
             }
         }, 0);
@@ -181,7 +177,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
 
     @SuppressLint("MissingPermission")
     public void updateLocation(Location location) {
-        if (location != null && mMap!=null) {
+        if (location != null && mMap != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
@@ -240,13 +236,13 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                                     if (getActivity().getSupportFragmentManager() != null) {
                                                         getActivity().getSupportFragmentManager().popBackStack();
                                                     }
-                                                } catch(IllegalStateException ex) {
+                                                } catch (IllegalStateException ex) {
+
+                                                } catch (Exception ex) {
 
                                                 }
-                                                catch(Exception ex) {
-
-                                                } }
-                                        } catch(IllegalStateException ex) {
+                                            }
+                                        } catch (IllegalStateException ex) {
 
                                         }
                                         Log.d("getRouteCall", "fail " + response.toString());
@@ -265,14 +261,13 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                             if (getActivity().getSupportFragmentManager() != null) {
                                                 getActivity().getSupportFragmentManager().popBackStack();
                                             }
-                                        } catch(IllegalStateException ex) {
+                                        } catch (IllegalStateException ex) {
 
-                                        }
-                                        catch(Exception ex) {
+                                        } catch (Exception ex) {
 
                                         }
                                     }
-                                } catch(IllegalStateException ex) {
+                                } catch (IllegalStateException ex) {
 
                                 }
                                 Log.d("acceptRideCall", "failed " + e.toString());
@@ -293,14 +288,14 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
         try {
             boolean isInternetConnected = InternetChecker.isInternetAvailable();
             if (isInternetConnected) {
-                RetrofitClient.getAPIClient().getRoutes(rideInfoDto.routeId,true,true,true)
+                RetrofitClient.getAPIClient().getRoutes(rideInfoDto.routeId, true, true, true)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<GetRoutesResponse>() {
                             @Override
                             public void onSuccess(GetRoutesResponse response) {
                                 dialog.dismiss();
-                                if (response.responseCode == 1  && response.data!=null) {
+                                if (response.responseCode == 1 && response.data != null) {
                                     AppElement.routeId = rideInfoDto.routeId;
                                     Gson gson = new Gson();
                                     String rideInfoDtoGson = gson.toJson(rideInfoDto);
@@ -313,16 +308,15 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                     try {
                                         if (getActivity().getSupportFragmentManager() != null) {
 
-                                                if (getActivity().getSupportFragmentManager() != null) {
-                                                    getActivity().getSupportFragmentManager().popBackStack();
-                                                }
+                                            if (getActivity().getSupportFragmentManager() != null) {
+                                                getActivity().getSupportFragmentManager().popBackStack();
+                                            }
 
 
                                         }
-                                    } catch(IllegalStateException ex) {
+                                    } catch (IllegalStateException ex) {
 
-                                    }
-                                    catch(Exception ex) {
+                                    } catch (Exception ex) {
 
                                     }
                                     isPopupactive = false;
@@ -330,21 +324,20 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                 } else {
                                     dialog.dismiss();
                                     try {
-                                    if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
-                                        if (getActivity().getSupportFragmentManager() != null) {
+                                        if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                                            if (getActivity().getSupportFragmentManager() != null) {
 
                                                 if (getActivity().getSupportFragmentManager() != null) {
                                                     getActivity().getSupportFragmentManager().popBackStack();
                                                 }
 
+                                            }
+                                            Log.d("getRouteCall", "fail " + response.toString());
+                                            Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
                                         }
-                                        Log.d("getRouteCall", "fail " + response.toString());
-                                        Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
-                                    }
-                                    } catch(IllegalStateException ex) {
+                                    } catch (IllegalStateException ex) {
 
-                                    }
-                                    catch(Exception ex) {
+                                    } catch (Exception ex) {
 
                                     }
                                 }
@@ -356,15 +349,14 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                 try {
                                     if (getActivity().getSupportFragmentManager() != null) {
 
-                                            if (getActivity().getSupportFragmentManager() != null) {
-                                                getActivity().getSupportFragmentManager().popBackStack();
-                                            }
+                                        if (getActivity().getSupportFragmentManager() != null) {
+                                            getActivity().getSupportFragmentManager().popBackStack();
+                                        }
 
                                     }
-                                } catch(IllegalStateException ex) {
+                                } catch (IllegalStateException ex) {
 
-                                }
-                                catch(Exception ex) {
+                                } catch (Exception ex) {
 
                                 }
                                 Log.d("getRouteCall", "failed " + e.toString());

@@ -368,7 +368,8 @@ public class FragmentTakePhoto extends Fragment {
                 RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
                         "" + routeId);
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().orderPickupWithImage(ConfirmPickupmage, routeID)
+                MultipartBody.Part[] pics ={ConfirmPickupmage};
+                RetrofitClient.getAPIClient().orderPickupWithImage(pics, routeID)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<ConfirmDeliveryResponse>() {
