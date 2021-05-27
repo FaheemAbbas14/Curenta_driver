@@ -52,104 +52,57 @@ public class FragmentThankYouAction extends Fragment {
         fragmentThankYouActionBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
-                    if (getActivity().getSupportFragmentManager() != null) {
-                        getActivity().getSupportFragmentManager().popBackStack();
-
-                    }
-                } catch (IllegalStateException ex) {
-
-                } catch (Exception ex) {
-
-                }
+                getActivity().getSupportFragmentManager().popBackStack();
             }
         });
         fragmentThankYouActionBinding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
-                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount() - 1; i++) {
-                        try {
-                            if (getActivity().getSupportFragmentManager() != null) {
-                                getActivity().getSupportFragmentManager().popBackStack();
-
-                            }
-                        } catch (IllegalStateException ex) {
-
-                        } catch (Exception ex) {
-
+                try {
+                    if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
+                        for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount() - 1; i++) {
+                            getActivity().getSupportFragmentManager().popBackStack();
                         }
-                    }
-                    if (isCompleted) {
-                        try {
-                            if (getActivity().getSupportFragmentManager() != null) {
-                                getActivity().getSupportFragmentManager().popBackStack();
-
-                            }
-                        } catch (IllegalStateException ex) {
-
-                        } catch (Exception ex) {
-
+                        if (isCompleted) {
+                            getActivity().getSupportFragmentManager().popBackStack();
                         }
-                    }
-                } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
-                    try {
+                    } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
+
                         Preferences.getInstance().setString("rideInfoDto", "");
                         Log.d("fragmentCount", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
                         for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
-
-                            if (getActivity().getSupportFragmentManager() != null) {
-                                getActivity().getSupportFragmentManager().popBackStack();
-
-                            }
-                        }
-                    } catch (IllegalStateException ex) {
-
-                    } catch (Exception ex) {
-
-                    }
-
-                    ((DashboardActivity) getActivity()).checkRide();
-
-                } else if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
-                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount() - 1; i++) {
-                        try {
-                            if (getActivity().getSupportFragmentManager() != null) {
-                                getActivity().getSupportFragmentManager().popBackStack();
-
-                            }
-                        } catch (IllegalStateException ex) {
-
-                        } catch (Exception ex) {
-
-                        }
-                    }
-                } else {
-                    try {
-                        if (getActivity().getSupportFragmentManager() != null) {
-                            getActivity().getSupportFragmentManager().popBackStack();
                             getActivity().getSupportFragmentManager().popBackStack();
                         }
-                    } catch (IllegalStateException ex) {
+                        ((DashboardActivity) getActivity()).checkRide();
 
-                    } catch (Exception ex) {
+                    } else if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
+                        for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount() - 1; i++) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                    } else {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                        getActivity().getSupportFragmentManager().popBackStack();
+                        //getActivity().getSupportFragmentManager().popBackStack();
+                        LoggedInUser.getInstance().isSelfie = true;
+                        if (LoggedInUser.getInstance().isSelfie && LoggedInUser.getInstance().isCovidPassed) {
+                            AppElement.isCameOnline = true;
+                            // ((DashboardActivity) getActivity()).launchDismissDlg();
+                            AppElement.isCameOnline = true;
+                            LoggedInUser.getInstance().isOnline = true;
+                            Preferences.getInstance().saveBoolean("isOnline", true);
+                            ((DashboardActivity) getActivity()).checkOnline();
+                            AppElement.isCameOnline = false;
+                            MainApplication.enableNotifications();
+                            ((DashboardActivity) getActivity()).updateDriverStatus(true);
+                        }
+                    }
+                } catch (IllegalStateException ex) {
 
-                    }
-                    //getActivity().getSupportFragmentManager().popBackStack();
-                    LoggedInUser.getInstance().isSelfie = true;
-                    if (LoggedInUser.getInstance().isSelfie && LoggedInUser.getInstance().isCovidPassed) {
-                        AppElement.isCameOnline = true;
-                        // ((DashboardActivity) getActivity()).launchDismissDlg();
-                        AppElement.isCameOnline = true;
-                        LoggedInUser.getInstance().isOnline = true;
-                        Preferences.getInstance().saveBoolean("isOnline", true);
-                        ((DashboardActivity) getActivity()).checkOnline();
-                        AppElement.isCameOnline = false;
-                        MainApplication.enableNotifications();
-                        ((DashboardActivity) getActivity()).updateDriverStatus(true);
-                    }
+                } catch (Exception e) {
+
                 }
             }
+
         });
 
         return fragmentThankYouActionBinding.getRoot();
