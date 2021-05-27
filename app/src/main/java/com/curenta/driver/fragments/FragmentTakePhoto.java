@@ -29,6 +29,7 @@ import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.ConfirmDeliveryResponse;
+import com.curenta.driver.retrofit.apiDTO.ConfirmOrderResponse;
 import com.curenta.driver.retrofit.apiDTO.DriverAPIResponse;
 import com.curenta.driver.utilities.FragmentUtils;
 import com.curenta.driver.utilities.ImageConverter;
@@ -85,13 +86,13 @@ public class FragmentTakePhoto extends Fragment {
             public void onClick(View v) {
 
                 try {
-                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null){
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
                 } catch(IllegalStateException ex) {
 
                 }
-                catch (Exception e){
+                catch(Exception ex) {
 
                 }
             }
@@ -276,20 +277,21 @@ public class FragmentTakePhoto extends Fragment {
                 File ConfirmDeliveryPic = new File(imageUri.getPath());
                 MultipartBody.Part ConfirmDeliveryImage = MultipartBody.Part.createFormData("ConfirmDeliveryImage", ConfirmDeliveryPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
                         ConfirmDeliveryPic));
-                RequestBody driverId = RequestBody.create(MediaType.parse("text/plain"),
-                        "" + LoggedInUser.getInstance().driverId);
-                RequestBody orderId = RequestBody.create(MediaType.parse("text/plain"),
-                        "" + order.orderId);
+                RequestBody routeStepId = RequestBody.create(MediaType.parse("text/plain"),
+                        "" + order.routeStepId);
                 RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
                         "" + routeId);
-                Log.d("deliveryAPICall", " driver id " + user.driverId);
+//                RequestBody orderId = RequestBody.create(MediaType.parse("text/plain"),
+//                        "" + order.orderId);
+                Log.d("deliveryAPICall", " routeID " + routeId+" routeStepId " + order.routeStepId);
+                MultipartBody.Part[] pics = {ConfirmDeliveryImage};
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().confirmDelivery(ConfirmDeliveryImage, routeID, orderId, driverId)
+                RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<ConfirmDeliveryResponse>() {
+                        .subscribeWith(new DisposableSingleObserver<ConfirmOrderResponse>() {
                             @Override
-                            public void onSuccess(ConfirmDeliveryResponse response) {
+                            public void onSuccess(ConfirmOrderResponse response) {
                                 dialog.dismiss();
                                 if (response.responseCode == 1) {
                                     Log.d("deliveryAPICall", "success " + response.toString());
@@ -366,7 +368,8 @@ public class FragmentTakePhoto extends Fragment {
                 RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
                         "" + routeId);
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().orderPickupWithImage(ConfirmPickupmage, routeID)
+                MultipartBody.Part[] pics ={ConfirmPickupmage};
+                RetrofitClient.getAPIClient().orderPickupWithImage(pics, routeID)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<ConfirmDeliveryResponse>() {
