@@ -69,7 +69,7 @@ public class FragmentThankYouAction extends Fragment {
                     } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
 
                         Preferences.getInstance().setString("rideInfoDto", "");
-                        Log.d("fragmentCount", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
+                      //  Log.d("fragmentCount", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
                         for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
                             getActivity().getSupportFragmentManager().popBackStack();
                         }

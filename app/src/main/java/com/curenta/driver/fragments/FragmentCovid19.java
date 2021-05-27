@@ -33,7 +33,7 @@ public class FragmentCovid19 extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    if (getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
                 } catch(IllegalStateException ex) {
@@ -48,7 +48,7 @@ public class FragmentCovid19 extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    if (getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
                 } catch(IllegalStateException ex) {

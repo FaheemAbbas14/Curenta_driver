@@ -58,7 +58,7 @@ public class FragmentThankYou extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    if (getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
@@ -71,7 +71,7 @@ public class FragmentThankYou extends Fragment {
 
                 if(pictureType==EnumPictureType.RESET_PASSWORD){
                     try {
-                        if (getActivity().getSupportFragmentManager() != null) {
+                        if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                             getActivity().getSupportFragmentManager().popBackStack();
                             getActivity().getSupportFragmentManager().popBackStack();
                         }
@@ -84,7 +84,7 @@ public class FragmentThankYou extends Fragment {
                 }
                 if(pictureType==null){
                     try {
-                        if (getActivity().getSupportFragmentManager() != null) {
+                        if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                             getActivity().getSupportFragmentManager().popBackStack();
 
                         }

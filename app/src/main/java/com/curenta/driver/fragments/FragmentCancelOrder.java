@@ -64,7 +64,7 @@ public class FragmentCancelOrder extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    if (getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
                 } catch (IllegalStateException ex) {
@@ -291,7 +291,7 @@ public class FragmentCancelOrder extends Fragment {
                     try {
                         for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
 
-                            if (getActivity().getSupportFragmentManager() != null) {
+                            if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
                             }
                         }
@@ -305,7 +305,7 @@ public class FragmentCancelOrder extends Fragment {
                     if (index < sections.get(0).items.size() - 1) {
                         sections.get(0).items.get(index + 1).isFocused = true;
                         try {
-                            if (getActivity().getSupportFragmentManager() != null) {
+                            if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
                             }
                         } catch (IllegalStateException ex) {

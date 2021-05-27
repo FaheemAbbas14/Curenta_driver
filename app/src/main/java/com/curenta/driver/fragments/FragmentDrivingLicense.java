@@ -100,7 +100,7 @@ public class FragmentDrivingLicense extends Fragment {
                     checkComplete(true);
                     if (UserInfo.getInstance().isDriveingLicenseCompleted) {
                         try {
-                            if (getActivity().getSupportFragmentManager() != null) {
+                            if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
                             }
                         } catch(IllegalStateException ex) {

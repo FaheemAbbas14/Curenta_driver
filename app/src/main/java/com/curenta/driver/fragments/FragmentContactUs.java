@@ -29,7 +29,7 @@ public class FragmentContactUs extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    if (getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
                 } catch(IllegalStateException ex) {

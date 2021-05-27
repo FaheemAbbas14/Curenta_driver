@@ -165,7 +165,7 @@ public class FragmentBankDetails extends Fragment {
                 checkComplete(true);
                 if (UserInfo.getInstance().isBankDetailsCompleted) {
                     try {
-                        if (getActivity().getSupportFragmentManager() != null) {
+                        if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                             getActivity().getSupportFragmentManager().popBackStack();
                         }
                     } catch(IllegalStateException ex) {

@@ -42,7 +42,7 @@ public class FragmentRideDetail extends Fragment {
                 try {
                     for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
 
-                        if (getActivity().getSupportFragmentManager() != null) {
+                        if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                             getActivity().getSupportFragmentManager().popBackStack();
                         }
                     }

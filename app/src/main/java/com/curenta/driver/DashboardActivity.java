@@ -292,7 +292,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             Gson gson = new Gson();
             rideInfoDto = gson.fromJson(rideInfoString, RideInfoDto.class);
             AppElement.routeId = rideInfoDto.routeId;
-          //  getRouteDetails(rideInfoDto.routeId, false, false, false);
+           getRouteDetails(rideInfoDto.routeId, false, false, false);
             activityDashboardBinding.appBarMain.contentMain.llonline.setEnabled(false);
         } else {
 //            if (LoggedInUser.getInstance().isOnline) {
@@ -759,7 +759,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                             activityDashboardBinding.appBarMain.contentMain.llRideinprogress.setVisibility(View.VISIBLE);
 
                                         }
-                                        checkRide();
+                                       // checkRide();
                                     } else {
 
                                         Preferences.getInstance().setString("rideInfoDto", "");

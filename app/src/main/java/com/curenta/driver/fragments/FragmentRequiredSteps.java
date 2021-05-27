@@ -364,17 +364,19 @@ public class FragmentRequiredSteps extends Fragment {
                                     Preferences.getInstance().setString("loggedInUser", loggedInUserGson);
                                     Log.d("registrationAPICall", "success " + response.toString());
                                     UserInfo.getInstance().instance=null;
+                                    try {
                                     for (int i = 0; i <getActivity().getSupportFragmentManager().getBackStackEntryCount() ; i++) {
-                                        try {
-                                            if (getActivity().getSupportFragmentManager() != null) {
+
+                                            if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                                 getActivity().getSupportFragmentManager().popBackStack();
                                             }
-                                        } catch(IllegalStateException ex) {
 
-                                        }
-                                        catch(Exception ex) {
+                                    }
+                                    } catch(IllegalStateException ex) {
 
-                                        }
+                                    }
+                                    catch(Exception ex) {
+
                                     }
                                     if(user.w9Uri!=null){
                                         deleteForms(user.w9Uri);

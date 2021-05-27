@@ -100,7 +100,7 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
             @Override
             public void onClick(View v) {
                 try {
-                    if (getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
 
                     }
