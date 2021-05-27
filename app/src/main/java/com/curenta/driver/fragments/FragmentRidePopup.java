@@ -72,7 +72,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                 isPopupactive = false;
 
                 try {
-                    if (getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
                 } catch(IllegalStateException ex) {
@@ -82,7 +82,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
 
                 }
 
-                Log.d("totalFragments", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
+             //   Log.d("totalFragments", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
             }
         });
         fragmentRidePopupBinding.btnAccept.setOnClickListener(new View.OnClickListener() {
@@ -129,8 +129,8 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                 fragmentRidePopupBinding.txtcounter.setText("" + counter);
                 if ((progress <0 ||counter <= 0) && isPopupactive) {
                     try {
-                        if (((AppCompatActivity) getContext()).getSupportFragmentManager() != null) {
-                            ((AppCompatActivity) getContext()).getSupportFragmentManager().popBackStack();
+                        if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
+                            getActivity().getSupportFragmentManager().popBackStack();
                         }
                     } catch (Exception e) {
                         FirebaseCrashlytics.getInstance().recordException(e);
@@ -213,9 +213,9 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                 } else {
                                     //getRouteDetails();
                                     dialog.dismiss();
-                                    if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                                    if (getActivity()!=null && getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
                                         try {
-                                            if (getActivity().getSupportFragmentManager() != null) {
+                                            if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                                 getActivity().getSupportFragmentManager().popBackStack();
                                             }
                                         } catch(IllegalStateException ex) {
@@ -235,7 +235,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                             public void onError(Throwable e) {
                                 dialog.dismiss();
                                 try {
-                                    if (getActivity().getSupportFragmentManager() != null) {
+                                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                         getActivity().getSupportFragmentManager().popBackStack();
                                     }
                                 } catch(IllegalStateException ex) {
@@ -283,7 +283,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                     fragmentRideDetail.getRouteResponse = response;
                                     fragmentRideDetail.routeId = rideInfoDto.routeId;
                                     try {
-                                        if (getActivity().getSupportFragmentManager() != null) {
+                                        if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                             getActivity().getSupportFragmentManager().popBackStack();
                                         }
                                     } catch(IllegalStateException ex) {
@@ -296,9 +296,9 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                                     FragmentUtils.getInstance().addFragment(getActivity(), fragmentRideDetail, R.id.fragContainer);
                                 } else {
                                     dialog.dismiss();
-                                    if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
+                                    if (getActivity()!=null && getActivity().getSupportFragmentManager().getBackStackEntryCount() > 0) {
                                         try {
-                                            if (getActivity().getSupportFragmentManager() != null) {
+                                            if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                                 getActivity().getSupportFragmentManager().popBackStack();
                                             }
                                         } catch(IllegalStateException ex) {
@@ -317,7 +317,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                             public void onError(Throwable e) {
                                 dialog.dismiss();
                                 try {
-                                    if (getActivity().getSupportFragmentManager() != null) {
+                                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                         getActivity().getSupportFragmentManager().popBackStack();
                                     }
                                 } catch(IllegalStateException ex) {

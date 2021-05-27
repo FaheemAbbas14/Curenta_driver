@@ -58,44 +58,51 @@ public class FragmentThankYouAction extends Fragment {
         fragmentThankYouActionBinding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
-                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount()-1; i++) {
-                        getActivity().getSupportFragmentManager().popBackStack();
-                    }
-                    if (isCompleted) {
-                        getActivity().getSupportFragmentManager().popBackStack();
-                    }
-                } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
+                try {
+                    if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
+                        for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount() - 1; i++) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                        if (isCompleted) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                    } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
 
-                    Preferences.getInstance().setString("rideInfoDto", "");
-                    Log.d("fragmentCount", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
-                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                        getActivity().getSupportFragmentManager().popBackStack();
-                    }
-                    ((DashboardActivity) getActivity()).checkRide();
+                        Preferences.getInstance().setString("rideInfoDto", "");
+                        Log.d("fragmentCount", "" + getActivity().getSupportFragmentManager().getBackStackEntryCount());
+                        for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                        ((DashboardActivity) getActivity()).checkRide();
 
-                } else if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
-                    for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount()-1; i++) {
+                    } else if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
+                        for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount() - 1; i++) {
+                            getActivity().getSupportFragmentManager().popBackStack();
+                        }
+                    } else {
                         getActivity().getSupportFragmentManager().popBackStack();
+                        getActivity().getSupportFragmentManager().popBackStack();
+                        //getActivity().getSupportFragmentManager().popBackStack();
+                        LoggedInUser.getInstance().isSelfie = true;
+                        if (LoggedInUser.getInstance().isSelfie && LoggedInUser.getInstance().isCovidPassed) {
+                            AppElement.isCameOnline = true;
+                            // ((DashboardActivity) getActivity()).launchDismissDlg();
+                            AppElement.isCameOnline = true;
+                            LoggedInUser.getInstance().isOnline = true;
+                            Preferences.getInstance().saveBoolean("isOnline", true);
+                            ((DashboardActivity) getActivity()).checkOnline();
+                            AppElement.isCameOnline = false;
+                            MainApplication.enableNotifications();
+                            ((DashboardActivity) getActivity()).updateDriverStatus(true);
+                        }
                     }
-                } else {
-                    getActivity().getSupportFragmentManager().popBackStack();
-                    getActivity().getSupportFragmentManager().popBackStack();
-                    //getActivity().getSupportFragmentManager().popBackStack();
-                    LoggedInUser.getInstance().isSelfie = true;
-                    if (LoggedInUser.getInstance().isSelfie && LoggedInUser.getInstance().isCovidPassed) {
-                        AppElement.isCameOnline = true;
-                        // ((DashboardActivity) getActivity()).launchDismissDlg();
-                        AppElement.isCameOnline = true;
-                        LoggedInUser.getInstance().isOnline = true;
-                        Preferences.getInstance().saveBoolean("isOnline", true);
-                        ((DashboardActivity) getActivity()).checkOnline();
-                        AppElement.isCameOnline = false;
-                        MainApplication.enableNotifications();
-                        ((DashboardActivity) getActivity()).updateDriverStatus(true);
-                    }
+                } catch (IllegalStateException ex) {
+
+                } catch (Exception e) {
+
                 }
             }
+
         });
 
         return fragmentThankYouActionBinding.getRoot();

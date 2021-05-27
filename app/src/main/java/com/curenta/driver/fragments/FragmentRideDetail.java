@@ -54,19 +54,21 @@ public class FragmentRideDetail extends Fragment {
         fragmentRideDetailBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                try {
                 for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
-                    try {
-                        if (getActivity().getSupportFragmentManager() != null) {
+
+                        if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                             getActivity().getSupportFragmentManager().popBackStack();
                         }
-                    } catch(IllegalStateException ex) {
 
-                    }
-                    catch (Exception e){
-
-                    }
                 }
                 ((DashboardActivity) getActivity()).checkRide();
+                } catch(IllegalStateException ex) {
+
+                }
+                catch (Exception e){
+
+                }
             }
         });
         fragmentRideDetailBinding.button2.setOnClickListener(new View.OnClickListener() {

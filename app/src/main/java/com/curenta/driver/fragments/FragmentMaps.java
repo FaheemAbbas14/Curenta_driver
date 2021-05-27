@@ -273,7 +273,7 @@ public class FragmentMaps extends Fragment implements ILocationChange, OnMapRead
                                     }
                                 } else {
                                     if (getActivity().getSupportFragmentManager().getBackStackEntryCount() > 1) {
-                                        if (getActivity().getSupportFragmentManager() != null) {
+                                        if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                             getActivity().getSupportFragmentManager().popBackStack();
                                         }
                                         Log.d("getRouteCall", "fail " + responseData.toString());
@@ -285,7 +285,7 @@ public class FragmentMaps extends Fragment implements ILocationChange, OnMapRead
                             @Override
                             public void onError(Throwable e) {
 
-                                if (getActivity().getSupportFragmentManager() != null) {
+                                if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                     getActivity().getSupportFragmentManager().popBackStack();
                                 }
                                 Log.d("getRouteCall", "failed " + e.toString());

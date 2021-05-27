@@ -46,7 +46,6 @@ import com.curenta.driver.fragments.FragmentContactUs;
 import com.curenta.driver.fragments.FragmentCovid19;
 import com.curenta.driver.fragments.FragmentEarningSimpleLIst;
 import com.curenta.driver.fragments.FragmentMyAccount;
-import com.curenta.driver.fragments.FragmentNavigation;
 import com.curenta.driver.fragments.FragmentRideDetail;
 import com.curenta.driver.fragments.FragmentRidePopup;
 import com.curenta.driver.fragments.FragmentStatus;
@@ -160,7 +159,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Gson gson = new Gson();
         LoggedInUser loggedInUser = LoggedInUser.getInstance();
         LoggedInUser userDTO = gson.fromJson(logedInUser, LoggedInUser.class);
-        if(userDTO!=null) {
+        if (userDTO != null) {
             loggedInUser.setInstance(userDTO);
         }
         navUsername.setText(loggedInUser.fname + " " + loggedInUser.lname);
@@ -290,7 +289,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             Gson gson = new Gson();
             rideInfoDto = gson.fromJson(rideInfoString, RideInfoDto.class);
             AppElement.routeId = rideInfoDto.routeId;
-          //  getRouteDetails(rideInfoDto.routeId, false, false, false);
+            getRouteDetails(rideInfoDto.routeId, false, false, false);
             activityDashboardBinding.appBarMain.contentMain.llonline.setEnabled(false);
         } else {
 //            if (LoggedInUser.getInstance().isOnline) {
@@ -324,7 +323,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 // check selected menu item's id and replace a Fragment Accordingly
         if (itemId == R.id.covid19) {
             FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentCovid19(), R.id.fragContainer);
-           // FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentNavigation(), R.id.fragContainer);
+            // FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentNavigation(), R.id.fragContainer);
 
         } else if (itemId == R.id.contactus) {
             FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentContactUs(), R.id.fragContainer);
@@ -368,10 +367,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 if (getSupportFragmentManager() != null) {
                     getSupportFragmentManager().popBackStack();
                 }
-            } catch(IllegalStateException ex) {
+            } catch (IllegalStateException ex) {
 
-            }
-            catch (Exception e){
+            } catch (Exception e) {
 
             }
         }
@@ -416,10 +414,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                         if (getSupportFragmentManager() != null) {
                             getSupportFragmentManager().popBackStack();
                         }
-                    } catch(IllegalStateException ex) {
+                    } catch (IllegalStateException ex) {
 
-                    }
-                    catch (Exception e){
+                    } catch (Exception e) {
 
                     }
                 }
@@ -440,10 +437,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                     if (getSupportFragmentManager() != null) {
                         getSupportFragmentManager().popBackStack();
                     }
-                } catch(IllegalStateException ex) {
+                } catch (IllegalStateException ex) {
 
-                }
-                catch (Exception e){
+                } catch (Exception e) {
 
                 }
             }
@@ -560,8 +556,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     }
 
     public void publishLocation() {
-        Thread thread = new Thread(){
-            public void run(){
+        Thread thread = new Thread() {
+            public void run() {
                 Looper.prepare();//Call looper.prepare()
 
                 Handler mHandler = new Handler() {
@@ -653,8 +649,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                         Log.d("Routeinprogress", "success ");
                         if (responseData.data != null) {
                             for (RouteInprogressResponse.Update update : responseData.data.updates) {
-                                if(update.platformType.equalsIgnoreCase("ANDRIOD")){
-                                   String appCloudVersion=update.appVersion.replace(".","");
+                                if (update.platformType.equalsIgnoreCase("ANDRIOD")) {
+                                    String appCloudVersion = update.appVersion.replace(".", "");
                                     int appVersion = Integer.parseInt(appCloudVersion);
                                     if (appVersion > version) {
                                         boolean forceUpdate = false;
@@ -765,7 +761,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                             activityDashboardBinding.appBarMain.contentMain.llRideinprogress.setVisibility(View.VISIBLE);
 
                                         }
-                                        checkRide();
+                                      //  checkRide();
                                     } else {
 
                                         Preferences.getInstance().setString("rideInfoDto", "");
@@ -778,10 +774,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                             if (getSupportFragmentManager() != null) {
                                                 getSupportFragmentManager().popBackStack();
                                             }
-                                        } catch(IllegalStateException ex) {
+                                        } catch (IllegalStateException ex) {
 
-                                        }
-                                        catch (Exception e){
+                                        } catch (Exception e) {
 
                                         }
                                         Log.d("getRouteCall", "fail " + responseData.toString());
@@ -796,10 +791,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                     if (getSupportFragmentManager() != null) {
                                         getSupportFragmentManager().popBackStack();
                                     }
-                                } catch(IllegalStateException ex) {
+                                } catch (IllegalStateException ex) {
 
-                                }
-                                catch (Exception ex){
+                                } catch (Exception ex) {
 
                                 }
                                 Log.d("getRouteCall", "failed " + e.toString());
@@ -883,11 +877,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         if (rideInfoString.equalsIgnoreCase("") || force) {
             RetrofitClient.changeApiBaseUrl(BuildConfig.curentadispatcherURL);
             String status;
-            if (!rideInfoString.equalsIgnoreCase("") && force) {
-                status = "Busy";
-                checkRide();
-            }
-            else if (LoggedInUser.getInstance().isOnline) {
+//            if (!rideInfoString.equalsIgnoreCase("") && force) {
+//                status = "Busy";
+//                checkRide();
+//            }
+//            else
+            if (LoggedInUser.getInstance().isOnline) {
                 status = "Active";
             } else {
                 status = "Inactive";

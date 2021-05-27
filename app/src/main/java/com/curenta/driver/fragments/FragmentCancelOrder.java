@@ -64,7 +64,7 @@ public class FragmentCancelOrder extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    if (getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
                 } catch(IllegalStateException ex) {
@@ -287,7 +287,7 @@ public class FragmentCancelOrder extends Fragment {
         btnReopenId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                try {
                 if (cancelTYpe == 1) {
                     for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
                         getActivity().getSupportFragmentManager().popBackStack();
@@ -295,16 +295,11 @@ public class FragmentCancelOrder extends Fragment {
                 } else {
                     if (index < sections.get(0).items.size() - 1) {
                         sections.get(0).items.get(index + 1).isFocused = true;
-                        try {
-                            if (getActivity().getSupportFragmentManager() != null) {
+
+                            if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
                             }
-                        } catch(IllegalStateException ex) {
 
-                        }
-                        catch (Exception e){
-
-                        }
                     } else {
 
                         FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
@@ -313,6 +308,12 @@ public class FragmentCancelOrder extends Fragment {
                         FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
 
                     }
+
+                }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch (Exception e){
 
                 }
                 dialog.dismiss();
