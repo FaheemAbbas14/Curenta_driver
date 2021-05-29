@@ -21,6 +21,7 @@ import android.util.Log;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.curenta.driver.R;
 import com.curenta.driver.interfaces.ILocationChange;
@@ -105,10 +106,12 @@ public class GPSTracker extends Service implements LocationListener {
                 // if GPS Enabled get lat/long using GPS Services
                 if (isGPSEnabled) {
                     if (location == null) {
-                        //check the network permission
-                        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions((Activity) mContext, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 101);
-                        }
+                        if (ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                                PackageManager.PERMISSION_GRANTED &&
+                                ContextCompat.checkSelfPermission(mContext, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                                        PackageManager.PERMISSION_GRANTED) {
+
+
                         locationManager.requestLocationUpdates(
                                 LocationManager.GPS_PROVIDER,
                                 MIN_TIME_BW_UPDATES,
@@ -124,6 +127,7 @@ public class GPSTracker extends Service implements LocationListener {
                                 longitude = location.getLongitude();
                             }
                         }
+                    }
                     }
                 }
             }

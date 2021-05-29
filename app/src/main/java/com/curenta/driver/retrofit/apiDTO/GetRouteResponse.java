@@ -76,14 +76,14 @@ public class GetRouteResponse {
         public double pricePerMile;
         public boolean isRoundTrip;
         public double returnTripPrice;
-        public int returnTripDistance;
-        public int returnTripDuration;
+        public double returnTripDistance;
+        public double returnTripDuration;
         public int notificationsSent;
         public String sendNotificationOn;
         public List<RouteOrder> routeOrders;
         public PickupAddress pickupAddress;
-        public int distance;
-        public int duration;
+        public double distance;
+        public double duration;
         public Object pickupDateTime;
         public Object pickupConfirmationImagePath;
         public Object cancelledBy;

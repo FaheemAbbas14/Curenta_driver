@@ -2,6 +2,7 @@ package com.curenta.driver.fragments;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,8 +101,10 @@ public class FragmentRideDetail extends Fragment {
         section.items.add(new RideDetailListAdapter.Order(data.data.get(0).pickupAddress.name, data.data.get(0).pickupAddress.fullAddress, pickText, isPickupFocused, isPickupCompleted, false, data.data.get(0).pickupAddress.pickupAddressId, false, data.data.get(0).pickupAddress.latitude, data.data.get(0).pickupAddress.longitude, ""));
         int client = 0;
         for (int i = 0; i < data.data.size(); i++) {
+
 //            for (int j=0;j<data.data.get(i).routeSteps.size();j++){
             for (GetRoutesResponse.RouteStep routeStep : data.data.get(i).routeSteps) {
+                Log.d("routestatus",routeStep.orders.get(0).patientName+" status "+routeStep.orders.get(0).orderStatus);
                 client++;
                 boolean isOrdercompleted = false;
                 boolean isOrderfocused = false;
@@ -112,7 +115,7 @@ public class FragmentRideDetail extends Fragment {
                     buttonText = "Delivered";
 
                 }
-                if (routeStep.orders.get(0).orderStatus.equalsIgnoreCase("UNDELIVERED")) {
+                if (routeStep.orders.get(0).orderStatus.equalsIgnoreCase("UNDELIVERED") || routeStep.orders.get(0).orderStatus.equalsIgnoreCase("Returned") ) {
                     isOrdercompleted = true;
                     isCancelled = true;
                     buttonText = "Canceled";

@@ -63,10 +63,10 @@ public class MainApplication extends Application {
                 }
             });
 
-            locationSocket.connect();
+
 
         } catch (URISyntaxException e) {
-            //Log.d("sockets","location socket failure "+e.getMessage());
+            Log.d("sockets","location socket failure "+e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -76,7 +76,7 @@ public class MainApplication extends Application {
 
             // Log.d("sockets","notification socket connected");
         } catch (URISyntaxException e) {
-            // Log.d("sockets","notification socket failure "+e.getMessage());
+             Log.d("sockets","notification socket failure "+e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -97,7 +97,7 @@ public class MainApplication extends Application {
             disableNotifications();
             Log.d("onesignalnotifications", "notifications disabled");
         }
-       // locationSocket.connect();
+        locationSocket.connect();
         notificationSocket.connect();
 
         // OneSignal Initialization

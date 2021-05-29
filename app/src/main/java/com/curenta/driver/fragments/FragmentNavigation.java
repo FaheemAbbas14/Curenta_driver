@@ -152,14 +152,19 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
         fragmentNavigationBinding.btnNavigate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentRoute!=null) {
-                    boolean simulateRoute = false;
-                    NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                            .directionsRoute(currentRoute)
-                            .shouldSimulateRoute(simulateRoute)
-                            .build();
+                try {
+                    if (currentRoute != null) {
+                        boolean simulateRoute = false;
+                        NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+                                .directionsRoute(currentRoute)
+                                .shouldSimulateRoute(simulateRoute)
+                                .build();
 // Call this method with Context from within an Activity
-                    NavigationLauncher.startNavigation(getActivity(), options);
+                        NavigationLauncher.startNavigation(getActivity(), options);
+                    }
+                }
+                catch (Exception e){
+                    e.printStackTrace();
                 }
             }
         });
