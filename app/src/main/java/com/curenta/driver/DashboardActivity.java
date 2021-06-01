@@ -66,6 +66,7 @@ import com.curenta.driver.retrofit.apiDTO.UpdateDriverStatusResponse;
 import com.curenta.driver.retrofit.apiDTO.UpdateLocationResponse;
 import com.curenta.driver.utilities.FragmentUtils;
 import com.curenta.driver.utilities.GPSTracker;
+import com.curenta.driver.utilities.Helper;
 import com.curenta.driver.utilities.InternetChecker;
 import com.curenta.driver.utilities.Preferences;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -724,6 +725,11 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                             rideInfoDto = new RideInfoDto();
                                         }
                                         DecimalFormat df = new DecimalFormat("0.00");
+                                        double outboundDistance = Helper.round((responseData.data.get(0).outboundDistance *0.000621371),2);
+                                        double inboundDistance = Helper.round((responseData.data.get(0).inboundDistance *0.000621371),2);
+                                        Log.d("getRouteCall", "outboundDistance " + outboundDistance+" inboundDistance"+inboundDistance);
+                                        double totalAmount=Helper.round((responseData.data.get(0).outboundPricePerMile*outboundDistance)+(responseData.data.get(0).inboundPricePerMile*inboundDistance),2);
+                                        Log.d("getRouteCall", "outboundprice " + responseData.data.get(0).outboundPricePerMile+" inboundPrice"+responseData.data.get(0).inboundPricePerMile+" totalAmount"+totalAmount);
 //                                        double totalDistance = responseData.data.distance + responseData.data.returnTripDistance;
 //                                        double totalDuration = responseData.data.duration + responseData.data.returnTripDuration;
                                         double totalDistance = responseData.data.get(0).outboundDistance;
@@ -732,13 +738,14 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                         double duration = totalDuration / 60;
                                         distance = Double.parseDouble(df.format(distance));
                                         duration = Double.parseDouble(df.format(duration));
+
                                         rideInfoDto.routeId = responseData.data.get(0).routeId;
                                         rideInfoDto.distanceInMiles = "" + distance;
                                         if (responseData.data.get(0).routeSteps.get(0).orders.size() > 0) {
                                             rideInfoDto.endPoint = responseData.data.get(0).routeSteps.get(0).orders.get(responseData.data.get(0).routeSteps.get(0).orders.size() - 1).deliveryAddress;
                                         }
                                         rideInfoDto.startingPoint = "" + responseData.data.get(0).pickupAddress.name;
-                                        rideInfoDto.price = "" + responseData.data.get(0).totalPrice;
+                                        rideInfoDto.price = "" + totalAmount;
                                         rideInfoDto.stops = "" + responseData.data.get(0).stepCount;
                                         rideInfoDto.totalMins = "" + duration;
                                         rideInfoDto.routeName = "" + responseData.data.get(0).routeName;

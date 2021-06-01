@@ -6,6 +6,9 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * Created by faheem on 29,March,2021
  */
@@ -30,5 +33,12 @@ public class Helper {
         }
         Log.d("deviceid", deviceId);
         return deviceId;
+    }
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        BigDecimal bd = BigDecimal.valueOf(value);
+        bd = bd.setScale(places, RoundingMode.HALF_UP);
+        return bd.doubleValue();
     }
 }

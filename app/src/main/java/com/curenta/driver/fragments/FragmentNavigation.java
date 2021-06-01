@@ -182,7 +182,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
     }
 
     private void updatedLocation() {
-        if (mapboxMap != null && mapboxMap.getStyle() != null) {
+        if (mapboxMap != null && mapboxMap.getStyle() != null && mDestination!=null && mOrigin!=null) {
             Point destinationPoint = Point.fromLngLat(mDestination.longitude, mDestination.latitude);
             Point originPoint = Point.fromLngLat(mOrigin.longitude,
                     mOrigin.latitude);
