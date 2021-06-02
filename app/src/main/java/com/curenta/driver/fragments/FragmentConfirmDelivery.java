@@ -271,9 +271,9 @@ public class FragmentConfirmDelivery extends Fragment {
                                     }
                                 } else {
                                     if (response.responseMessage.equalsIgnoreCase("no order found")) {
-                                        ((DashboardActivity) getActivity()).cancelNotification(1);
+                                        ((DashboardActivity) getActivity()).RideNewNotification(1);
                                     } else if (response.responseMessage.equalsIgnoreCase("Route does not exist")) {
-                                        ((DashboardActivity) getActivity()).cancelNotification(2);
+                                        ((DashboardActivity) getActivity()).RideNewNotification(2);
                                     } else {
                                         Log.d("deliveryAPICall", "fail " + response.toString());
                                         Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();

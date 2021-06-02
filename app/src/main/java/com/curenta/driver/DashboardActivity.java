@@ -108,7 +108,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     RideInfoDto rideInfoDto;
     GetRoutesResponse response;
     ScheduledExecutorService mscheduler;
-
+    int retries=0;
     public ILatLngUpdate iLocationChange;
     int version;
 
@@ -174,14 +174,19 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Intent intent = getIntent();
         if (intent.hasExtra("rideInfo")) {
             String rideInfo = intent.getExtras().getString("rideInfo");
-            RideInfoDto rideInfoDto = gson.fromJson(rideInfo, RideInfoDto.class);
-            if (rideInfoDto.routeId != null) {
+            Log.d("Ridedata",rideInfo);
+            try {
 
-                FirebaseCrashlytics.getInstance().log(rideInfo);
-                FragmentRidePopup fragmentRidePopup = new FragmentRidePopup();
-                fragmentRidePopup.rideInfoDto = rideInfoDto;
-                FragmentUtils.getInstance().addFragment(DashboardActivity.this, fragmentRidePopup, R.id.fragContainer);
+                JSONObject obj = new JSONObject(rideInfo);
+                String RouteId = obj.getString("RouteId");
+                String NotificationId = obj.getString("NotificationId");
+                Log.d("Ridedata",RouteId);
+                AppElement.routeId=RouteId;
+               RideNewNotification(Integer.parseInt(NotificationId));
+            } catch (Throwable t) {
+
             }
+
         }
 
         activityDashboardBinding.appBarMain.contentMain.fab.setOnClickListener(new View.OnClickListener() {
@@ -396,7 +401,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     }
 
     @Override
-    public void cancelNotification(int id) {
+    public void RideNewNotification(int id) {
         Log.d("cancel", "id " + id);
         if (id == 2 || id == 3) {
 
@@ -511,7 +516,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     @SuppressLint("MissingPermission")
     public void updateLocation(Location location) {
-        if (location != null) {
+        if (location != null && mMap!=null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
@@ -719,6 +724,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                 Log.d("getRouteCall", "success " + responseData.toString());
 
                                 if (responseData.responseCode == 1&& responseData.data!=null && responseData.data.size()>0 && responseData.data.get(0).routeSteps!=null && responseData.data.get(0).routeSteps.size()>0) {
+                                    retries=0;
                                     if (!responseData.data.get(0).routeStatus.equalsIgnoreCase("Completed") && responseData.data.get(0).routeSteps.get(0).orders.size() > 0) {
                                         response = responseData;
                                         if (rideInfoDto == null) {
@@ -801,11 +807,42 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                 } catch(IllegalStateException ex) {
 
                                 }
+                                if(retries<3) {
+                                    final Handler handler = new Handler(Looper.getMainLooper());
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            retries++;
+                                            Log.d("getRouteCall", "retrying " +retries);
+                                            getRouteDetails(routeId,isRide,isRouteUpdated,isDriverAssigned);
+                                        }
+                                    }, 5000);
+                                }
+                                else{
+                                    Log.d("getRouteCall", "retrying finished" +retries);
+                                    retries=0;
+                                }
                                 Log.d("getRouteCall", "failed " + e.toString());
                                 Toast.makeText(getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
                             }
                         });
             } else {
+                if(retries<3) {
+
+                    final Handler handler = new Handler(Looper.getMainLooper());
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            retries++;
+                            Log.d("getRouteCall", "retrying " +retries);
+                            getRouteDetails(routeId,isRide,isRouteUpdated,isDriverAssigned);
+                        }
+                    }, 5000);
+                }
+                else{
+                    Log.d("getRouteCall", "retrying finished" +retries);
+                    retries=0;
+                }
                 Toast.makeText(getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
 
             }

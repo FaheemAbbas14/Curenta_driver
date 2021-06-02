@@ -129,7 +129,7 @@ public class MainApplication extends Application {
                     }
                     else{
                         if(notoficationid!=null) {
-                            iRideNotification.cancelNotification(Integer.parseInt(notoficationid));
+                            iRideNotification.RideNewNotification(Integer.parseInt(notoficationid));
                         }
                     }
                 } else {
@@ -172,7 +172,7 @@ public class MainApplication extends Application {
                     }
                     else{
                         if(notoficationid!=null) {
-                            iRideNotification.cancelNotification(Integer.parseInt(notoficationid));
+                            iRideNotification.RideNewNotification(Integer.parseInt(notoficationid));
                         }
                     }
                 } else {

@@ -7,5 +7,5 @@ import com.curenta.driver.dto.RideInfoDto;
  */
 public interface IRideNotification {
     void rideNotification(RideInfoDto rideInfoDto);
-    void cancelNotification(int id);
+    void RideNewNotification(int id);
 }

@@ -568,47 +568,52 @@ public class FragmentMyAccount extends Fragment {
     }
 
     public void checkChange() {
-        boolean isAnyChange = false;
-        LoggedInUser user=LoggedInUser.getInstance();
-        String phoneNumber = LoggedInUser.getInstance().mobile;
-        phoneNumber = phoneNumber.replaceAll("\\) ", "\\)");
-        if (!LoggedInUser.getInstance().fname.equalsIgnoreCase(fragmentMyAccountBinding.txtfName.getText().toString())) {
-            isAnyChange = true;
+        try {
+            boolean isAnyChange = false;
+            LoggedInUser user = LoggedInUser.getInstance();
+            String phoneNumber = LoggedInUser.getInstance().mobile;
+            phoneNumber = phoneNumber.replaceAll("\\) ", "\\)");
+            if (!LoggedInUser.getInstance().fname.equalsIgnoreCase(fragmentMyAccountBinding.txtfName.getText().toString())) {
+                isAnyChange = true;
+            }
+            if (!LoggedInUser.getInstance().lname.equalsIgnoreCase(fragmentMyAccountBinding.txtlastName.getText().toString())) {
+                isAnyChange = true;
+            }
+            if (!phoneNumber.equalsIgnoreCase(fragmentMyAccountBinding.txtPhone.getText().toString())) {
+                isAnyChange = true;
+            }
+            if (!LoggedInUser.getInstance().street.equalsIgnoreCase(fragmentMyAccountBinding.txtStreet.getText().toString())) {
+                isAnyChange = true;
+            }
+            if (!user.state.equalsIgnoreCase(state)) {
+                UserInfo.getInstance().state = state;
+                isAnyChange = true;
+            }
+            if (!LoggedInUser.getInstance().city.equalsIgnoreCase(fragmentMyAccountBinding.txtCity.getText().toString())) {
+                isAnyChange = true;
+            }
+            if (!LoggedInUser.getInstance().zipcode.equalsIgnoreCase(fragmentMyAccountBinding.txtZipcode.getText().toString())) {
+                isAnyChange = true;
+            }
+            if (!LoggedInUser.getInstance().vehicleModel.equalsIgnoreCase(fragmentMyAccountBinding.txtVehicleModel.getText().toString())) {
+                isAnyChange = true;
+            }
+            if (!LoggedInUser.getInstance().vehiclecolor.equalsIgnoreCase(fragmentMyAccountBinding.txtVehicleColor.getText().toString())) {
+                isAnyChange = true;
+            }
+            if (imageUri != null) {
+                isAnyChange = true;
+            }
+            if (isAnyChange) {
+                fragmentMyAccountBinding.btnSave.setBackgroundResource(R.drawable.blue_rounded);
+                fragmentMyAccountBinding.btnSave.setEnabled(true);
+            } else {
+                fragmentMyAccountBinding.btnSave.setBackgroundResource(R.drawable.grey_rounded);
+                fragmentMyAccountBinding.btnSave.setEnabled(false);
+            }
         }
-        if (!LoggedInUser.getInstance().lname.equalsIgnoreCase(fragmentMyAccountBinding.txtlastName.getText().toString())) {
-            isAnyChange = true;
-        }
-        if (!phoneNumber.equalsIgnoreCase(fragmentMyAccountBinding.txtPhone.getText().toString())) {
-            isAnyChange = true;
-        }
-        if (!LoggedInUser.getInstance().street.equalsIgnoreCase(fragmentMyAccountBinding.txtStreet.getText().toString())) {
-            isAnyChange = true;
-        }
-        if (!user.state.equalsIgnoreCase(state)) {
-            UserInfo.getInstance().state = state;
-            isAnyChange = true;
-        }
-        if (!LoggedInUser.getInstance().city.equalsIgnoreCase(fragmentMyAccountBinding.txtCity.getText().toString())) {
-            isAnyChange = true;
-        }
-        if (!LoggedInUser.getInstance().zipcode.equalsIgnoreCase(fragmentMyAccountBinding.txtZipcode.getText().toString())) {
-            isAnyChange = true;
-        }
-        if (!LoggedInUser.getInstance().vehicleModel.equalsIgnoreCase(fragmentMyAccountBinding.txtVehicleModel.getText().toString())) {
-            isAnyChange = true;
-        }
-        if (!LoggedInUser.getInstance().vehiclecolor.equalsIgnoreCase(fragmentMyAccountBinding.txtVehicleColor.getText().toString())) {
-            isAnyChange = true;
-        }
-        if (imageUri != null) {
-            isAnyChange = true;
-        }
-        if (isAnyChange) {
-            fragmentMyAccountBinding.btnSave.setBackgroundResource(R.drawable.blue_rounded);
-            fragmentMyAccountBinding.btnSave.setEnabled(true);
-        } else {
-            fragmentMyAccountBinding.btnSave.setBackgroundResource(R.drawable.grey_rounded);
-            fragmentMyAccountBinding.btnSave.setEnabled(false);
+        catch (Exception e){
+
         }
     }
     private void saveBitmap(Bitmap bmp) {
