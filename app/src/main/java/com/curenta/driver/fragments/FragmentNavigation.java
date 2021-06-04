@@ -24,6 +24,7 @@ import com.curenta.driver.utilities.GPSTracker;
 import com.google.android.gms.maps.model.LatLng;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
+import com.mapbox.api.directions.v5.DirectionsCriteria;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Feature;
@@ -191,7 +192,6 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
             if (source != null) {
                 source.setGeoJson(Feature.fromGeometry(destinationPoint));
             }
-
             getRoute(originPoint, destinationPoint);
             fragmentNavigationBinding.btnNavigate.setEnabled(true);
             //fragmentNavigationBinding.btnNavigate.setBackgroundResource(R.color.blue);
@@ -223,6 +223,8 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
                 .accessToken(Mapbox.getAccessToken())
                 .origin(origin)
                 .destination(destination)
+                .alternatives(true)
+                .exclude(DirectionsCriteria.EXCLUDE_TOLL)
                 .build()
                 .getRoute(new Callback<DirectionsResponse>() {
                     @Override
@@ -322,7 +324,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
 
     @Override
     public void onPermissionResult(boolean granted) {
-        if (granted) {
+        if (granted && mapboxMap!=null) {
             enableLocationComponent(mapboxMap.getStyle());
         } else {
             Toast.makeText(getContext(), R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
@@ -333,43 +335,57 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
     @Override
     public void onStart() {
         super.onStart();
-        fragmentNavigationBinding.mapView.onStart();
+        if(fragmentNavigationBinding.mapView!=null) {
+            fragmentNavigationBinding.mapView.onStart();
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        fragmentNavigationBinding.mapView.onResume();
+        if(fragmentNavigationBinding.mapView!=null) {
+            fragmentNavigationBinding.mapView.onResume();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        fragmentNavigationBinding.mapView.onPause();
+        if(fragmentNavigationBinding.mapView!=null) {
+            fragmentNavigationBinding.mapView.onPause();
+        }
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        fragmentNavigationBinding.mapView.onStop();
+        if(fragmentNavigationBinding.mapView!=null) {
+            fragmentNavigationBinding.mapView.onStop();
+        }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        fragmentNavigationBinding.mapView.onSaveInstanceState(outState);
+        if(fragmentNavigationBinding.mapView!=null) {
+            fragmentNavigationBinding.mapView.onSaveInstanceState(outState);
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        fragmentNavigationBinding.mapView.onDestroy();
+        if(fragmentNavigationBinding.mapView!=null) {
+            fragmentNavigationBinding.mapView.onDestroy();
+        }
     }
 
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        fragmentNavigationBinding.mapView.onLowMemory();
+        if(fragmentNavigationBinding.mapView!=null) {
+            fragmentNavigationBinding.mapView.onLowMemory();
+        }
     }
 }
 

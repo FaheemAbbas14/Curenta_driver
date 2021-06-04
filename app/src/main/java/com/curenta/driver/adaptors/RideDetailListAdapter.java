@@ -88,16 +88,7 @@ public class RideDetailListAdapter extends SectioningAdapter {
             this.routeStepId = routeStepId;
         }
 
-        public Order(String name, String address, String buttonText, boolean isFocused, boolean isCompleted, boolean isArrived, String orderId, boolean isCancled) {
-            this.name = name;
-            this.address = address;
-            this.buttonText = buttonText;
-            this.isFocused = isFocused;
-            this.isCompleted = isCompleted;
-            this.isArrived = isArrived;
-            this.orderId = orderId;
-            this.isCancled = isCancled;
-        }
+
 
 
     }
@@ -285,7 +276,7 @@ public class RideDetailListAdapter extends SectioningAdapter {
             ivh.action.setBackgroundResource(R.drawable.grey_rounded);
             ivh.topLayout.setEnabled(false);
         } else {
-            AppElement.orderId = s.items.get(itemIndex).orderId;
+            AppElement.orderId = s.items.get(itemIndex).routeStepId;
             ivh.topLayout.setEnabled(true);
             ivh.icon.setImageResource(R.drawable.bluenextarrow);
             ivh.heading.setTextColor(ContextCompat.getColor(context, R.color.blue));

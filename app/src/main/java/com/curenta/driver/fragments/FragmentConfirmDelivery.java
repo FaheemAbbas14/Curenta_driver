@@ -88,12 +88,17 @@ public class FragmentConfirmDelivery extends Fragment {
         fragmentConfirmDeliveryBinding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-              if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
-                    confirmPickup();
+                if(order.routeStepId!=null && routeId!=null) {
+                    if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
+                        confirmPickup();
 
-                } else {
-                    RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                    confirmDelivery();
+                    } else {
+                        RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
+                        confirmDelivery();
+                    }
+                }
+                else{
+                    Toast.makeText(getContext(),"Issue while uploading photos.Please try again later",Toast.LENGTH_SHORT).show();
                 }
             }
         });

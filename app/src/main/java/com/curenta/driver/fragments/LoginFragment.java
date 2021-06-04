@@ -24,6 +24,7 @@ import com.curenta.driver.DashboardActivity;
 import com.curenta.driver.LoginActivity;
 import com.curenta.driver.MainApplication;
 import com.curenta.driver.R;
+import com.curenta.driver.SplashScreen;
 import com.curenta.driver.databinding.FragmentLoginBinding;
 import com.curenta.driver.dto.AppElement;
 import com.curenta.driver.dto.LoggedInUser;
@@ -107,7 +108,14 @@ public class LoginFragment extends Fragment implements GoogleApiClient.OnConnect
         });
         initFb();
         initGoogle();
-
+        String logedInUser = Preferences.getInstance().getString("loggedInUser","");
+        Log.d("userData",logedInUser);
+        Gson gson = new Gson();
+        LoggedInUser userDTO = gson.fromJson(logedInUser, LoggedInUser.class);
+        if (userDTO != null) {
+            Intent i = new Intent(getContext(), DashboardActivity.class);
+            startActivity(i);
+        }
         fragmentLoginBinding.imgGoogle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

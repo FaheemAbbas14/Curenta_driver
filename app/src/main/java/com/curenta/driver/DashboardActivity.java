@@ -582,7 +582,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             AppElement.Latitude = gpsTracker.getLatitude();
             AppElement.Longitude = gpsTracker.getLongitude();
 
-            String message = LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude();
+            String message =  LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude() + "," + AppElement.routeId + "," + AppElement.orderId;
             publishMessage(message);
             publishAPICall();
             Log.d(TAG, "updateDriverLocation " + LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude() + "," + AppElement.routeId + "," + AppElement.orderId);
