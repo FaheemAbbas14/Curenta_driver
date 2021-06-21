@@ -2,65 +2,53 @@ package com.curenta.driver.fragments;
 
 import android.os.Bundle;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 
 import com.curenta.driver.R;
+import com.curenta.driver.databinding.FragmentContactUsBinding;
+import com.curenta.driver.databinding.FragmentSettingBinding;
+import com.curenta.driver.utilities.Preferences;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link FragmentSetting#newInstance} factory method to
- * create an instance of this fragment.
- */
+
 public class FragmentSetting extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    FragmentSettingBinding fragmentSettingBinding;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public FragmentSetting() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment FragmentSetting.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static FragmentSetting newInstance(String param1, String param2) {
-        FragmentSetting fragment = new FragmentSetting();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_setting, container, false);
+        fragmentSettingBinding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_setting, container, false);
+        fragmentSettingBinding.header.txtLabel.setText("Settings");
+        fragmentSettingBinding.header.imageView3.setVisibility(View.INVISIBLE);
+        fragmentSettingBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                } catch(IllegalStateException ex) {
+
+                }
+                catch(Exception ex) {
+
+                }
+            }
+        });
+        boolean tollFreeRoute = Preferences.getInstance().getBoolean("toolFreeRoute", true);
+        fragmentSettingBinding.simpleSwitch.setChecked(tollFreeRoute);
+        fragmentSettingBinding.simpleSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                Preferences.getInstance().saveBoolean("toolFreeRoute", isChecked);
+            }
+        });
+        return fragmentSettingBinding.getRoot();
     }
+
 }

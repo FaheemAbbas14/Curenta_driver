@@ -88,7 +88,7 @@ public class FragmentConfirmDelivery extends Fragment {
         fragmentConfirmDeliveryBinding.btnSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(order.routeStepId!=null && routeId!=null) {
+                if(order!=null && order.routeStepId!=null && routeId!=null) {
                     if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
                         confirmPickup();
 

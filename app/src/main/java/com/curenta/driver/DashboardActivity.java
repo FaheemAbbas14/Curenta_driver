@@ -50,6 +50,7 @@ import com.curenta.driver.fragments.FragmentMyAccount;
 import com.curenta.driver.fragments.FragmentNavigation;
 import com.curenta.driver.fragments.FragmentRideDetail;
 import com.curenta.driver.fragments.FragmentRidePopup;
+import com.curenta.driver.fragments.FragmentSetting;
 import com.curenta.driver.fragments.FragmentStatus;
 import com.curenta.driver.fragments.FragmentTakePhoto;
 import com.curenta.driver.interfaces.ILatLngUpdate;
@@ -337,7 +338,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         } else if (itemId == R.id.contactus) {
             FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentContactUs(), R.id.fragContainer);
 
-        } else if (itemId == R.id.logout) {
+        }
+        else if (itemId == R.id.setting) {
+            FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentSetting(), R.id.fragContainer);
+
+        }
+        else if (itemId == R.id.logout) {
             LoggedInUser.instance = null;
             UserInfo.instance = null;
             Preferences.getInstance().saveBoolean("isOnline", false);

@@ -143,7 +143,7 @@ public class FragmentTakePhoto extends Fragment {
                     // imageUri = getImageUri(getContext(), bmp);
                     ByteArrayOutputStream stream = new ByteArrayOutputStream();
 
-                    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
                     byte[] byteArray = stream.toByteArray();
 
 

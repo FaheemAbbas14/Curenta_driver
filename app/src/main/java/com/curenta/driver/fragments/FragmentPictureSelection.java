@@ -172,7 +172,7 @@ public class FragmentPictureSelection extends Fragment {
 
 
                 }
-            } else if (requestCode == 2) {
+            } else if (requestCode == 2 && data!=null) {
                 dialog.show();
                 Uri imageUritemp = data.getData();
 

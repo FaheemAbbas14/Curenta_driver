@@ -21,6 +21,7 @@ import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.interfaces.ILocationChange;
 import com.curenta.driver.utilities.FragmentUtils;
 import com.curenta.driver.utilities.GPSTracker;
+import com.curenta.driver.utilities.Preferences;
 import com.google.android.gms.maps.model.LatLng;
 import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
@@ -32,7 +33,6 @@ import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
-import com.mapbox.mapboxsdk.location.LocationComponentOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
@@ -72,6 +72,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
     private NavigationMapRoute navigationMapRoute;
     public LatLng mDestination;
     static GPSTracker gpsTracker;
+    boolean tollRoute = true;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -89,17 +90,44 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
         if (order != null) {
             fragmentNavigationBinding.txtAddress.setText(order.address);
         }
+        tollRoute = Preferences.getInstance().getBoolean("toolFreeRoute", true);
+        if(tollRoute){
+            fragmentNavigationBinding.lltollon.setImageResource(R.drawable.tollon);
+
+        }
+        else{
+            fragmentNavigationBinding.lltollon.setImageResource(R.drawable.tolloff);
+
+        }
+        fragmentNavigationBinding.lltollon.setOnClickListener(new View.OnClickListener() {
+    @Override
+    public void onClick(View v) {
+        if(tollRoute){
+            Toast.makeText(getContext(),"Toll routes are disabled",Toast.LENGTH_SHORT).show();
+            tollRoute=false;
+            fragmentNavigationBinding.lltollon.setImageResource(R.drawable.tolloff);
+            updatedLocation();
+        }
+        else{
+            Toast.makeText(getContext(),"Toll routes are enabled",Toast.LENGTH_SHORT).show();
+            tollRoute=true;
+            fragmentNavigationBinding.lltollon.setImageResource(R.drawable.tollon);
+            updatedLocation();
+        }
+        Preferences.getInstance().saveBoolean("toolFreeRoute", tollRoute);
+    }
+});
+
         fragmentNavigationBinding.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
-                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity() != null && getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
-                } catch(IllegalStateException ex) {
+                } catch (IllegalStateException ex) {
 
-                }
-                catch(Exception ex) {
+                } catch (Exception ex) {
 
                 }
             }
@@ -163,8 +191,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
 // Call this method with Context from within an Activity
                         NavigationLauncher.startNavigation(getActivity(), options);
                     }
-                }
-                catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
@@ -180,10 +207,11 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
         if (mDestination != null && mOrigin != null) {
             updatedLocation();
         }
+
     }
 
     private void updatedLocation() {
-        if (mapboxMap != null && mapboxMap.getStyle() != null && mDestination!=null && mOrigin!=null) {
+        if (mapboxMap != null && mapboxMap.getStyle() != null && mDestination != null && mOrigin != null) {
             Point destinationPoint = Point.fromLngLat(mDestination.longitude, mDestination.latitude);
             Point originPoint = Point.fromLngLat(mOrigin.longitude,
                     mOrigin.latitude);
@@ -192,7 +220,14 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
             if (source != null) {
                 source.setGeoJson(Feature.fromGeometry(destinationPoint));
             }
-            getRoute(originPoint, destinationPoint);
+          //  destinationPoint=Point.fromLngLat(74.329376, 31.582045);
+            if(!tollRoute){
+                getTollFreeRoute(originPoint, destinationPoint);
+            }
+            else{
+                getRoute(originPoint, destinationPoint);
+            }
+
             fragmentNavigationBinding.btnNavigate.setEnabled(true);
             //fragmentNavigationBinding.btnNavigate.setBackgroundResource(R.color.blue);
         }
@@ -211,14 +246,70 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
                     iconIgnorePlacement(true)
             );
             loadedMapStyle.addLayer(destinationSymbolLayer);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
     private void getRoute(Point origin, Point destination) {
+        NavigationRoute.builder(getContext())
+                .accessToken(Mapbox.getAccessToken())
+                .origin(origin)
+                .destination(destination)
+                .alternatives(true)
+                .build()
+                .getRoute(new Callback<DirectionsResponse>() {
+                    @Override
+                    public void onResponse(Call<DirectionsResponse> call, Response<DirectionsResponse> response) {
+// You can get the generic HTTP info about the response
+                        Log.d(TAG, "Response code: " + response.code());
+                        if (response.body() == null) {
+                            Log.e(TAG, "No routes found, make sure you set the right user and access token.");
+                            return;
+                        } else if (response.body().routes().size() < 1) {
+                            Log.e(TAG, "No routes found");
+                            return;
+                        }
+
+                        currentRoute = response.body().routes().get(0);
+                        double distance = (currentRoute.distance() / 1000) * 0.621371;
+                        DecimalFormat df = new DecimalFormat("0.00");
+                        distance = Double.parseDouble(df.format(distance));
+                        //distance=Math.floor(distance);
+                        if (distance > 1) {
+                            fragmentNavigationBinding.txtdistance.setText(distance + " Miles");
+                        } else {
+                            fragmentNavigationBinding.txtdistance.setText(distance + " Mile");
+                        }
+                        if (currentRoute.duration() != null) {
+                            double time = currentRoute.duration() / 60;
+                            time = Double.parseDouble(df.format(time));
+                            time = Math.floor(time);
+                            if (time > 1) {
+                                fragmentNavigationBinding.txttime.setText(time + " mins");
+                            } else {
+                                fragmentNavigationBinding.txttime.setText(time + " min");
+                            }
+
+                        }
+                        Log.d("routeData", currentRoute.distance() + "," + currentRoute.duration());
+// Draw the route on the map
+                        if (navigationMapRoute != null) {
+                            navigationMapRoute.removeRoute();
+                        } else {
+                            navigationMapRoute = new NavigationMapRoute(null, fragmentNavigationBinding.mapView, mapboxMap, R.style.NavigationMapRoute);
+                        }
+                        navigationMapRoute.addRoute(currentRoute);
+                    }
+
+                    @Override
+                    public void onFailure(Call<DirectionsResponse> call, Throwable throwable) {
+                        Log.e(TAG, "Error: " + throwable.getMessage());
+                    }
+                });
+    }
+    private void getTollFreeRoute(Point origin, Point destination) {
         NavigationRoute.builder(getContext())
                 .accessToken(Mapbox.getAccessToken())
                 .origin(origin)
@@ -249,10 +340,10 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
                         } else {
                             fragmentNavigationBinding.txtdistance.setText(distance + " Mile");
                         }
-                        if(currentRoute.duration()!=null) {
+                        if (currentRoute.duration() != null) {
                             double time = currentRoute.duration() / 60;
                             time = Double.parseDouble(df.format(time));
-                            time=Math.floor(time);
+                            time = Math.floor(time);
                             if (time > 1) {
                                 fragmentNavigationBinding.txttime.setText(time + " mins");
                             } else {
@@ -276,13 +367,13 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
                     }
                 });
     }
-
     @SuppressWarnings({"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
 // Check if permissions are enabled and if not request
-        if (PermissionsManager.areLocationPermissionsGranted(getContext())) {
+        if (PermissionsManager.areLocationPermissionsGranted(getContext()) && mapboxMap!=null) {
 // Activate the MapboxMap LocationComponent to show user location
             // Adding in LocationComponentOptions is also an optional parameter
+
             locationComponent = mapboxMap.getLocationComponent();
             locationComponent.activateLocationComponent(getContext(), loadedMapStyle);
             locationComponent.setLocationComponentEnabled(true);
@@ -324,7 +415,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
 
     @Override
     public void onPermissionResult(boolean granted) {
-        if (granted && mapboxMap!=null) {
+        if (granted && mapboxMap != null) {
             enableLocationComponent(mapboxMap.getStyle());
         } else {
             Toast.makeText(getContext(), R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
@@ -335,7 +426,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
     @Override
     public void onStart() {
         super.onStart();
-        if(fragmentNavigationBinding.mapView!=null) {
+        if (fragmentNavigationBinding.mapView != null) {
             fragmentNavigationBinding.mapView.onStart();
         }
     }
@@ -343,7 +434,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
     @Override
     public void onResume() {
         super.onResume();
-        if(fragmentNavigationBinding.mapView!=null) {
+        if (fragmentNavigationBinding.mapView != null) {
             fragmentNavigationBinding.mapView.onResume();
         }
     }
@@ -351,7 +442,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
     @Override
     public void onPause() {
         super.onPause();
-        if(fragmentNavigationBinding.mapView!=null) {
+        if (fragmentNavigationBinding.mapView != null) {
             fragmentNavigationBinding.mapView.onPause();
         }
     }
@@ -359,7 +450,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
     @Override
     public void onStop() {
         super.onStop();
-        if(fragmentNavigationBinding.mapView!=null) {
+        if (fragmentNavigationBinding.mapView != null) {
             fragmentNavigationBinding.mapView.onStop();
         }
     }
@@ -367,15 +458,20 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(fragmentNavigationBinding.mapView!=null) {
-            fragmentNavigationBinding.mapView.onSaveInstanceState(outState);
+        try {
+            if (fragmentNavigationBinding.mapView != null) {
+                fragmentNavigationBinding.mapView.onSaveInstanceState(outState);
+            }
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(fragmentNavigationBinding.mapView!=null) {
+        if (fragmentNavigationBinding.mapView != null) {
             fragmentNavigationBinding.mapView.onDestroy();
         }
     }
@@ -383,7 +479,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
     @Override
     public void onLowMemory() {
         super.onLowMemory();
-        if(fragmentNavigationBinding.mapView!=null) {
+        if (fragmentNavigationBinding.mapView != null) {
             fragmentNavigationBinding.mapView.onLowMemory();
         }
     }
