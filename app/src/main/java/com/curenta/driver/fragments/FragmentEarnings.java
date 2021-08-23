@@ -30,6 +30,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -49,7 +50,7 @@ public class FragmentEarnings extends Fragment {
                              Bundle savedInstanceState) {
         fragmentEarningsBinding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_earnings, container, false);
-        getEarnings();
+        //getEarnings();
         for (int i = 0; i < 5; i++) {
             appendSection(i, 5);
         }
@@ -91,7 +92,7 @@ public class FragmentEarnings extends Fragment {
         sections.add(section);
     }
 
-    private void getEarnings() {
+    private void getEarnings(String from,String to) {
         try {
             boolean isInternetConnected = InternetChecker.isInternetAvailable();
             if (isInternetConnected) {
@@ -101,7 +102,7 @@ public class FragmentEarnings extends Fragment {
                 dialog.setIndeterminate(true);
                 dialog.setCancelable(false);
                 dialog.show();
-                EarningRequest requestDto = new EarningRequest("" + LoggedInUser.getInstance().driverId);
+                EarningRequest requestDto = new EarningRequest( LoggedInUser.getInstance().driverId,from,to);
                 Gson gson = new Gson();
                 String request = gson.toJson(requestDto);
                 RetrofitClient.getAPIClient().getDriverEarnings(request)

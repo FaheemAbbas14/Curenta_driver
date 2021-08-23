@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -18,8 +17,7 @@
                 android:id="@+id/llgradient"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/white_gradient_bg"
-                >
+                android:background="@drawable/white_gradient_bg">
 
                 <include
                     android:id="@+id/header"
@@ -28,7 +26,7 @@
 
         </RelativeLayout>
 
-        <ScrollView
+        <RelativeLayout
             android:id="@+id/scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -41,7 +39,106 @@
 
                 >
 
+                <RadioGroup
+                    android:id="@+id/radioGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_margin="20dp"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
 
+                    <RadioButton
+                        android:id="@+id/dailyButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/segmented_button"
+                        android:button="@android:color/transparent"
+                        android:checked="true"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:textSize="12sp"
+                        android:text="Today"
+                        android:textColor="@drawable/txt_segmented" />
+
+                    <RadioButton
+                        android:id="@+id/weekButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/btn_segmented_center"
+                        android:button="@android:color/transparent"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:textSize="12sp"
+                        android:text="This Week"
+                        android:textColor="@drawable/txt_segmented" />
+
+                    <RadioButton
+                        android:id="@+id/monthButtion"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="12sp"
+                        android:background="@drawable/btn_segmented_center"
+                        android:button="@android:color/transparent"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="This Month"
+                        android:textColor="@drawable/txt_segmented" />
+
+                    <RadioButton
+                        android:id="@+id/yearButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:textSize="12sp"
+                        android:background="@drawable/btn_segmented_right"
+                        android:button="@android:color/transparent"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="This Year"
+                        android:textColor="@drawable/txt_segmented" />
+                </RadioGroup>
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginLeft="25dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.331"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/radioGroup">
+
+                    <TextView
+                        android:id="@+id/textView"
+                        android:layout_width="0dp"
+                        android:layout_weight="1.9"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="Total Earnings"
+                        android:textColor="@color/grey"
+                        android:fontFamily="@font/archivobold"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_gravity="start|center_vertical" />
+
+                    <TextView
+                        android:id="@+id/txtAmount"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:padding="10dp"
+                        android:text="0"
+                        android:textColor="@color/grey"
+                        android:fontFamily="@font/archivobold"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_gravity="start|center_vertical" />
+
+
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"
@@ -49,16 +146,18 @@
                     android:layout_height="match_parent"
                     android:layout_marginStart="25dp"
                     android:layout_marginLeft="25dp"
-                    android:layout_marginTop="5dp"
+                    android:layout_marginTop="100dp"
                     android:layout_marginEnd="10dp"
                     android:layout_marginRight="10dp"
-
-                    app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.331"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </ScrollView>
+        </RelativeLayout>
     </RelativeLayout>
 </layout>

@@ -53,6 +53,7 @@ public class FragmentPictureSelection extends Fragment {
     Uri imageUri;
     boolean isFromCamera;
     ProgressDialog dialog;
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         ((LoginActivity) getActivity()).moveToTop();
@@ -172,17 +173,17 @@ public class FragmentPictureSelection extends Fragment {
 
 
                 }
-            } else if (requestCode == 2 && data!=null) {
+            } else if (requestCode == 2 && data != null) {
                 dialog.show();
                 Uri imageUritemp = data.getData();
+                if (imageUritemp != null) {
+                    bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUritemp);
+                    if (bitmap != null) {
+                        saveBitmap(bitmap);
 
-                bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), imageUritemp);
-                if (bitmap != null) {
-                    saveBitmap(bitmap);
 
-
+                    }
                 }
-
 
             }
         } catch (Exception e) {
@@ -231,7 +232,7 @@ public class FragmentPictureSelection extends Fragment {
                     File file = new File(directory, imageFileName);
                     imageUri = Uri.fromFile(file);
                     if (!file.exists()) {
-                        Log.d("path", imageFileName+" created");
+                        Log.d("path", imageFileName + " created");
                         FileOutputStream fos = null;
 
                         fos = new FileOutputStream(file);

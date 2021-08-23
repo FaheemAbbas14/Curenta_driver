@@ -104,29 +104,30 @@ public class FragmentRideDetail extends Fragment {
 
 //            for (int j=0;j<data.data.get(i).routeSteps.size();j++){
             for (GetRoutesResponse.RouteStep routeStep : data.data.get(i).routeSteps) {
-                Log.d("routestatus",routeStep.orders.get(0).patientName+" status "+routeStep.orders.get(0).orderStatus);
-                client++;
-                boolean isOrdercompleted = false;
-                boolean isOrderfocused = false;
-                boolean isCancelled = false;
-                String buttonText = "Deliver";
-                if (routeStep.orders.get(0).orderStatus.equalsIgnoreCase("Delivered")) {
-                    isOrdercompleted = true;
-                    buttonText = "Delivered";
+                if(routeStep.orders.size()>0) {
+                    Log.d("routestatus", routeStep.orders.get(0).patientName + " status " + routeStep.orders.get(0).orderStatus);
+                    client++;
+                    boolean isOrdercompleted = false;
+                    boolean isOrderfocused = false;
+                    boolean isCancelled = false;
+                    String buttonText = "Deliver";
+                    if (routeStep.orders.get(0).orderStatus.equalsIgnoreCase("Delivered")) {
+                        isOrdercompleted = true;
+                        buttonText = "Delivered";
 
-                }
-                if (routeStep.orders.get(0).orderStatus.equalsIgnoreCase("UNDELIVERED") || routeStep.orders.get(0).orderStatus.equalsIgnoreCase("Returned") ) {
-                    isOrdercompleted = true;
-                    isCancelled = true;
-                    buttonText = "Canceled";
+                    }
+                    if (routeStep.orders.get(0).orderStatus.equalsIgnoreCase("UNDELIVERED") || routeStep.orders.get(0).orderStatus.equalsIgnoreCase("Returned")) {
+                        isOrdercompleted = true;
+                        isCancelled = true;
+                        buttonText = "Canceled";
 
+                    }
+                    if (isPickupCompleted != false && !isOrdercompleted && !isAnyFocused) {
+                        isOrderfocused = true;
+                        isAnyFocused = true;
+                    }
+                    section.items.add(new RideDetailListAdapter.Order(routeStep.orders.get(0).patientName, routeStep.orders.get(0).deliveryAddress, buttonText, isOrderfocused, isOrdercompleted, false, routeStep.orders.get(0).orderId, isCancelled, routeStep.orders.get(0).latitude, routeStep.orders.get(0).longitude, routeStep.routeStepsId));
                 }
-                if (isPickupCompleted != false && !isOrdercompleted && !isAnyFocused) {
-                    isOrderfocused = true;
-                    isAnyFocused = true;
-                }
-                section.items.add(new RideDetailListAdapter.Order(routeStep.orders.get(0).patientName, routeStep.orders.get(0).deliveryAddress, buttonText, isOrderfocused, isOrdercompleted, false, routeStep.orders.get(0).orderId, isCancelled, routeStep.orders.get(0).latitude, routeStep.orders.get(0).longitude, routeStep.routeStepsId));
-
             }
 
             //}

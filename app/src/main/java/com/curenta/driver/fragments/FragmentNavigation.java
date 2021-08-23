@@ -1,5 +1,9 @@
 package com.curenta.driver.fragments;
 
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
+import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+
 import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.os.Bundle;
@@ -52,10 +56,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
-import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
-
 public class FragmentNavigation extends Fragment implements ILocationChange, OnMapReadyCallback, PermissionsListener {
 
     public LatLng mOrigin;
@@ -91,32 +91,30 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
             fragmentNavigationBinding.txtAddress.setText(order.address);
         }
         tollRoute = Preferences.getInstance().getBoolean("toolFreeRoute", true);
-        if(tollRoute){
+        if (tollRoute) {
             fragmentNavigationBinding.lltollon.setImageResource(R.drawable.tollon);
 
-        }
-        else{
+        } else {
             fragmentNavigationBinding.lltollon.setImageResource(R.drawable.tolloff);
 
         }
         fragmentNavigationBinding.lltollon.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View v) {
-        if(tollRoute){
-            Toast.makeText(getContext(),"Toll routes are disabled",Toast.LENGTH_SHORT).show();
-            tollRoute=false;
-            fragmentNavigationBinding.lltollon.setImageResource(R.drawable.tolloff);
-            updatedLocation();
-        }
-        else{
-            Toast.makeText(getContext(),"Toll routes are enabled",Toast.LENGTH_SHORT).show();
-            tollRoute=true;
-            fragmentNavigationBinding.lltollon.setImageResource(R.drawable.tollon);
-            updatedLocation();
-        }
-        Preferences.getInstance().saveBoolean("toolFreeRoute", tollRoute);
-    }
-});
+            @Override
+            public void onClick(View v) {
+                if (tollRoute) {
+                    Toast.makeText(getContext(), "Toll routes are disabled", Toast.LENGTH_SHORT).show();
+                    tollRoute = false;
+                    fragmentNavigationBinding.lltollon.setImageResource(R.drawable.tolloff);
+                    updatedLocation();
+                } else {
+                    Toast.makeText(getContext(), "Toll routes are enabled", Toast.LENGTH_SHORT).show();
+                    tollRoute = true;
+                    fragmentNavigationBinding.lltollon.setImageResource(R.drawable.tollon);
+                    updatedLocation();
+                }
+                Preferences.getInstance().saveBoolean("toolFreeRoute", tollRoute);
+            }
+        });
 
         fragmentNavigationBinding.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -196,14 +194,16 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
                 }
             }
         });
-        mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
-            @Override
-            public void onStyleLoaded(@NonNull Style style) {
-                enableLocationComponent(style);
-                addDestinationIconSymbolLayer(style);
+        if (mapboxMap != null) {
+            mapboxMap.setStyle(getString(R.string.navigation_guidance_day), new Style.OnStyleLoaded() {
+                @Override
+                public void onStyleLoaded(@NonNull Style style) {
+                    enableLocationComponent(style);
+                    addDestinationIconSymbolLayer(style);
 
-            }
-        });
+                }
+            });
+        }
         if (mDestination != null && mOrigin != null) {
             updatedLocation();
         }
@@ -220,11 +220,10 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
             if (source != null) {
                 source.setGeoJson(Feature.fromGeometry(destinationPoint));
             }
-          //  destinationPoint=Point.fromLngLat(74.329376, 31.582045);
-            if(!tollRoute){
+            //  destinationPoint=Point.fromLngLat(74.329376, 31.582045);
+            if (!tollRoute) {
                 getTollFreeRoute(originPoint, destinationPoint);
-            }
-            else{
+            } else {
                 getRoute(originPoint, destinationPoint);
             }
 
@@ -309,6 +308,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
                     }
                 });
     }
+
     private void getTollFreeRoute(Point origin, Point destination) {
         NavigationRoute.builder(getContext())
                 .accessToken(Mapbox.getAccessToken())
@@ -367,10 +367,11 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
                     }
                 });
     }
+
     @SuppressWarnings({"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
 // Check if permissions are enabled and if not request
-        if (PermissionsManager.areLocationPermissionsGranted(getContext()) && mapboxMap!=null) {
+        if (PermissionsManager.areLocationPermissionsGranted(getContext()) && mapboxMap != null) {
 // Activate the MapboxMap LocationComponent to show user location
             // Adding in LocationComponentOptions is also an optional parameter
 
@@ -462,8 +463,7 @@ public class FragmentNavigation extends Fragment implements ILocationChange, OnM
             if (fragmentNavigationBinding.mapView != null) {
                 fragmentNavigationBinding.mapView.onSaveInstanceState(outState);
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

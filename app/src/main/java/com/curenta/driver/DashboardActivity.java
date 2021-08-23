@@ -1,7 +1,10 @@
 package com.curenta.driver;
 
+import static com.curenta.driver.MainApplication.getContext;
+
 import android.annotation.SuppressLint;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -24,6 +27,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -42,12 +46,11 @@ import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.dto.RideInfoDto;
 import com.curenta.driver.dto.UserInfo;
 import com.curenta.driver.enums.EnumPictureType;
-import com.curenta.driver.fragments.FragmentConfirmDelivery;
 import com.curenta.driver.fragments.FragmentContactUs;
 import com.curenta.driver.fragments.FragmentCovid19;
 import com.curenta.driver.fragments.FragmentEarningSimpleLIst;
+import com.curenta.driver.fragments.FragmentFeedback;
 import com.curenta.driver.fragments.FragmentMyAccount;
-import com.curenta.driver.fragments.FragmentNavigation;
 import com.curenta.driver.fragments.FragmentRideDetail;
 import com.curenta.driver.fragments.FragmentRidePopup;
 import com.curenta.driver.fragments.FragmentSetting;
@@ -57,10 +60,10 @@ import com.curenta.driver.interfaces.ILatLngUpdate;
 import com.curenta.driver.interfaces.ILocationChange;
 import com.curenta.driver.interfaces.IRideNotification;
 import com.curenta.driver.retrofit.RetrofitClient;
-import com.curenta.driver.retrofit.apiDTO.GetRouteResponse;
+import com.curenta.driver.retrofit.apiDTO.CheckRequest;
+import com.curenta.driver.retrofit.apiDTO.CheckResponse;
 import com.curenta.driver.retrofit.apiDTO.GetRoutesResponse;
 import com.curenta.driver.retrofit.apiDTO.RouteInprogressResponse;
-import com.curenta.driver.retrofit.apiDTO.RouteRequest;
 import com.curenta.driver.retrofit.apiDTO.UpdateDRiverLocationRequest;
 import com.curenta.driver.retrofit.apiDTO.UpdateDriverStatusRequest;
 import com.curenta.driver.retrofit.apiDTO.UpdateDriverStatusResponse;
@@ -93,8 +96,6 @@ import io.reactivex.schedulers.Schedulers;
 import io.socket.client.Socket;
 import io.socket.emitter.Emitter;
 
-import static com.curenta.driver.MainApplication.getContext;
-
 public class DashboardActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, IRideNotification, ILocationChange, OnMapReadyCallback {
 
 
@@ -109,11 +110,12 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     RideInfoDto rideInfoDto;
     GetRoutesResponse response;
     ScheduledExecutorService mscheduler;
-    int retries=0;
+    int retries = 0;
     public ILatLngUpdate iLocationChange;
     int version;
 
 
+    @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +127,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         profilePic = (ImageView) headerView.findViewById(R.id.imgUserPhoto);
         MainApplication app = (MainApplication) getApplication();
         locationSocket = app.getLocationSocket();
-        ;
+
+
         notificationSocket = app.getNotificationSocket();
 
         if (locationSocket.connected()) {
@@ -164,7 +167,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Gson gson = new Gson();
         LoggedInUser loggedInUser = LoggedInUser.getInstance();
         LoggedInUser userDTO = gson.fromJson(logedInUser, LoggedInUser.class);
-        if(userDTO!=null) {
+        if (userDTO != null) {
             loggedInUser.setInstance(userDTO);
         }
         navUsername.setText(loggedInUser.fname + " " + loggedInUser.lname);
@@ -175,21 +178,39 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         Intent intent = getIntent();
         if (intent.hasExtra("rideInfo")) {
             String rideInfo = intent.getExtras().getString("rideInfo");
-            Log.d("Ridedata",rideInfo);
+            Log.d("Ridedata", rideInfo);
             try {
 
                 JSONObject obj = new JSONObject(rideInfo);
                 String RouteId = obj.getString("RouteId");
                 String NotificationId = obj.getString("NotificationId");
-                Log.d("Ridedata",RouteId);
-                AppElement.routeId=RouteId;
-               RideNewNotification(Integer.parseInt(NotificationId));
+                Log.d("Ridedata", RouteId);
+                AppElement.routeId = RouteId;
+                RideNewNotification(Integer.parseInt(NotificationId));
             } catch (Throwable t) {
 
             }
 
         }
+        boolean isCheckedIn = Preferences.getInstance().getBoolean("checkin", false);
+      setCheckStatus(isCheckedIn);
 
+        activityDashboardBinding.appBarMain.contentMain.chStatus.setChecked(isCheckedIn);
+        activityDashboardBinding.appBarMain.contentMain.chStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    setCheckStatus(isChecked);
+
+                    checkInCall();
+                } else {
+                    checkOutCall();
+                    setCheckStatus(isChecked);
+                }
+             
+            }
+        });
         activityDashboardBinding.appBarMain.contentMain.fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -284,6 +305,17 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     }
 
+    private void setCheckStatus(boolean isCheckedIn) {
+        if(isCheckedIn){
+            activityDashboardBinding.appBarMain.contentMain.txtCheckin.setTextColor(getResources().getColor(R.color.labelblue));
+            activityDashboardBinding.appBarMain.contentMain.txtchecout.setTextColor(getResources().getColor(R.color.labelgrey));
+        }
+        else{
+            activityDashboardBinding.appBarMain.contentMain.txtCheckin.setTextColor(getResources().getColor(R.color.labelgrey));
+            activityDashboardBinding.appBarMain.contentMain.txtchecout.setTextColor(getResources().getColor(R.color.labelblue));
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -299,7 +331,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             Gson gson = new Gson();
             rideInfoDto = gson.fromJson(rideInfoString, RideInfoDto.class);
             AppElement.routeId = rideInfoDto.routeId;
-           getRouteDetails(rideInfoDto.routeId, false, false, false);
+            getRouteDetails(rideInfoDto.routeId, false, false, false);
             activityDashboardBinding.appBarMain.contentMain.llonline.setEnabled(false);
         } else {
 //            if (LoggedInUser.getInstance().isOnline) {
@@ -333,17 +365,18 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 // check selected menu item's id and replace a Fragment Accordingly
         if (itemId == R.id.covid19) {
             FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentCovid19(), R.id.fragContainer);
-           // FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentConfirmDelivery(), R.id.fragContainer);
+            // FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentConfirmDelivery(), R.id.fragContainer);
 
         } else if (itemId == R.id.contactus) {
             FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentContactUs(), R.id.fragContainer);
 
-        }
-        else if (itemId == R.id.setting) {
+        } else if (itemId == R.id.setting) {
             FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentSetting(), R.id.fragContainer);
 
-        }
-        else if (itemId == R.id.logout) {
+        } else if (itemId == R.id.feedback) {
+            FragmentUtils.getInstance().addFragment(DashboardActivity.this, new FragmentFeedback(), R.id.fragContainer);
+
+        } else if (itemId == R.id.logout) {
             LoggedInUser.instance = null;
             UserInfo.instance = null;
             Preferences.getInstance().saveBoolean("isOnline", false);
@@ -382,7 +415,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 if (getSupportFragmentManager() != null) {
                     getSupportFragmentManager().popBackStack();
                 }
-            } catch(IllegalStateException ex) {
+            } catch (IllegalStateException ex) {
 
             }
         }
@@ -427,7 +460,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                         if (getSupportFragmentManager() != null) {
                             getSupportFragmentManager().popBackStack();
                         }
-                    } catch(IllegalStateException ex) {
+                    } catch (IllegalStateException ex) {
 
                     }
                 }
@@ -448,7 +481,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                     if (getSupportFragmentManager() != null) {
                         getSupportFragmentManager().popBackStack();
                     }
-                } catch(IllegalStateException ex) {
+                } catch (IllegalStateException ex) {
 
                 }
             }
@@ -489,6 +522,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             activityDashboardBinding.appBarMain.contentMain.llStatus.setBackgroundResource(R.drawable.rounded_green_button);
             activityDashboardBinding.appBarMain.contentMain.circularProgress.setVisibility(View.VISIBLE);
             activityDashboardBinding.appBarMain.contentMain.fab.setBackgroundResource(Color.TRANSPARENT);
+            activityDashboardBinding.appBarMain.contentMain.llCheckin.setVisibility(View.GONE);
         } else {
             MainApplication.disableNotifications();
             activityDashboardBinding.appBarMain.contentMain.llonline.setVisibility(View.GONE);
@@ -497,6 +531,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             activityDashboardBinding.appBarMain.contentMain.lltakephoto.setVisibility(View.VISIBLE);
             activityDashboardBinding.appBarMain.contentMain.llStatus.setBackgroundResource(R.drawable.round_grey_button);
             activityDashboardBinding.appBarMain.contentMain.circularProgress.setVisibility(View.INVISIBLE);
+            activityDashboardBinding.appBarMain.contentMain.llCheckin.setVisibility(View.VISIBLE);
             activityDashboardBinding.appBarMain.contentMain.fab.setBackgroundResource(R.drawable.whitecircle);
         }
     }
@@ -522,7 +557,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     @SuppressLint("MissingPermission")
     public void updateLocation(Location location) {
-        if (location != null && mMap!=null) {
+        if (location != null && mMap != null) {
             LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
             mMap.moveCamera(CameraUpdateFactory.newLatLng(currentLocation));
             mMap.animateCamera(CameraUpdateFactory.newLatLng(currentLocation));
@@ -565,8 +600,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     }
 
     public void publishLocation() {
-        Thread thread = new Thread(){
-            public void run(){
+        Thread thread = new Thread() {
+            public void run() {
                 Looper.prepare();//Call looper.prepare()
 
                 Handler mHandler = new Handler() {
@@ -588,7 +623,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             AppElement.Latitude = gpsTracker.getLatitude();
             AppElement.Longitude = gpsTracker.getLongitude();
 
-            String message =  LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude() + "," + AppElement.routeId + "," + AppElement.orderId;
+            String message = LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude() + "," + AppElement.routeId + "," + AppElement.orderId;
             publishMessage(message);
             publishAPICall();
             Log.d(TAG, "updateDriverLocation " + LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude() + "," + AppElement.routeId + "," + AppElement.orderId);
@@ -612,6 +647,90 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         }
     }
 
+    public void checkInCall() {
+        RetrofitClient.changeApiBaseUrl(BuildConfig.logindevURL);
+        CheckRequest requestDto = new CheckRequest(LoggedInUser.getInstance().driverId);
+        Gson gson = new Gson();
+        String request = gson.toJson(requestDto);
+        Log.d(TAG, "checkInDriver " + request);
+        ProgressDialog dialog = new ProgressDialog(DashboardActivity.this, R.style.AppCompatAlertDialogStyle);
+        dialog.setMessage("Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        dialog.show();
+        RetrofitClient.getAPIClient().checkin(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<CheckResponse>() {
+                    @Override
+                    public void onSuccess(CheckResponse response) {
+                        //dialog.dismiss();
+                        if (response.responseCode == 1) {
+                            Preferences.getInstance().saveBoolean("checkin", true);
+                            Log.d("checkInDriver", "success " + response.responseCode);
+                            dialog.dismiss();
+                            Toast.makeText(getContext(), "Checked In", Toast.LENGTH_SHORT).show();
+
+                        } else {
+                            dialog.dismiss();
+                            Log.d("checkInDriver", "fail " + response);
+                            Toast.makeText(getContext().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        //  dialog.dismiss();
+                        dialog.dismiss();
+                        Log.d("checkInDriver", "failed " + e.toString());
+                        //  Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    public void checkOutCall() {
+        RetrofitClient.changeApiBaseUrl(BuildConfig.logindevURL);
+        CheckRequest requestDto = new CheckRequest(LoggedInUser.getInstance().driverId);
+        Gson gson = new Gson();
+        String request = gson.toJson(requestDto);
+        Log.d(TAG, "checkOutDriver " + request);
+        ProgressDialog dialog = new ProgressDialog(DashboardActivity.this, R.style.AppCompatAlertDialogStyle);
+        dialog.setMessage("Please wait...");
+        dialog.setIndeterminate(true);
+        dialog.setCancelable(false);
+        dialog.show();
+        RetrofitClient.getAPIClient().checkout(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(new DisposableSingleObserver<CheckResponse>() {
+                    @Override
+                    public void onSuccess(CheckResponse response) {
+                        //dialog.dismiss();
+                        if (response.responseCode == 1) {
+                            Preferences.getInstance().saveBoolean("checkin", false);
+                            Toast.makeText(getContext(), "Checked Out", Toast.LENGTH_SHORT).show();
+
+                            Log.d("checkOutDriver", "success " + response.responseCode);
+                            dialog.dismiss();
+
+                        } else {
+                            Log.d("checkOutDriver", "fail " + response);
+                            Toast.makeText(getContext().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
+                            dialog.dismiss();
+                        }
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        //  dialog.dismiss();
+                        dialog.dismiss();
+                        Log.d("checkOutDriver", "failed " + e.toString());
+                        //  Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     public static void publishAPICall() {
         RetrofitClient.changeApiBaseUrl(BuildConfig.logindevURL);
         UpdateDRiverLocationRequest requestDto = new UpdateDRiverLocationRequest(LoggedInUser.getInstance().driverId, gpsTracker.getLongitude(), gpsTracker.getLatitude());
@@ -627,7 +746,6 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                     public void onSuccess(UpdateLocationResponse response) {
                         //dialog.dismiss();
                         if (response.responseCode == 1) {
-
                             Log.d("updateDriverLocation", "success " + response.responseCode);
 
 
@@ -641,6 +759,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                     @Override
                     public void onError(Throwable e) {
                         //  dialog.dismiss();
+
                         Log.d("updateDriverLocation", "failed " + e.toString());
                         //  Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
                     }
@@ -660,8 +779,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                         Log.d("Routeinprogress", "success ");
                         if (responseData.data != null) {
                             for (RouteInprogressResponse.Update update : responseData.data.updates) {
-                                if(update.platformType.equalsIgnoreCase("ANDRIOD")){
-                                   String appCloudVersion=update.appVersion.replace(".","");
+                                if (update.platformType.equalsIgnoreCase("ANDRIOD")) {
+                                    String appCloudVersion = update.appVersion.replace(".", "");
                                     int appVersion = Integer.parseInt(appCloudVersion);
                                     if (appVersion > version) {
                                         boolean forceUpdate = false;
@@ -686,8 +805,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
 
                             }
-                        }
-                        else{
+                        } else {
                             updateDriverStatus(false);
                         }
                     }
@@ -721,7 +839,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                 Log.d("getRouteCall", "success " + routeId);
 
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().getRoutes(routeId,true,true,true)
+                RetrofitClient.getAPIClient().getRoutes(routeId, true, true, true)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<GetRoutesResponse>() {
@@ -729,19 +847,19 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                             public void onSuccess(GetRoutesResponse responseData) {
                                 Log.d("getRouteCall", "success " + responseData.toString());
 
-                                if (responseData.responseCode == 1&& responseData.data!=null && responseData.data.size()>0 && responseData.data.get(0).routeSteps!=null && responseData.data.get(0).routeSteps.size()>0) {
-                                    retries=0;
+                                if (responseData.responseCode == 1 && responseData.data != null && responseData.data.size() > 0 && responseData.data.get(0).routeSteps != null && responseData.data.get(0).routeSteps.size() > 0) {
+                                    retries = 0;
                                     if (!responseData.data.get(0).routeStatus.equalsIgnoreCase("Completed") && responseData.data.get(0).routeSteps.get(0).orders.size() > 0) {
                                         response = responseData;
                                         if (rideInfoDto == null) {
                                             rideInfoDto = new RideInfoDto();
                                         }
                                         DecimalFormat df = new DecimalFormat("0.00");
-                                        double outboundDistance = Helper.round((responseData.data.get(0).outboundDistance *0.000621371),2);
-                                        double inboundDistance = Helper.round((responseData.data.get(0).inboundDistance *0.000621371),2);
-                                        Log.d("getRouteCall", "outboundDistance " + outboundDistance+" inboundDistance"+inboundDistance);
-                                        double totalAmount=Helper.round((responseData.data.get(0).outboundPricePerMile*outboundDistance)+(responseData.data.get(0).inboundPricePerMile*inboundDistance),2);
-                                        Log.d("getRouteCall", "outboundprice " + responseData.data.get(0).outboundPricePerMile+" inboundPrice"+responseData.data.get(0).inboundPricePerMile+" totalAmount"+totalAmount);
+                                        double outboundDistance = Helper.round((responseData.data.get(0).outboundDistance * 0.000621371), 2);
+                                        double inboundDistance = Helper.round((responseData.data.get(0).inboundDistance * 0.000621371), 2);
+                                        Log.d("getRouteCall", "outboundDistance " + outboundDistance + " inboundDistance" + inboundDistance);
+                                        double totalAmount = Helper.round((responseData.data.get(0).outboundPricePerMile * outboundDistance) + (responseData.data.get(0).inboundPricePerMile * inboundDistance), 2);
+                                        Log.d("getRouteCall", "outboundprice " + responseData.data.get(0).outboundPricePerMile + " inboundPrice" + responseData.data.get(0).inboundPricePerMile + " totalAmount" + totalAmount);
 //                                        double totalDistance = responseData.data.distance + responseData.data.returnTripDistance;
 //                                        double totalDuration = responseData.data.duration + responseData.data.returnTripDuration;
                                         double totalDistance = responseData.data.get(0).outboundDistance;
@@ -782,7 +900,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                             activityDashboardBinding.appBarMain.contentMain.llRideinprogress.setVisibility(View.VISIBLE);
 
                                         }
-                                       // checkRide();
+                                        // checkRide();
                                     } else {
 
                                         Preferences.getInstance().setString("rideInfoDto", "");
@@ -795,7 +913,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                             if (getSupportFragmentManager() != null) {
                                                 getSupportFragmentManager().popBackStack();
                                             }
-                                        } catch(IllegalStateException ex) {
+                                        } catch (IllegalStateException ex) {
 
                                         }
                                         Log.d("getRouteCall", "fail " + responseData.toString());
@@ -810,44 +928,42 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                     if (getSupportFragmentManager() != null) {
                                         getSupportFragmentManager().popBackStack();
                                     }
-                                } catch(IllegalStateException ex) {
+                                } catch (IllegalStateException ex) {
 
                                 }
-                                if(retries<3) {
+                                if (retries < 3) {
                                     final Handler handler = new Handler(Looper.getMainLooper());
                                     handler.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
                                             retries++;
-                                            Log.d("getRouteCall", "retrying " +retries);
-                                            getRouteDetails(routeId,isRide,isRouteUpdated,isDriverAssigned);
+                                            Log.d("getRouteCall", "retrying " + retries);
+                                            getRouteDetails(routeId, isRide, isRouteUpdated, isDriverAssigned);
                                         }
                                     }, 5000);
-                                }
-                                else{
-                                    Log.d("getRouteCall", "retrying finished" +retries);
-                                    retries=0;
+                                } else {
+                                    Log.d("getRouteCall", "retrying finished" + retries);
+                                    retries = 0;
                                 }
                                 Log.d("getRouteCall", "failed " + e.toString());
                                 Toast.makeText(getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
                             }
                         });
             } else {
-                if(retries<3) {
+                if (retries < 3) {
 
                     final Handler handler = new Handler(Looper.getMainLooper());
                     handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             retries++;
-                            Log.d("getRouteCall", "retrying " +retries);
-                            getRouteDetails(routeId,isRide,isRouteUpdated,isDriverAssigned);
+                            Log.d("getRouteCall", "retrying " + retries);
+                            getRouteDetails(routeId, isRide, isRouteUpdated, isDriverAssigned);
                         }
                     }, 5000);
-                }
-                else{
-                    Log.d("getRouteCall", "retrying finished" +retries);
-                    retries=0;
+                } else {
+                    Log.d("getRouteCall", "retrying finished" + retries);
+                    retries = 0;
                 }
                 Toast.makeText(getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
 
@@ -928,9 +1044,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             if (!rideInfoString.equalsIgnoreCase("") && force) {
 
                 checkRide();
-            }
-            else {
-             if (LoggedInUser.getInstance().isOnline) {
+            } else {
+                if (LoggedInUser.getInstance().isOnline) {
                     status = "Active";
                 } else {
                     status = "Inactive";

@@ -24,7 +24,7 @@
             android:clipToPadding="false"
             app:headerLayout="@layout/nav_header_main"
             android:background="@color/white"
-            android:paddingBottom="96dp"
+            android:paddingBottom="40dp"
             app:itemTextAppearance="@style/RobotoTextViewStyle"
             app:itemTextColor="#006CD6"
 
@@ -32,9 +32,9 @@
             <TextView
                 android:id="@+id/txtAppversion"
                 android:layout_width="match_parent"
-                android:layout_height="96dp"
+                android:layout_height="40dp"
                 android:layout_gravity="bottom"
-                android:layout_marginBottom="-96dp"
+                android:layout_marginBottom="-40dp"
                 android:textColor="@color/labelblue"
                 android:background="@color/white"
                 android:gravity="center"

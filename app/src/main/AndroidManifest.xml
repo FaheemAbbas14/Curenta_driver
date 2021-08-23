@@ -31,7 +31,7 @@
         android:supportsRtl="true"
         android:usesCleartextTraffic="true"
         android:requestLegacyExternalStorage="true"
-
+        android:hardwareAccelerated="false"
         android:theme="@style/Theme.Curenta">
 
         <activity

@@ -7,8 +7,10 @@ import com.curenta.driver.retrofit.apiDTO.AcceptRideResponse;
 import com.curenta.driver.retrofit.apiDTO.CancelRouteResponse;
 import com.curenta.driver.retrofit.apiDTO.ChangePasswordResponse;
 import com.curenta.driver.retrofit.apiDTO.CheckEmailResponse;
+import com.curenta.driver.retrofit.apiDTO.CheckResponse;
 import com.curenta.driver.retrofit.apiDTO.ConfirmDeliveryResponse;
 import com.curenta.driver.retrofit.apiDTO.ConfirmOrderResponse;
+import com.curenta.driver.retrofit.apiDTO.CrashReportResponse;
 import com.curenta.driver.retrofit.apiDTO.DriverAPIResponse;
 import com.curenta.driver.retrofit.apiDTO.EarningAPIResponse;
 import com.curenta.driver.retrofit.apiDTO.GetRouteResponse;
@@ -153,4 +155,20 @@ public interface IClientAPI {
                                         @Query("PickupAddress") boolean PickupAddress,
                                         @Query("Order") boolean Order,
                                         @Query("RouteStep") boolean RouteStep);
+
+    @Multipart
+    @POST("/api/CrashReport")
+    Single<CrashReportResponse> sendCrashReport(@Part MultipartBody.Part[] DriverPhotos,
+                                                @Part("Title") RequestBody Title,
+                                                @Part("Message") RequestBody Message,
+                                                @Part("DriverId") RequestBody DriverId,
+                                                @Part("RouteId") RequestBody RouteId,
+                                                @Part("OrderId") RequestBody OrderId,
+                                                @Part("PlatformType") RequestBody PlatformType);
+    @Headers("Content-Type: application/json")
+    @POST("/api/Driver/DriverCheckIn")
+    Single<CheckResponse> checkin(@Body String userString);
+    @Headers("Content-Type: application/json")
+    @POST("/api/Driver/DriverCheckOut")
+    Single<CheckResponse> checkout(@Body String userString);
 }
