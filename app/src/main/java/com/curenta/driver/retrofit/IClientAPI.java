@@ -13,6 +13,8 @@ import com.curenta.driver.retrofit.apiDTO.ConfirmOrderResponse;
 import com.curenta.driver.retrofit.apiDTO.CrashReportResponse;
 import com.curenta.driver.retrofit.apiDTO.DriverAPIResponse;
 import com.curenta.driver.retrofit.apiDTO.EarningAPIResponse;
+import com.curenta.driver.retrofit.apiDTO.GetFacilityDetails;
+import com.curenta.driver.retrofit.apiDTO.GetPatientDetailResponse;
 import com.curenta.driver.retrofit.apiDTO.GetRouteResponse;
 import com.curenta.driver.retrofit.apiDTO.GetRoutesResponse;
 import com.curenta.driver.retrofit.apiDTO.OTPResponse;
@@ -171,4 +173,9 @@ public interface IClientAPI {
     @Headers("Content-Type: application/json")
     @POST("/api/Driver/DriverCheckOut")
     Single<CheckResponse> checkout(@Body String userString);
+
+    @GET("api/Patient/GetPatientById/{patientid}")
+    Single<GetPatientDetailResponse> getPatientDetails(@Path("patientid") int patientid);
+    @GET("Facilities/{facilityid}")
+    Single<GetFacilityDetails> getFacilityDetails(@Path("facilityid") int facilityid);
 }

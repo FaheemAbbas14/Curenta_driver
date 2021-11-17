@@ -73,6 +73,7 @@ import com.curenta.driver.utilities.GPSTracker;
 import com.curenta.driver.utilities.Helper;
 import com.curenta.driver.utilities.InternetChecker;
 import com.curenta.driver.utilities.Preferences;
+import com.curenta.driver.utilities.Utility;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -128,7 +129,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         MainApplication app = (MainApplication) getApplication();
         locationSocket = app.getLocationSocket();
 
-
+        boolean result = Utility.checkCallPermission(DashboardActivity.this);
         notificationSocket = app.getNotificationSocket();
 
         if (locationSocket.connected()) {
@@ -192,8 +193,9 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             }
 
         }
+
         boolean isCheckedIn = Preferences.getInstance().getBoolean("checkin", false);
-      setCheckStatus(isCheckedIn);
+        setCheckStatus(isCheckedIn);
 
         activityDashboardBinding.appBarMain.contentMain.chStatus.setChecked(isCheckedIn);
         activityDashboardBinding.appBarMain.contentMain.chStatus.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -208,7 +210,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                     checkOutCall();
                     setCheckStatus(isChecked);
                 }
-             
+
             }
         });
         activityDashboardBinding.appBarMain.contentMain.fab.setOnClickListener(new View.OnClickListener() {
@@ -306,11 +308,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     }
 
     private void setCheckStatus(boolean isCheckedIn) {
-        if(isCheckedIn){
+        if (isCheckedIn) {
             activityDashboardBinding.appBarMain.contentMain.txtCheckin.setTextColor(getResources().getColor(R.color.labelblue));
             activityDashboardBinding.appBarMain.contentMain.txtchecout.setTextColor(getResources().getColor(R.color.labelgrey));
-        }
-        else{
+        } else {
             activityDashboardBinding.appBarMain.contentMain.txtCheckin.setTextColor(getResources().getColor(R.color.labelgrey));
             activityDashboardBinding.appBarMain.contentMain.txtchecout.setTextColor(getResources().getColor(R.color.labelblue));
         }
@@ -512,8 +513,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
     @SuppressLint("ResourceType")
     public void checkOnline() {
-
-        if (LoggedInUser.getInstance().isOnline) {
+        LoggedInUser loggedInUser = LoggedInUser.getInstance();
+        if (loggedInUser.isOnline) {
             MainApplication.enableNotifications();
             activityDashboardBinding.appBarMain.contentMain.llonline.setVisibility(View.VISIBLE);
             activityDashboardBinding.appBarMain.contentMain.llactionrequired.setVisibility(View.GONE);
@@ -531,7 +532,10 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             activityDashboardBinding.appBarMain.contentMain.lltakephoto.setVisibility(View.VISIBLE);
             activityDashboardBinding.appBarMain.contentMain.llStatus.setBackgroundResource(R.drawable.round_grey_button);
             activityDashboardBinding.appBarMain.contentMain.circularProgress.setVisibility(View.INVISIBLE);
-            activityDashboardBinding.appBarMain.contentMain.llCheckin.setVisibility(View.VISIBLE);
+            if (loggedInUser.driverType.equals("Permanent")) {
+                activityDashboardBinding.appBarMain.contentMain.llCheckin.setVisibility(View.VISIBLE);
+
+            }
             activityDashboardBinding.appBarMain.contentMain.fab.setBackgroundResource(R.drawable.whitecircle);
         }
     }

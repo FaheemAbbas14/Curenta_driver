@@ -6,14 +6,14 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     defaultConfig {
         applicationId "com.curenta.driver"
         minSdkVersion 19
         targetSdkVersion 29
-        versionCode 37
-        versionName "1.4.0"
+        versionCode 42
+        versionName "1.4.4"
         manifestPlaceholders = [manifestApplicationId          : "${applicationId}",
                                 onesignal_app_id               : "0782162b-2e6e-4ebb-9825-af0af68eadeb",
                                 onesignal_google_project_number: "1089148107134"]
@@ -41,6 +41,9 @@ android {
             buildConfigField "String", "locationSocketIOPath", '"https://curentadispatcher.azurewebsites.net/DriverLocationTrackingHub"'
             buildConfigField "String", "notificationSocketIOPath", '"https://curentaordertriaging.azurewebsites.net/notificationHub"'
             buildConfigField "String", "onesignalappkey", '"7e69dde1-ec2b-4a2d-9bfc-fd4b1fc86fa6"'
+            buildConfigField "String", "curentaPatientUrl", '"https://curentapatients.azurewebsites.net/"'
+            buildConfigField "String", "curentaFacilityUrl", '"https://curentafacility.azurewebsites.net/"'
+
         }
         debug {
             //prod url
@@ -54,9 +57,12 @@ android {
             buildConfigField "String", "logindevURL", '"https://curentadispatcher-tests.azurewebsites.net/"'
             buildConfigField "String", "curentaordertriagingURL", '"https://curentaordertriaging-v3.azurewebsites.net/"'
             buildConfigField "String", "curentadispatcherURL", '"https://curentadispatcher-tests.azurewebsites.net/"'
+            buildConfigField "String", "curentaPatientUrl", '"https://curentapatients-tests.azurewebsites.net/"'
+            buildConfigField "String", "curentadispatcherURL", '"https://curentapatients-tests.azurewebsites.net/"'
             buildConfigField "String", "locationSocketIOPath", '"https://curentadispatcher-tests.azurewebsites.net/DriverLocationTrackingHub"'
             buildConfigField "String", "notificationSocketIOPath", '"https://curentaordertriaging-test.azurewebsites.net/notificationHub"'
             buildConfigField "String", "onesignalappkey", '"e9f872cd-421e-4ea6-b08a-5f9e35289f1e"'
+            buildConfigField "String", "curentaFacilityUrl", '"https://curentafacility-test.azurewebsites.net/"'
         }
     }
     compileOptions {

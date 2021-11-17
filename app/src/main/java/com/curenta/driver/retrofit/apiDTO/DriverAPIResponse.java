@@ -42,5 +42,6 @@ public class DriverAPIResponse {
         public Object fcmToken;
         public Object driverStatus;
         public Object driverSelfie;
+        public String driverType;
     }
 }

@@ -11,9 +11,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
 
-        android:background="#F1F2F1"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
+        android:background="#F1F2F1"
         android:orientation="vertical">
 
         <androidx.appcompat.widget.LinearLayoutCompat
@@ -25,9 +25,9 @@
                 android:id="@+id/heading"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_marginLeft="10dp"
                 android:fontFamily="@font/archivobold"
                 android:gravity="center"
-                android:layout_marginLeft="10dp"
                 android:text="Go to Pharmacy"
                 android:textColor="@color/labellightgrey"
                 android:textSize="18sp">
@@ -44,70 +44,99 @@
 
             </ImageView>
         </androidx.appcompat.widget.LinearLayoutCompat>
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/patientName"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:layout_marginLeft="10dp"
             android:fontFamily="@font/archivobold"
             android:gravity="center"
-            android:layout_marginLeft="10dp"
             android:text="Patient Name"
             android:textColor="@color/labelblue"
             android:textSize="15sp">
 
         </androidx.appcompat.widget.AppCompatTextView>
+
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/txtDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/archivoregular"
             android:layout_marginLeft="10dp"
-            android:gravity="center|left"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="10dp"
+            android:fontFamily="@font/archivoregular"
+            android:gravity="center|left"
             android:text="Lorem Ipsum is simply dummy text of the.Lorem Ipsum is simply dummy text "
             android:textColor="@color/labelgrey"
             android:textSize="13sp"></androidx.appcompat.widget.AppCompatTextView>
 
 
     </LinearLayout>
+
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:weightSum="10"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="10">
+
         <Button
             android:id="@+id/btnAction"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:layout_weight="5"
+            android:layout_marginLeft="10dp"
 
             android:layout_marginTop="5dp"
+            android:layout_weight="4"
             android:background="@drawable/blue_rounded"
             android:fontFamily="@font/archivobold"
-            android:layout_marginLeft="10dp"
             android:text="Order Pickup"
             android:textColor="@color/white" />
+
         <TextView
             android:id="@+id/txtCancelOrder"
             android:layout_width="0dp"
-            android:layout_weight="5"
-            android:layout_height="30dp"
-            android:gravity="center"
-            android:layout_marginTop="10dp"
-            android:fontFamily="@font/archivoregular"
+            android:layout_height="match_parent"
             android:layout_marginLeft="10dp"
+            android:layout_weight="5"
             android:background="@android:color/transparent"
-            android:textColor="@color/labelblue"
-            android:text="Facing an Issue" />
+            android:fontFamily="@font/archivoregular"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:text="Facing an Issue"
+            android:textColor="@color/labelblue" />
+
+        <ImageView
+            android:id="@+id/imgCall"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:visibility="gone"
+            android:scaleType="centerCrop"
+            android:src="@drawable/call_icon">
+
+        </ImageView>
+        <ImageView
+            android:id="@+id/imgMessage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="10dp"
+            android:visibility="gone"
+            android:scaleType="centerInside"
+            android:background="@drawable/blue_circle"
+            android:src="@drawable/message_icon">
+
+        </ImageView>
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
         android:background="#E0E0E0" />
 

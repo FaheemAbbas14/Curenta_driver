@@ -40,6 +40,7 @@ public class LoggedInUser {
     public String fcmToken;
     public String driverStatus;
     public String driverSelfie;
+    public String driverType;
     public boolean isOnline = false;
     public boolean isCovidPassed = false;
     public boolean isSelfie = false;
@@ -52,6 +53,46 @@ public class LoggedInUser {
         instance = new LoggedInUser();
 
 
+    }
+
+    public LoggedInUser(int driverId, String email, String fname, String lname, String password, String mobile, String dateofBirth, String gender, String street, String city, String state, String zipcode, String profileImagePath, String licenseImagePath, String carRegistrationImagePath, String carInsuranceImagePath, String hippaComplaintLetterPath, String driverLicenseNumber, String vehicleModel, String vehiclecolor, String socialsecurityNumber, String bankname, String accountnumber, String routingnumber, double longitude, double latitude, double userIdRef, String createDate, String updateDate, String createdBy, String fcmToken, String driverStatus, String driverSelfie, String driverType, boolean isOnline, boolean isCovidPassed, boolean isSelfie) {
+        this.driverId = driverId;
+        this.email = email;
+        this.fname = fname;
+        this.lname = lname;
+        this.password = password;
+        this.mobile = mobile;
+        this.dateofBirth = dateofBirth;
+        this.gender = gender;
+        this.street = street;
+        this.city = city;
+        this.state = state;
+        this.zipcode = zipcode;
+        this.profileImagePath = profileImagePath;
+        this.licenseImagePath = licenseImagePath;
+        this.carRegistrationImagePath = carRegistrationImagePath;
+        this.carInsuranceImagePath = carInsuranceImagePath;
+        this.hippaComplaintLetterPath = hippaComplaintLetterPath;
+        this.driverLicenseNumber = driverLicenseNumber;
+        this.vehicleModel = vehicleModel;
+        this.vehiclecolor = vehiclecolor;
+        this.socialsecurityNumber = socialsecurityNumber;
+        this.bankname = bankname;
+        this.accountnumber = accountnumber;
+        this.routingnumber = routingnumber;
+        this.longitude = longitude;
+        this.latitude = latitude;
+        this.userIdRef = userIdRef;
+        this.createDate = createDate;
+        this.updateDate = updateDate;
+        this.createdBy = createdBy;
+        this.fcmToken = fcmToken;
+        this.driverStatus = driverStatus;
+        this.driverSelfie = driverSelfie;
+        this.driverType = driverType;
+        this.isOnline = isOnline;
+        this.isCovidPassed = isCovidPassed;
+        this.isSelfie = isSelfie;
     }
 
     public LoggedInUser(int driverId, String email, String fname, String lname, String password, String mobile, String dateofBirth, String gender, String street, String city, String state, String zipcode, String profileImagePath, String licenseImagePath, String carRegistrationImagePath, String carInsuranceImagePath, String hippaComplaintLetterPath, String driverLicenseNumber, String vehicleModel, String vehiclecolor, String socialsecurityNumber, String bankname, String accountnumber, String routingnumber, double longitude, double latitude, double userIdRef, String createDate, String updateDate, String createdBy, String fcmToken, String driverStatus, String driverSelfie) {
@@ -88,6 +129,7 @@ public class LoggedInUser {
         this.fcmToken = fcmToken;
         this.driverStatus = driverStatus;
         this.driverSelfie = driverSelfie;
+
     }
 
     public static LoggedInUser getInstance() {
@@ -132,7 +174,7 @@ public class LoggedInUser {
         this.fcmToken = loggedInUser.fcmToken;
         this.driverStatus = loggedInUser.driverStatus;
         this.driverSelfie = loggedInUser.driverSelfie;
-
+        this.driverType = loggedInUser.driverType;
     }
 
     public void copyData(DriverAPIResponse.Data data) {
@@ -169,5 +211,6 @@ public class LoggedInUser {
         this.fcmToken = (String) data.fcmToken;
         this.driverStatus = (String) data.driverStatus;
         this.driverSelfie = (String) data.driverSelfie;
+        this.driverType = data.driverType;
     }
 }

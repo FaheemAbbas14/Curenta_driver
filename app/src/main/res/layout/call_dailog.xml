@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+
+        android:layout_height="match_parent">
+
+
+        <ImageView
+            android:id="@+id/imgCross"
+            android:layout_width="25dp"
+            android:layout_height="0dp"
+            android:src="@drawable/bluecross"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <LinearLayout
+            android:id="@+id/llcontent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/white_rounded"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgCross">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/white_rounded"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/labellightgrey" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+
+                <TextView
+                    android:id="@+id/txtCallFacility"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:fontFamily="@font/archivobold"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:text="Call the facility"
+                    android:textColor="@color/labelblue"
+                    android:textSize="15sp" />
+
+
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/labellightgrey" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+
+                <TextView
+                    android:id="@+id/txtCallCustomer"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+
+                    android:fontFamily="@font/archivobold"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:text="Call Patient"
+                    android:textColor="@color/labelblue"
+                    android:textSize="15sp" />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/call_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imgCross" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
