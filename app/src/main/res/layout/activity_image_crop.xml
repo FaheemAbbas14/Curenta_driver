@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="100dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <!--Here the selected cropped image will be shown-->
+        <ImageView
+            android:id="@+id/set_profile_image"
+            android:layout_width="300dp"
+            android:layout_height="300dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:src="@drawable/addphoto" />
+
+        <!--Here we are clicking on this text to select
+            an image from camera or gallery-->
+        <Button
+            android:id="@+id/btnSubmit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/grey_rounded"
+            android:fontFamily="@font/archivobold"
+            android:gravity="center"
+            android:text="Submit"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+</layout>

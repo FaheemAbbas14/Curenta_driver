@@ -211,8 +211,8 @@ public class RideDetailListAdapter extends SectioningAdapter {
         getPatient(item.patientId,item.facilityId);
     }
     void onMessageClick(Order item, int sectionIndex) {
-        ChatFragment chatFragment=new ChatFragment();
-        FragmentUtils.getInstance().addFragment(context, chatFragment, R.id.fragContainer);
+//        ChatFragment chatFragment=new ChatFragment();
+//        FragmentUtils.getInstance().addFragment(context, chatFragment, R.id.fragContainer);
 
     }
     public LatLng getLocationFromAddress(Context context, double latitude, double longitude) {
@@ -325,7 +325,7 @@ public class RideDetailListAdapter extends SectioningAdapter {
             ivh.call.setEnabled(true);
             ivh.message.setEnabled(true);
             ivh.call.setVisibility(View.VISIBLE);
-            ivh.message.setVisibility(View.VISIBLE);
+            ivh.message.setVisibility(View.INVISIBLE);
         }
         if (s.items.get(itemIndex).isCompleted) {
             if (itemIndex == 0) {

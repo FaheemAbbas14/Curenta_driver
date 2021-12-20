@@ -1,6 +1,12 @@
 package com.curenta.driver.dto;
 
 import android.content.ContextWrapper;
+import android.graphics.Bitmap;
+import android.net.Uri;
+
+import androidx.collection.ArraySet;
+
+import java.util.ArrayList;
 
 public class AppElement {
     public static String logindevURL = "https://curentadispatcher-tests.azurewebsites.net/";
@@ -21,4 +27,6 @@ public class AppElement {
     public static String durationtxt = "";
     public static String pharmacyContact;
     public static String patientContact;
+    public static ArrayList<Bitmap> images= new ArrayList<>();
+    public static ArrayList<Uri> imagesURIs=new ArrayList<>();
 }

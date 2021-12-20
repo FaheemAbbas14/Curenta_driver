@@ -187,7 +187,7 @@ public class FragmentEarningSimpleLIst extends Fragment {
                                     } else {
                                         fragmentEarningSimpleLIstBinding.recyclerView.setVisibility(View.INVISIBLE);
                                         fragmentEarningSimpleLIstBinding.txtAmount.setText("$0.0");
-                                        Toast.makeText(getActivity().getApplicationContext(), "No earnings", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getActivity(), "No earnings", Toast.LENGTH_SHORT).show();
 
                                     }
 

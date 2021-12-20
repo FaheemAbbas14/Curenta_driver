@@ -1,14 +1,12 @@
 package com.curenta.driver;
 
+import android.Manifest;
 import android.annotation.TargetApi;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
@@ -25,8 +23,6 @@ import com.curenta.driver.utilities.GPSTracker;
 import com.curenta.driver.utilities.Helper;
 import com.curenta.driver.utilities.Utility;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
-
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding activityMainBinding;
@@ -63,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this, android.Manifest.permission.READ_PHONE_STATE)) {
-                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(getApplicationContext());
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainActivity.this);
                     alertBuilder.setCancelable(true);
                     alertBuilder.setTitle("Permission necessary");
                     alertBuilder.setMessage("Phone permission is required to get device identification number");
@@ -86,10 +82,10 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("deviceid", deviceId);
                 GPSTracker gpsTracker = new GPSTracker(MainActivity.this, null);
                 initGPS();
+                checkCameraPermission();
             }
-        }
-        catch (Exception e){
-            Toast.makeText(MainActivity.this,"Error while reading device id ",Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            Toast.makeText(MainActivity.this, "Error while reading device id ", Toast.LENGTH_SHORT).show();
             FirebaseCrashlytics.getInstance().recordException(e);
         }
     }
@@ -98,7 +94,20 @@ public class MainActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case 101:
-                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    deviceId();
+                    Utility.checkPermission(MainActivity.this);
+
+                }
+                break;
+            case 102:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    deviceId();
+                    Utility.checkPermission(MainActivity.this);
+                    checkContactPermission();
+                }
+            case 103:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     deviceId();
                     Utility.checkPermission(MainActivity.this);
 
@@ -120,5 +129,25 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void checkCameraPermission() {
+        try {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.CAMERA}, 102);
+            }
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().recordException(e);
+            e.printStackTrace();
+        }
+    }
 
+    public void checkContactPermission() {
+        try {
+            if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.READ_CONTACTS}, 103);
+            }
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().recordException(e);
+            e.printStackTrace();
+        }
+    }
 }
