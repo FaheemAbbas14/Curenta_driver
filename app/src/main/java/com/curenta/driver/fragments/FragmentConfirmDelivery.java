@@ -5,6 +5,7 @@ import static android.app.Activity.RESULT_OK;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -34,13 +35,13 @@ import com.curenta.driver.R;
 import com.curenta.driver.adaptors.ImageAdapter;
 import com.curenta.driver.adaptors.RideDetailListAdapter;
 import com.curenta.driver.databinding.FragmentConfirmDeliveryBinding;
-import com.curenta.driver.dto.AppElement;
 import com.curenta.driver.dto.ImageModel;
 import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.ConfirmDeliveryResponse;
 import com.curenta.driver.retrofit.apiDTO.ConfirmOrderResponse;
+import com.curenta.driver.utilities.CompressFile;
 import com.curenta.driver.utilities.FileUtils;
 import com.curenta.driver.utilities.FragmentUtils;
 import com.curenta.driver.utilities.InternetChecker;
@@ -51,15 +52,12 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.yalantis.ucrop.UCrop;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -93,7 +91,8 @@ public class FragmentConfirmDelivery extends Fragment {
     public static final int ONLY_CAMERA_REQUEST_CODE = 612;
     public static final int ONLY_STORAGE_REQUEST_CODE = 613;
     private String currentPhotoPath = "";
-
+    String imageFileName;
+    File file;
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentConfirmDeliveryBinding = DataBindingUtil.inflate(
@@ -189,7 +188,7 @@ public class FragmentConfirmDelivery extends Fragment {
     }
 
     private File getImageFile() throws IOException {
-        String imageFileName = "JPEG_" + System.currentTimeMillis() + "_";
+        imageFileName = "JPEG_" + System.currentTimeMillis() + "_";
         File storageDir = new File(
                 Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_DCIM
@@ -200,7 +199,7 @@ public class FragmentConfirmDelivery extends Fragment {
             System.out.println("File exists");
         else
             System.out.println("File not exists");
-        File file = File.createTempFile(
+       file = File.createTempFile(
                 imageFileName, ".jpg", storageDir
         );
         currentPhotoPath = "file:" + file.getAbsolutePath();
@@ -209,11 +208,24 @@ public class FragmentConfirmDelivery extends Fragment {
 
     private void openCropActivity(Uri sourceUri, Uri destinationUri) {
         UCrop.Options options = new UCrop.Options();
-        options.setCircleDimmedLayer(true);
+        options.setCompressionFormat(Bitmap.CompressFormat.JPEG);
+        options.setCompressionQuality(100);
+        options.setMaxBitmapSize(1000);
         options.setCropFrameColor(ContextCompat.getColor(getActivity(), R.color.labelblue));
+        options.setFreeStyleCropEnabled(true);
+//        options.setAllowedGestures(
+//                UCropActivity.ALL, // When 'scale'-tab active
+//                UCropActivity.ALL, // When 'rotate'-tab active
+//                UCropActivity.ALL  // When 'aspect ratio'-tab active
+//        );
+//        options.setAspectRatioOptions(1,
+//                new AspectRatio("WOW", 1, 2),
+//                new AspectRatio("MUCH", 3, 4),
+//                new AspectRatio("RATIO", CropImageView.DEFAULT_ASPECT_RATIO, CropImageView.DEFAULT_ASPECT_RATIO),
+//                new AspectRatio("SO", 16, 9),
+//                new AspectRatio("ASPECT", 1, 1));
         UCrop.of(sourceUri, destinationUri)
-                .withMaxResultSize(100, 100)
-                .withAspectRatio(5f, 5f)
+                .withOptions(options)
                 .start(getActivity());
     }
 
@@ -227,20 +239,19 @@ public class FragmentConfirmDelivery extends Fragment {
 //                checkReadability(bitmap);
 
             openCropActivity(uri, uri);
-        }
-    else if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
-        if (data != null) {
-            Uri uri = UCrop.getOutput(data);
-            showImage(uri);
-        }
-    }
-        else if (requestCode == PICK_IMAGE_GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+        } else if (requestCode == UCrop.REQUEST_CROP && resultCode == RESULT_OK) {
+            if (data != null) {
+                imageUri = UCrop.getOutput(data);
+                Log.d("photouri", "" + imageUri);
+                showImage(imageUri);
+            }
+        } else if (requestCode == PICK_IMAGE_GALLERY_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
             try {
                 Uri sourceUri = data.getData();
                 File file = getImageFile();
                 Uri destinationUri = Uri.fromFile(file);
                 //Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), sourceUri);
-               // checkReadability(bitmap);
+                // checkReadability(bitmap);
                 openCropActivity(sourceUri, destinationUri);
             } catch (Exception e) {
                 Toast.makeText(getActivity(), "Please select different  picture.", Toast.LENGTH_SHORT)
@@ -249,6 +260,7 @@ public class FragmentConfirmDelivery extends Fragment {
             }
         }
     }
+
 
     private void openImagesDocument() {
         Intent pictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -261,19 +273,30 @@ public class FragmentConfirmDelivery extends Fragment {
         startActivityForResult(Intent.createChooser(pictureIntent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);
     }
 
-    private void showImage(Uri imageUri) {
+    private void showImage(Uri imageUritemp) {
         try {
-            File file;
+            File newfile;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-                file = FileUtils.getFile(getActivity(), imageUri);
+                newfile = FileUtils.getFile(getActivity(), imageUritemp);
             } else {
-                file = new File(currentPhotoPath);
+                newfile = new File(currentPhotoPath);
             }
+            long length = newfile.length();
+            length = length / 1024;
+            Log.d("filesize", "" + length);
+            if(length>800){
+                newfile= CompressFile.getCompressedImageFile(newfile,getContext());
+                length = newfile.length();
+                length = length / 1024;
+                Log.d("filesize modified", "" + length);
+            }
+
             InputStream inputStream = new FileInputStream(file);
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
             checkReadability(bitmap);
 
         } catch (Exception e) {
+            e.printStackTrace();
             Toast.makeText(getActivity(), "Please select different  picture.", Toast.LENGTH_SHORT)
                     .show();
 
@@ -312,30 +335,7 @@ public class FragmentConfirmDelivery extends Fragment {
                 } else {
                     Toast.makeText(getActivity(), "readable image", Toast.LENGTH_SHORT)
                             .show();
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    byte[] byteArray = stream.toByteArray();
-                    bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
-                            byteArray.length);
 
-                    File directory = AppElement.cw.getDir("imageDir", Context.MODE_PRIVATE);
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HH_mm_ss");
-                    String timeStamp = dateFormat.format(new Date());
-                    String imageFileName = "picture_" + timeStamp + ".jpg";
-                    File newFile = new File(directory, imageFileName);
-                    imageUri = Uri.fromFile(newFile);
-                    if (!newFile.exists()) {
-                        Log.d("path", newFile.toString());
-                        FileOutputStream fos = null;
-                        try {
-                            fos = new FileOutputStream(newFile);
-                            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                            fos.flush();
-                            fos.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
                     //add in array list
                     images.add(bitmap);
                     imagesURIs.add(imageUri);
@@ -402,6 +402,15 @@ public class FragmentConfirmDelivery extends Fragment {
                 MultipartBody.Part[] pics = new MultipartBody.Part[images.size()];
                 for (int i = 0; i < images.size(); i++) {
                     File ConfirmDeliveryPic = new File(imagesURIs.get(i).getPath());
+                    long length = ConfirmDeliveryPic.length();
+                    length = length / 1024;
+                    Log.d("filesize", "" + length);
+//                    if(length>800){
+//                        ConfirmDeliveryPic= CompressFile.getCompressedImageFile(ConfirmDeliveryPic,getContext());
+//                        length = ConfirmDeliveryPic.length();
+//                        length = length / 1024;
+//                        Log.d("filesize modified", "" + length);
+//                    }
                     MultipartBody.Part ConfirmDeliveryImage = MultipartBody.Part.createFormData("ConfirmOrderImage", ConfirmDeliveryPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
                             ConfirmDeliveryPic));
                     pics[i] = ConfirmDeliveryImage;
