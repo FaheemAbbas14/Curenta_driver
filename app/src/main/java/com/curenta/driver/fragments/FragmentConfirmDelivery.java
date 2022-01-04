@@ -4,8 +4,6 @@ import static android.app.Activity.RESULT_OK;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -45,6 +43,7 @@ import com.curenta.driver.utilities.CompressFile;
 import com.curenta.driver.utilities.FileUtils;
 import com.curenta.driver.utilities.FragmentUtils;
 import com.curenta.driver.utilities.InternetChecker;
+import com.curenta.driver.utilities.Utility;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.Text;
 import com.google.android.gms.vision.text.TextBlock;
@@ -54,7 +53,6 @@ import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -93,6 +91,7 @@ public class FragmentConfirmDelivery extends Fragment {
     private String currentPhotoPath = "";
     String imageFileName;
     File file;
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentConfirmDeliveryBinding = DataBindingUtil.inflate(
@@ -168,23 +167,28 @@ public class FragmentConfirmDelivery extends Fragment {
     }
 
     private void openCamera() {
-        Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        File file;
-        try {
-            file = getImageFile(); // 1
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getActivity(), "Please take another image", Toast.LENGTH_SHORT).show();
+        boolean cameraPermission= Utility.checkCameraPermission(getContext());
+        boolean storagePermission= Utility.checkPermission(getContext());
+        boolean writePermission= Utility.checkWritePermission(getContext());
+        if(cameraPermission && storagePermission && writePermission) {
+            Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            File file;
+            try {
+                file = getImageFile(); // 1
+            } catch (Exception e) {
+                e.printStackTrace();
+                Toast.makeText(getActivity(), "Please take another image", Toast.LENGTH_SHORT).show();
 
-            return;
+                return;
+            }
+            Uri uri;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) // 2
+                uri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID.concat(".provider"), file);
+            else
+                uri = Uri.fromFile(file); // 3
+            pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri); // 4
+            startActivityForResult(pictureIntent, CAMERA_ACTION_PICK_REQUEST_CODE);
         }
-        Uri uri;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) // 2
-            uri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID.concat(".provider"), file);
-        else
-            uri = Uri.fromFile(file); // 3
-        pictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri); // 4
-        startActivityForResult(pictureIntent, CAMERA_ACTION_PICK_REQUEST_CODE);
     }
 
     private File getImageFile() throws IOException {
@@ -199,7 +203,7 @@ public class FragmentConfirmDelivery extends Fragment {
             System.out.println("File exists");
         else
             System.out.println("File not exists");
-       file = File.createTempFile(
+        file = File.createTempFile(
                 imageFileName, ".jpg", storageDir
         );
         currentPhotoPath = "file:" + file.getAbsolutePath();
@@ -263,14 +267,20 @@ public class FragmentConfirmDelivery extends Fragment {
 
 
     private void openImagesDocument() {
-        Intent pictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
-        pictureIntent.setType("image/*");
-        pictureIntent.addCategory(Intent.CATEGORY_OPENABLE);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            String[] mimeTypes = new String[]{"image/jpeg", "image/png"};
-            pictureIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+        boolean cameraPermission= Utility.checkCameraPermission(getContext());
+        boolean storagePermission= Utility.checkPermission(getContext());
+        boolean writePermission= Utility.checkWritePermission(getContext());
+        if(cameraPermission && storagePermission && writePermission) {
+            Intent pictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
+            pictureIntent.setType("image/*");
+            pictureIntent.addCategory(Intent.CATEGORY_OPENABLE);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                String[] mimeTypes = new String[]{"image/jpeg", "image/png"};
+                pictureIntent.putExtra(Intent.EXTRA_MIME_TYPES, mimeTypes);
+            }
+            startActivityForResult(Intent.createChooser(pictureIntent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);
+
         }
-        startActivityForResult(Intent.createChooser(pictureIntent, "Select Picture"), PICK_IMAGE_GALLERY_REQUEST_CODE);
     }
 
     private void showImage(Uri imageUritemp) {
@@ -284,8 +294,8 @@ public class FragmentConfirmDelivery extends Fragment {
             long length = newfile.length();
             length = length / 1024;
             Log.d("filesize", "" + length);
-            if(length>800){
-                newfile= CompressFile.getCompressedImageFile(newfile,getContext());
+            if (length > 800) {
+                newfile = CompressFile.getCompressedImageFile(newfile, getContext());
                 length = newfile.length();
                 length = length / 1024;
                 Log.d("filesize modified", "" + length);
@@ -321,10 +331,11 @@ public class FragmentConfirmDelivery extends Fragment {
                         lines = lines + line.getValue() + "\n";
                         for (Text element : line.getComponents()) {
                             //extract scanned text words here
-                            words = words + element.getValue() + ", ";
+                            words = words + element.getValue() + " ";
                         }
                     }
                 }
+                Log.d("readedtext", words);
                 if (textBlocks.size() == 0) {
                     new AlertDialog.Builder(getActivity())
                             .setMessage("Image is not readable , please take another photo!")
@@ -332,9 +343,18 @@ public class FragmentConfirmDelivery extends Fragment {
                             .setTitle("Blurry Image")
                             .create()
                             .show();
-                } else {
-                    Toast.makeText(getActivity(), "readable image", Toast.LENGTH_SHORT)
+                }
+                else   if (!words.contains("Curenta") || !words.contains("Total") || !words.contains("Signature required for the following")) {
+                    new AlertDialog.Builder(getActivity())
+                            .setMessage("Image is not invalid , please upload curenta receipt!")
+                            .setNeutralButton("Ok", null)
+                            .setTitle("Invalid Image")
+                            .create()
                             .show();
+                }
+                else {
+
+                    //Toast.makeText(getActivity(), "readable image", Toast.LENGTH_SHORT).show();
 
                     //add in array list
                     images.add(bitmap);

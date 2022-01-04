@@ -134,20 +134,20 @@ public class RideDetailListAdapter extends SectioningAdapter {
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            Order item = sections.get(0).items.get(adapterPosition);
-            if (v == topLayout) {
-                RideDetailListAdapter.this.onAddressClick(item, adapterPosition);
-            } else if (v == action) {
-                RideDetailListAdapter.this.onActionClicked(item, adapterPosition);
-            } else if (v == cancel) {
-                RideDetailListAdapter.this.onCancelClick(item, adapterPosition);
-            } else if (v == call) {
-                RideDetailListAdapter.this.onCallClick(item, adapterPosition);
+            if(adapterPosition>=0) {
+                Order item = sections.get(0).items.get(adapterPosition);
+                if (v == topLayout) {
+                    RideDetailListAdapter.this.onAddressClick(item, adapterPosition);
+                } else if (v == action) {
+                    RideDetailListAdapter.this.onActionClicked(item, adapterPosition);
+                } else if (v == cancel) {
+                    RideDetailListAdapter.this.onCancelClick(item, adapterPosition);
+                } else if (v == call) {
+                    RideDetailListAdapter.this.onCallClick(item, adapterPosition);
+                } else if (v == message) {
+                    RideDetailListAdapter.this.onMessageClick(item, adapterPosition);
+                }
             }
-            else if (v == message) {
-                RideDetailListAdapter.this.onMessageClick(item, adapterPosition);
-            }
-
         }
     }
 
