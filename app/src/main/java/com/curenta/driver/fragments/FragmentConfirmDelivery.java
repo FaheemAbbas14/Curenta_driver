@@ -1,5 +1,6 @@
 package com.curenta.driver.fragments;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
@@ -145,11 +147,13 @@ public class FragmentConfirmDelivery extends Fragment {
 
     private void cameraIntent() {
         boolean result = Utility.checkPermission(getContext());
-        if (result) {
+        boolean cameraPermission = Utility.checkCameraPermission(getContext());
+        if (result && cameraPermission) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent,
                     CAPTURE_PICCODE);
         }
+
 
 
     }
