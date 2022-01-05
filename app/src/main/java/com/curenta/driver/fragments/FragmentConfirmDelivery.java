@@ -2,8 +2,10 @@ package com.curenta.driver.fragments;
 
 import static android.app.Activity.RESULT_OK;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -33,6 +35,7 @@ import com.curenta.driver.R;
 import com.curenta.driver.adaptors.ImageAdapter;
 import com.curenta.driver.adaptors.RideDetailListAdapter;
 import com.curenta.driver.databinding.FragmentConfirmDeliveryBinding;
+import com.curenta.driver.dto.AppElement;
 import com.curenta.driver.dto.ImageModel;
 import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.enums.EnumPictureType;
@@ -51,11 +54,15 @@ import com.google.android.gms.vision.text.TextRecognizer;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.yalantis.ucrop.UCrop;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -147,18 +154,22 @@ public class FragmentConfirmDelivery extends Fragment {
     }
 
     private void selectImage() {
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        final CharSequence[] options = {"Take Photo with Scanner", "Choose from Gallery","Take Photo without Scanner", "Cancel"};
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
         builder.setCancelable(false);
         builder.setTitle("Upload Photo!");
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                if (options[item].equals("Take Photo")) {
+                if (options[item].equals("Take Photo with Scanner")) {
                     openCamera();
                 } else if (options[item].equals("Choose from Gallery")) {
                     openImagesDocument();
-                } else if (options[item].equals("Cancel")) {
+                }
+                else if (options[item].equals("Take Photo without Scanner")) {
+                    cameraIntent();
+                }
+                else if (options[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
             }
@@ -236,6 +247,45 @@ public class FragmentConfirmDelivery extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAPTURE_PICCODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                // imageUri = getImageUri(getContext(), bmp);
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byte[] byteArray = stream.toByteArray();
+
+
+                bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
+                        byteArray.length);
+
+                File directory = AppElement.cw.getDir("imageDir", Context.MODE_PRIVATE);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd_HH_mm_ss");
+                String timeStamp = dateFormat.format(new Date());
+                String imageFileName = "picture_" + timeStamp + ".jpg";
+                File file = new File(directory, imageFileName);
+                imageUri = Uri.fromFile(file);
+                if (!file.exists()) {
+                    Log.d("path", file.toString());
+                    FileOutputStream fos = null;
+                    try {
+                        fos = new FileOutputStream(file);
+                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                        fos.flush();
+                        fos.close();
+                    } catch (java.io.IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                //add in array list
+                images.add(bitmap);
+                imagesURIs.add(imageUri);
+                setDataAdopter();
+
+
+            }
+        }
         if (requestCode == CAMERA_ACTION_PICK_REQUEST_CODE && resultCode == RESULT_OK) {
             Uri uri = Uri.parse(currentPhotoPath);
 
@@ -264,7 +314,14 @@ public class FragmentConfirmDelivery extends Fragment {
             }
         }
     }
-
+    private void cameraIntent() {
+        boolean result = Utility.checkPermission(getContext());
+        if (result) {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(intent,
+                    CAPTURE_PICCODE);
+        }
+    }
 
     private void openImagesDocument() {
         boolean cameraPermission= Utility.checkCameraPermission(getContext());
@@ -344,9 +401,9 @@ public class FragmentConfirmDelivery extends Fragment {
                             .create()
                             .show();
                 }
-                else   if (!words.contains("Curenta") || !words.contains("Total") || !words.contains("Signature required for the following")) {
+                else   if (!words.contains("Curenta")) {
                     new AlertDialog.Builder(getActivity())
-                            .setMessage("Image is not invalid , please upload curenta receipt!")
+                            .setMessage("Image is not valid curenta receipt!")
                             .setNeutralButton("Ok", null)
                             .setTitle("Invalid Image")
                             .create()
