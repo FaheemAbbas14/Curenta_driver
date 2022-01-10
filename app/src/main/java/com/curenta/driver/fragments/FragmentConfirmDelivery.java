@@ -316,7 +316,8 @@ public class FragmentConfirmDelivery extends Fragment {
     }
     private void cameraIntent() {
         boolean result = Utility.checkPermission(getContext());
-        if (result) {
+        boolean cameraPermission = Utility.checkCameraPermission(getContext());
+        if (result && cameraPermission) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent,
                     CAPTURE_PICCODE);
@@ -401,7 +402,8 @@ public class FragmentConfirmDelivery extends Fragment {
                             .create()
                             .show();
                 }
-                else   if (!words.contains("Curenta")) {
+                else   if (!words.contains("Curenta") || !words.contains("Total") || !words.contains("Signature required for the following")) {
+
                     new AlertDialog.Builder(getActivity())
                             .setMessage("Image is not valid curenta receipt!")
                             .setNeutralButton("Ok", null)
