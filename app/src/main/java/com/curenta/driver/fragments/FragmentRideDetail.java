@@ -100,7 +100,7 @@ public class FragmentRideDetail extends Fragment {
 
         }
         AppElement.pharmacyContact=data.data.get(0).pickupAddress.phoneNumberPrimary;
-        section.items.add(new RideDetailListAdapter.Order(data.data.get(0).pickupAddress.name, data.data.get(0).pickupAddress.fullAddress, pickText, isPickupFocused, isPickupCompleted, false, data.data.get(0).pickupAddress.pickupAddressId, false, data.data.get(0).pickupAddress.latitude, data.data.get(0).pickupAddress.longitude, "","",0,0));
+        section.items.add(new RideDetailListAdapter.Order(data.data.get(0).pickupAddress.name, data.data.get(0).pickupAddress.fullAddress, pickText, isPickupFocused, isPickupCompleted, false, data.data.get(0).pickupAddress.pickupAddressId, false, data.data.get(0).pickupAddress.latitude, data.data.get(0).pickupAddress.longitude, "","",0,0,null));
         int client = 0;
         for (int i = 0; i < data.data.size(); i++) {
 
@@ -128,7 +128,7 @@ public class FragmentRideDetail extends Fragment {
                         isOrderfocused = true;
                         isAnyFocused = true;
                     }
-                    section.items.add(new RideDetailListAdapter.Order(routeStep.orders.get(0).patientName, routeStep.orders.get(0).deliveryAddress, buttonText, isOrderfocused, isOrdercompleted, false, routeStep.orders.get(0).orderId, isCancelled, routeStep.orders.get(0).latitude, routeStep.orders.get(0).longitude, routeStep.routeStepsId,"",routeStep.orders.get(0).patientId,routeStep.orders.get(0).facilityId));
+                    section.items.add(new RideDetailListAdapter.Order(routeStep.orders.get(0).patientName, routeStep.orders.get(0).deliveryAddress, buttonText, isOrderfocused, isOrdercompleted, false, routeStep.orders.get(0).orderId, isCancelled, routeStep.orders.get(0).latitude, routeStep.orders.get(0).longitude, routeStep.routeStepsId,"",routeStep.orders.get(0).patientId,routeStep.orders.get(0).facilityId,routeStep.orders.get(0).deliveryNote));
                 }
             }
 

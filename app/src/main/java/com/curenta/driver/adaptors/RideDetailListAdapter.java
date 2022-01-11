@@ -83,7 +83,9 @@ public class RideDetailListAdapter extends SectioningAdapter {
         public String phoneNumber;
         public int patientId;
         public int facilityId;
-        public Order(String name, String address, String buttonText, boolean isFocused, boolean isCompleted, boolean isArrived, String orderId, boolean isCancled, double latitude, double longitude, String routeStepId, String phoneNumber, int patientId, int facilityId) {
+        public String deliveryNote;
+
+        public Order(String name, String address, String buttonText, boolean isFocused, boolean isCompleted, boolean isArrived, String orderId, boolean isCancled, double latitude, double longitude, String routeStepId, String phoneNumber, int patientId, int facilityId,String deliveryNote) {
             this.name = name;
             this.address = address;
             this.buttonText = buttonText;
@@ -98,6 +100,7 @@ public class RideDetailListAdapter extends SectioningAdapter {
             this.phoneNumber = phoneNumber;
             this.patientId = patientId;
             this.facilityId = facilityId;
+            this.deliveryNote = deliveryNote;
         }
 
 
@@ -105,12 +108,12 @@ public class RideDetailListAdapter extends SectioningAdapter {
 
     public class ItemViewHolder extends SectioningAdapter.ItemViewHolder implements View.OnClickListener {
         TextView heading;
-        TextView description;
+        TextView description,deliveryNotes;
         TextView patientName;
         TextView cancel;
         ImageView icon;
         Button action;
-        LinearLayout topLayout;
+        LinearLayout topLayout,llDeliveryNotes;
         ImageView call,message;
 
         public ItemViewHolder(View itemView) {
@@ -119,11 +122,13 @@ public class RideDetailListAdapter extends SectioningAdapter {
             description = (TextView) itemView.findViewById(R.id.txtDescription);
             patientName = (TextView) itemView.findViewById(R.id.patientName);
             cancel = (TextView) itemView.findViewById(R.id.txtCancelOrder);
+            deliveryNotes = (TextView) itemView.findViewById(R.id.txtDeliveryNotes);
             icon = (ImageView) itemView.findViewById(R.id.imgIcon);
             call = (ImageView) itemView.findViewById(R.id.imgCall);
             message = (ImageView) itemView.findViewById(R.id.imgMessage);
             action = (Button) itemView.findViewById(R.id.btnAction);
             topLayout = (LinearLayout) itemView.findViewById(R.id.lltop);
+            llDeliveryNotes = (LinearLayout) itemView.findViewById(R.id.llDeliveryNotes);
             topLayout.setOnClickListener(this);
             action.setOnClickListener(this);
             cancel.setOnClickListener(this);
@@ -306,6 +311,7 @@ public class RideDetailListAdapter extends SectioningAdapter {
             ivh.topLayout.setBackgroundColor(Color.WHITE);
             ivh.action.setBackgroundResource(R.drawable.grey_rounded);
             ivh.topLayout.setEnabled(false);
+
         } else {
             AppElement.orderId = s.items.get(itemIndex).routeStepId;
             ivh.topLayout.setEnabled(true);
@@ -313,7 +319,10 @@ public class RideDetailListAdapter extends SectioningAdapter {
             ivh.heading.setTextColor(ContextCompat.getColor(context, R.color.blue));
             ivh.topLayout.setBackgroundResource(R.color.focus);
             ivh.action.setBackgroundResource(R.drawable.grey_rounded);
-
+            if(s.items.get(itemIndex).deliveryNote!=null) {
+                ivh.llDeliveryNotes.setVisibility(View.VISIBLE);
+                ivh.deliveryNotes.setText(s.items.get(itemIndex).deliveryNote);
+            }
         }
         if (s.items.get(itemIndex).isArrived) {
             ivh.action.setBackgroundResource(R.drawable.blue_rounded);

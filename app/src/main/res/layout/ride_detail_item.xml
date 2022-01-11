@@ -130,6 +130,38 @@
 
         </ImageView>
     </androidx.appcompat.widget.LinearLayoutCompat>
+    <LinearLayout
+       android:id="@+id/llDeliveryNotes"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="10">
+
+        <Button
+
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:background="@drawable/delivey_botes_icon"
+            android:fontFamily="@font/archivobold"
+            android:textColor="@color/white" />
+
+        <TextView
+            android:id="@+id/txtDeliveryNotes"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="5dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="@font/archivobold"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:text="Facing an Issue"
+            android:textColor="@color/labelblue" />
+
+
+    </LinearLayout>
 
     <View
         android:layout_width="match_parent"
