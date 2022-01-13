@@ -19,7 +19,6 @@ import androidx.databinding.DataBindingUtil;
 
 import com.curenta.driver.databinding.ActivityMainBinding;
 import com.curenta.driver.dto.UserInfo;
-import com.curenta.driver.utilities.GPSTracker;
 import com.curenta.driver.utilities.Helper;
 import com.curenta.driver.utilities.Utility;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
@@ -67,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
 
                         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
                         public void onClick(DialogInterface dialog, int which) {
+                            Log.d("permissionchecker", "Phone permission called");
                             ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.READ_PHONE_STATE}, 101);
                         }
                     });
@@ -80,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 String deviceId = Helper.getDeviceId(getApplicationContext());
                 UserInfo.getInstance().deviceId = deviceId;
                 Log.d("deviceid", deviceId);
-                GPSTracker gpsTracker = new GPSTracker(MainActivity.this, null);
+                // GPSTracker gpsTracker = new GPSTracker(MainActivity.this, null);
                 initGPS();
                 checkCameraPermission();
             }
@@ -92,10 +92,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        Log.d("permissionchecker", "" + requestCode);
         switch (requestCode) {
             case 101:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     deviceId();
+                    Log.d("permissionchecker", "101");
+                    initGPS();
                     Utility.checkPermission(MainActivity.this);
 
                 }
@@ -103,11 +106,15 @@ public class MainActivity extends AppCompatActivity {
             case 102:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     deviceId();
+                    Log.d("permissionchecker", "102");
+
                     Utility.checkPermission(MainActivity.this);
                     checkContactPermission();
                 }
             case 103:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("permissionchecker", "103");
+
                     deviceId();
                     Utility.checkPermission(MainActivity.this);
 
@@ -121,7 +128,24 @@ public class MainActivity extends AppCompatActivity {
     public void initGPS() {
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                    Log.d("permissionchecker", "both R location permission called");
+
+                    int foregroundCheck = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+                    int backgroundCheck = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                    if (foregroundCheck != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+                    } else if (backgroundCheck != PackageManager.PERMISSION_GRANTED) {
+                        requestPermissions(new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 101);
+                    }
+                } else if (android.os.Build.VERSION.SDK_INT == android.os.Build.VERSION_CODES.Q) {
+                    Log.d("permissionchecker", "both q location permission called");
+                    ActivityCompat.requestPermissions(MainActivity.this,
+                            new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 101);
+                } else {
+                    Log.d("permissionchecker", "location permission called");
+                    ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 101);
+                }
             }
         } catch (Exception e) {
             FirebaseCrashlytics.getInstance().recordException(e);
@@ -132,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
     public void checkCameraPermission() {
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("permissionchecker", "camera permission called");
+
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.CAMERA}, 102);
             }
         } catch (Exception e) {
@@ -143,6 +169,8 @@ public class MainActivity extends AppCompatActivity {
     public void checkContactPermission() {
         try {
             if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+                Log.d("permissionchecker", "contact permission called");
+
                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{android.Manifest.permission.READ_CONTACTS}, 103);
             }
         } catch (Exception e) {

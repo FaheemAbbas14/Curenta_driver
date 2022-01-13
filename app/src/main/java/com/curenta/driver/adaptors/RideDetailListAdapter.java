@@ -169,12 +169,12 @@ public class RideDetailListAdapter extends SectioningAdapter {
 
 
     void onAddressClick(Order item, int sectionIndex) {
-//        LatLng location = getLocationFromAddress(context, item.latitude,item.longitude);
-//        if(location!=null) {
-//            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + location.latitude + "," + location.longitude);
-//            Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-//            context.startActivity(Intent.createChooser(intent, "Select application"));
-//        }
+        LatLng location = getLocationFromAddress(context, item.latitude,item.longitude);
+        if(location!=null) {
+            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + location.latitude + "," + location.longitude);
+            Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+            context.startActivity(Intent.createChooser(intent, "Select application"));
+        }
         LatLng source = null;
         if (sectionIndex > 0) {
             source = getLocationFromAddress(context, sections.get(0).items.get(sectionIndex - 1).latitude, sections.get(0).items.get(sectionIndex - 1).longitude);
@@ -188,13 +188,13 @@ public class RideDetailListAdapter extends SectioningAdapter {
 //        fragmentTracking.index=sectionIndex;
 //        FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
 
-        FragmentNavigation fragmentNavigation = new FragmentNavigation();
-        fragmentNavigation.mDestination = destination;
-        fragmentNavigation.mOrigin = source;
-        fragmentNavigation.order = item;
-        fragmentNavigation.sections = sections;
-        fragmentNavigation.index = sectionIndex;
-        FragmentUtils.getInstance().addFragment(context, fragmentNavigation, R.id.fragContainer);
+//        FragmentNavigation fragmentNavigation = new FragmentNavigation();
+//        fragmentNavigation.mDestination = destination;
+//        fragmentNavigation.mOrigin = source;
+//        fragmentNavigation.order = item;
+//        fragmentNavigation.sections = sections;
+//        fragmentNavigation.index = sectionIndex;
+//        FragmentUtils.getInstance().addFragment(context, fragmentNavigation, R.id.fragContainer);
 
         sections.get(0).items.get(sectionIndex).isArrived = true;
         notifyAllSectionsDataSetChanged();
@@ -319,7 +319,7 @@ public class RideDetailListAdapter extends SectioningAdapter {
             ivh.heading.setTextColor(ContextCompat.getColor(context, R.color.blue));
             ivh.topLayout.setBackgroundResource(R.color.focus);
             ivh.action.setBackgroundResource(R.drawable.grey_rounded);
-            if(s.items.get(itemIndex).deliveryNote!=null) {
+            if(s.items.get(itemIndex).deliveryNote!=null && !s.items.get(itemIndex).deliveryNote.contains("null")) {
                 ivh.llDeliveryNotes.setVisibility(View.VISIBLE);
                 ivh.deliveryNotes.setText(s.items.get(itemIndex).deliveryNote);
             }
