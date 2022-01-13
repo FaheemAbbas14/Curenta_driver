@@ -402,15 +402,6 @@ public class FragmentConfirmDelivery extends Fragment {
                             .create()
                             .show();
                 }
-                else   if (!words.contains("Curenta") || !words.contains("Total") || !words.contains("Signature required for the following")) {
-
-                    new AlertDialog.Builder(getActivity())
-                            .setMessage("Image is not valid curenta receipt!")
-                            .setNeutralButton("Ok", null)
-                            .setTitle("Invalid Image")
-                            .create()
-                            .show();
-                }
                 else {
 
                     //Toast.makeText(getActivity(), "readable image", Toast.LENGTH_SHORT).show();

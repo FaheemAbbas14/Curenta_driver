@@ -12,8 +12,8 @@ android {
         applicationId "com.curenta.driver"
         minSdkVersion 21
         targetSdkVersion 30
-        versionCode 47
-        versionName "1.4.8"
+        versionCode 49
+        versionName "1.5.0"
         manifestPlaceholders = [manifestApplicationId          : "${applicationId}",
                                 onesignal_app_id               : "0782162b-2e6e-4ebb-9825-af0af68eadeb",
                                 onesignal_google_project_number: "1089148107134"]
