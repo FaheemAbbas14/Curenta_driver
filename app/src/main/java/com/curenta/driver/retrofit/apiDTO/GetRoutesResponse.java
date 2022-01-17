@@ -51,6 +51,7 @@ public class GetRoutesResponse {
         public String city;
         public String state;
         public String deliveryDate;
+        public String deliveryNote;
         public String deliveryTime;
         public boolean isStat;
         public float distanceFromPickup;

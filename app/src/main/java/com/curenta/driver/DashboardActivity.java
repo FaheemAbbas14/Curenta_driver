@@ -2,9 +2,11 @@ package com.curenta.driver;
 
 import static com.curenta.driver.MainApplication.getContext;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -34,7 +36,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
@@ -114,7 +118,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     int retries = 0;
     public ILatLngUpdate iLocationChange;
     int version;
-
+    private int mInterval = 10000; // 5 seconds by default, can be changed later
+    private Handler mHandler;
 
     @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -194,6 +199,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         }
 
+        mHandler = new Handler();
+        startRepeatingTask();
         boolean isCheckedIn = Preferences.getInstance().getBoolean("checkin", false);
         setCheckStatus(isCheckedIn);
 
@@ -320,7 +327,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        stopRepeatingTask();
 
     }
 
@@ -834,6 +841,50 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 //            launchDismissDlg();
 //        }
         checkOnline();
+        initGPS();
+    }
+
+    public void initGPS() {
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+                int foregroundCheck = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+                int backgroundCheck = ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_BACKGROUND_LOCATION);
+                if (foregroundCheck != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(DashboardActivity.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+                } else if (backgroundCheck != PackageManager.PERMISSION_GRANTED) {
+                    showSettingsAlert();
+                }
+            }
+        } catch (Exception e) {
+            FirebaseCrashlytics.getInstance().recordException(e);
+            e.printStackTrace();
+        }
+    }
+
+    public void showSettingsAlert() {
+
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(DashboardActivity.this, R.style.MyDialogTheme);
+        // Setting Dialog Title
+        alertDialog.setTitle("Permission needed");
+
+        // Setting Dialog Message
+        alertDialog.setMessage("For tracking during route please give permission allow all time");
+
+        // On pressing Settings button
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                ActivityCompat.requestPermissions(DashboardActivity.this, new String[]{Manifest.permission.ACCESS_BACKGROUND_LOCATION}, 1);
+                dialog.cancel();
+            }
+        });
+
+        // on pressing cancel button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialog.show();
     }
 
     public void getRouteDetails(String routeId, boolean isRide, boolean isRouteUpdated, boolean isDriverAssigned) {
@@ -1142,5 +1193,34 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
 
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                boolean isOnline = Preferences.getInstance().getBoolean("isOnline", false);
+                String rideInfoString = Preferences.getInstance().getString("rideInfoDto");
+                if (rideInfoString.equalsIgnoreCase("") && isOnline) {
+                    Log.d("Routeinprogress","api called");
+                    RouteInprogressAPICall();
+                }
+                else{
+                    Log.d("Routeinprogress","already route in progress");
+                }
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                mHandler.postDelayed(mStatusChecker, mInterval);
+            }
+        }
+    };
+
+    void startRepeatingTask() {
+        mStatusChecker.run();
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
     }
 }
