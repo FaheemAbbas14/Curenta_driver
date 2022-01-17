@@ -118,7 +118,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     int retries = 0;
     public ILatLngUpdate iLocationChange;
     int version;
-
+    private int mInterval = 10000; // 5 seconds by default, can be changed later
+    private Handler mHandler;
 
     @SuppressLint("ResourceAsColor")
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -198,6 +199,8 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
 
         }
 
+        mHandler = new Handler();
+        startRepeatingTask();
         boolean isCheckedIn = Preferences.getInstance().getBoolean("checkin", false);
         setCheckStatus(isCheckedIn);
 
@@ -324,7 +327,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        stopRepeatingTask();
 
     }
 
@@ -1190,5 +1193,34 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.show();
 
+    }
+
+    Runnable mStatusChecker = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                boolean isOnline = Preferences.getInstance().getBoolean("isOnline", false);
+                String rideInfoString = Preferences.getInstance().getString("rideInfoDto");
+                if (rideInfoString.equalsIgnoreCase("") && isOnline) {
+                    Log.d("Routeinprogress","api called");
+                    RouteInprogressAPICall();
+                }
+                else{
+                    Log.d("Routeinprogress","already route in progress");
+                }
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                mHandler.postDelayed(mStatusChecker, mInterval);
+            }
+        }
+    };
+
+    void startRepeatingTask() {
+        mStatusChecker.run();
+    }
+
+    void stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker);
     }
 }
