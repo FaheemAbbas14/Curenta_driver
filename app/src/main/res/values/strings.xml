@@ -9,7 +9,7 @@
 
     <string name="facebook_app_id">388188499179380</string>
     <string name="fb_login_protocol_scheme">fb388188499179380</string>
-
+    <string name="google_maps_key">AIzaSyDMP4GI8rW2KJ9cuTsRBpt6VoesB6oJmF4</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>

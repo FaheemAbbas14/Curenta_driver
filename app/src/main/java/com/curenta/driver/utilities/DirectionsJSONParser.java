@@ -14,13 +14,17 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by faheem on 23,April,2021
+ * Created by anupamchugh on 27/11/15.
  */
-public class DirectionsJSONParser {
-    /** Receives a JSONObject and returns a list of lists containing latitude and longitude */
-    public List<List<HashMap<String,String>>> parse(JSONObject jObject){
 
-        List<List<HashMap<String, String>>> routes = new ArrayList<>() ;
+public class DirectionsJSONParser {
+
+    /**
+     * Receives a JSONObject and returns a list of lists containing latitude and longitude
+     */
+    public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
+
+        List<List<HashMap<String, String>>> routes = new ArrayList<List<HashMap<String, String>>>();
         JSONArray jRoutes = null;
         JSONArray jLegs = null;
         JSONArray jSteps = null;
@@ -30,30 +34,32 @@ public class DirectionsJSONParser {
             jRoutes = jObject.getJSONArray("routes");
 
             /** Traversing all routes */
-            for(int i=0;i<jRoutes.length();i++){
-                jLegs = ( (JSONObject)jRoutes.get(i)).getJSONArray("legs");
+            for (int i = 0; i < jRoutes.length(); i++) {
+                jLegs = ((JSONObject) jRoutes.get(i)).getJSONArray("legs");
                 List path = new ArrayList<HashMap<String, String>>();
 
                 /** Traversing all legs */
-                for(int j=0;j<jLegs.length();j++){
-                    jSteps = ( (JSONObject)jLegs.get(j)).getJSONArray("steps");
-                    String distance = ( (JSONObject)jLegs.get(j)).getJSONObject("distance").getString("value");
-                    String duration = ( (JSONObject)jLegs.get(j)).getJSONObject("duration").getString("value");
-                    AppElement.durationtxt = ( (JSONObject)jLegs.get(j)).getJSONObject("duration").getString("text");
-                    AppElement.distance=Integer.parseInt(distance);
-                    AppElement.duration=Integer.parseInt(duration);
-                    Log.d("routesdata","distance "+distance+" duration "+duration);
+                for (int j = 0; j < jLegs.length(); j++) {
+                    jSteps = ((JSONObject) jLegs.get(j)).getJSONArray("steps");
+                    JSONObject distanceObj = ((JSONObject) jLegs.get(j)).getJSONObject("distance");
+                    JSONObject timeObj = ((JSONObject) jLegs.get(j)).getJSONObject("duration");
+                    String distanceInMiles = distanceObj.getString("text");
+                    String time = timeObj.getString("text");
+                    Log.d("routedetails", "distance " + distanceInMiles);
+                    Log.d("routedetails", "time " + time);
+                    AppElement.distance = distanceInMiles;
+                    AppElement.duration = time;
                     /** Traversing all steps */
-                    for(int k=0;k<jSteps.length();k++){
+                    for (int k = 0; k < jSteps.length(); k++) {
                         String polyline = "";
-                        polyline = (String)((JSONObject)((JSONObject)jSteps.get(k)).get("polyline")).get("points");
-                        List<LatLng> list = decodePoly(polyline);
+                        polyline = (String) ((JSONObject) ((JSONObject) jSteps.get(k)).get("polyline")).get("points");
+                        List list = decodePoly(polyline);
 
                         /** Traversing all points */
-                        for(int l=0;l<list.size();l++){
+                        for (int l = 0; l < list.size(); l++) {
                             HashMap<String, String> hm = new HashMap<String, String>();
-                            hm.put("lat", Double.toString(((LatLng)list.get(l)).latitude) );
-                            hm.put("lng", Double.toString(((LatLng)list.get(l)).longitude) );
+                            hm.put("lat", Double.toString(((LatLng) list.get(l)).latitude));
+                            hm.put("lng", Double.toString(((LatLng) list.get(l)).longitude));
                             path.add(hm);
                         }
                     }
@@ -63,18 +69,19 @@ public class DirectionsJSONParser {
 
         } catch (JSONException e) {
             e.printStackTrace();
-        }catch (Exception e){
+        } catch (Exception e) {
         }
+
         return routes;
     }
 
     /**
      * Method to decode polyline points
-     * Courtesy : jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
-     * */
-    private List<LatLng> decodePoly(String encoded) {
+     * Courtesy : http://jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
+     */
+    private List decodePoly(String encoded) {
 
-        List<LatLng> poly = new ArrayList<LatLng>();
+        List poly = new ArrayList();
         int index = 0, len = encoded.length();
         int lat = 0, lng = 0;
 
@@ -102,6 +109,7 @@ public class DirectionsJSONParser {
                     (((double) lng / 1E5)));
             poly.add(p);
         }
+
         return poly;
     }
 }

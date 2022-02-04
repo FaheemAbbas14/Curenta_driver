@@ -539,7 +539,7 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
             activityDashboardBinding.appBarMain.contentMain.lltakephoto.setVisibility(View.VISIBLE);
             activityDashboardBinding.appBarMain.contentMain.llStatus.setBackgroundResource(R.drawable.round_grey_button);
             activityDashboardBinding.appBarMain.contentMain.circularProgress.setVisibility(View.INVISIBLE);
-            if (loggedInUser.driverType.equals("Permanent")) {
+            if (loggedInUser.driverType!=null && loggedInUser.driverType.equals("Permanent")) {
                 activityDashboardBinding.appBarMain.contentMain.llCheckin.setVisibility(View.VISIBLE);
 
             }
@@ -630,15 +630,31 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
         String rideInfoString = Preferences.getInstance().getString("rideInfoDto");
 
         if ((!rideInfoString.equalsIgnoreCase("") || AppElement.routeId != null) && gpsTracker != null && AppElement.Latitude != gpsTracker.getLatitude() && AppElement.Longitude != gpsTracker.getLongitude()) {
+            Location locationA = new Location("point A");
 
-            AppElement.Latitude = gpsTracker.getLatitude();
-            AppElement.Longitude = gpsTracker.getLongitude();
+            locationA.setLatitude(AppElement.Latitude);
+            locationA.setLongitude(AppElement.Longitude);
 
-            String message = LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude() + "," + AppElement.routeId + "," + AppElement.orderId;
-            publishMessage(message);
-            publishAPICall();
-            Log.d(TAG, "updateDriverLocation " + LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude() + "," + AppElement.routeId + "," + AppElement.orderId);
+            Location locationB = new Location("point B");
 
+            locationB.setLatitude(gpsTracker.getLatitude());
+            locationB.setLongitude(gpsTracker.getLongitude());
+
+            float distance = locationA.distanceTo(locationB);
+            Log.d(TAG, "updateDriverLocation distance " + distance);
+            if(distance>100) {
+                AppElement.Latitude = gpsTracker.getLatitude();
+                AppElement.Longitude = gpsTracker.getLongitude();
+
+                String message = LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude() + "," + AppElement.routeId + "," + AppElement.orderId;
+                publishMessage(message);
+                publishAPICall();
+                Log.d(TAG, "updateDriverLocation " + LoggedInUser.getInstance().driverId + "," + gpsTracker.getLongitude() + "," + gpsTracker.getLatitude() + "," + AppElement.routeId + "," + AppElement.orderId);
+            }
+            else{
+                Log.d(TAG, "updateDriverLocation not publish distance " + distance);
+
+            }
         }
     }
 

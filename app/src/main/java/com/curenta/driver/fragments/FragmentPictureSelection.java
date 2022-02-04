@@ -152,8 +152,10 @@ public class FragmentPictureSelection extends Fragment {
     }
 
     private void cameraIntent() {
-        boolean result = Utility.checkPermission(getContext());
-        if (result) {
+        boolean cameraPermission= Utility.checkCameraPermission(getContext());
+        boolean storagePermission= Utility.checkPermission(getContext());
+        boolean writePermission= Utility.checkWritePermission(getContext());
+        if(cameraPermission && storagePermission && writePermission) {
             Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(intent,
                     CAPTURE_PICCODE);

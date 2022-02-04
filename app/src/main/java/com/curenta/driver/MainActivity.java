@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(next);
             }
         });
-        deviceId();
+        showLocationAlert();
     }
 
 
@@ -177,5 +177,17 @@ public class MainActivity extends AppCompatActivity {
             FirebaseCrashlytics.getInstance().recordException(e);
             e.printStackTrace();
         }
+    }
+    public void showLocationAlert(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Curenta driver collects location data to enable driver tracking even when the app is closed or in background during navigation.")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        deviceId();
+                    }
+                });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 }

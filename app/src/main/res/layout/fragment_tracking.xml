@@ -163,7 +163,24 @@
 
 
         </LinearLayout>
+        <LinearLayout
 
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="bottom|right"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="200dp">
+
+            <ImageView
+                android:id="@+id/lltollon"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="10dp"
+                android:layout_gravity="center"
+                android:background="@drawable/circlewhite"
+                app:srcCompat="@drawable/tollon" />
+
+        </LinearLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

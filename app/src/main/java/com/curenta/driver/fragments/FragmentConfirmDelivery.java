@@ -154,21 +154,21 @@ public class FragmentConfirmDelivery extends Fragment {
     }
 
     private void selectImage() {
-        final CharSequence[] options = {"Take Photo with Scanner", "Choose from Gallery","Take Photo without Scanner", "Cancel"};
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
         builder.setCancelable(false);
         builder.setTitle("Upload Photo!");
         builder.setItems(options, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int item) {
-                if (options[item].equals("Take Photo with Scanner")) {
+                if (options[item].equals("Take Photo")) {
                     openCamera();
                 } else if (options[item].equals("Choose from Gallery")) {
                     openImagesDocument();
                 }
-                else if (options[item].equals("Take Photo without Scanner")) {
-                    cameraIntent();
-                }
+//                else if (options[item].equals("Take Photo without Scanner")) {
+//                    cameraIntent();
+//                }
                 else if (options[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
@@ -394,15 +394,15 @@ public class FragmentConfirmDelivery extends Fragment {
                     }
                 }
                 Log.d("readedtext", words);
-                if (textBlocks.size() == 0) {
-                    new AlertDialog.Builder(getActivity())
-                            .setMessage("Image is not readable , please take another photo!")
-                            .setNeutralButton("Ok", null)
-                            .setTitle("Blurry Image")
-                            .create()
-                            .show();
-                }
-                else {
+//                if (textBlocks.size() == 0 && enumPictureType != EnumPictureType.ORDER_PICKUP) {
+//                    new AlertDialog.Builder(getActivity())
+//                            .setMessage("Image is not readable , please take another photo!")
+//                            .setNeutralButton("Ok", null)
+//                            .setTitle("Blurry Image")
+//                            .create()
+//                            .show();
+//                }
+//                else {
 
                     //Toast.makeText(getActivity(), "readable image", Toast.LENGTH_SHORT).show();
 
@@ -410,7 +410,7 @@ public class FragmentConfirmDelivery extends Fragment {
                     images.add(bitmap);
                     imagesURIs.add(imageUri);
                     setDataAdopter();
-                }
+              //  }
             } else {
                 Toast.makeText(getActivity(), "Could not set up the detector!", Toast.LENGTH_SHORT)
                         .show();

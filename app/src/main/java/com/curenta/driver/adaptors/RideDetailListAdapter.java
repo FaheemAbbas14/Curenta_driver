@@ -33,6 +33,7 @@ import com.curenta.driver.fragments.FragmentCancelOrder;
 import com.curenta.driver.fragments.FragmentConfirmDelivery;
 import com.curenta.driver.fragments.FragmentNavigation;
 import com.curenta.driver.fragments.FragmentThankYouAction;
+import com.curenta.driver.fragments.FragmentTracking;
 import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.GetFacilityDetails;
 import com.curenta.driver.retrofit.apiDTO.GetPatientDetailResponse;
@@ -169,24 +170,24 @@ public class RideDetailListAdapter extends SectioningAdapter {
 
 
     void onAddressClick(Order item, int sectionIndex) {
-        LatLng location = getLocationFromAddress(context, item.latitude,item.longitude);
-        if(location!=null) {
-            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + location.latitude + "," + location.longitude);
-            Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
-            context.startActivity(Intent.createChooser(intent, "Select application"));
-        }
+//        LatLng location = getLocationFromAddress(context, item.latitude,item.longitude);
+//        if(location!=null) {
+//            Uri gmmIntentUri = Uri.parse("geo:0,0?q=" + location.latitude + "," + location.longitude);
+//            Intent intent = new Intent(Intent.ACTION_VIEW, gmmIntentUri);
+//            context.startActivity(Intent.createChooser(intent, "Select application"));
+//        }
         LatLng source = null;
         if (sectionIndex > 0) {
             source = getLocationFromAddress(context, sections.get(0).items.get(sectionIndex - 1).latitude, sections.get(0).items.get(sectionIndex - 1).longitude);
         }
         LatLng destination = getLocationFromAddress(context, item.latitude, item.longitude);
-//        FragmentTracking fragmentTracking = new FragmentTracking();
-//        fragmentTracking.mDestination = destination;
-//        fragmentTracking.mOrigin = source;
-//        fragmentTracking.order=item;
-//        fragmentTracking.sections=sections;
-//        fragmentTracking.index=sectionIndex;
-//        FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
+        FragmentTracking fragmentTracking = new FragmentTracking();
+        fragmentTracking.mDestination = destination;
+        fragmentTracking.mOrigin = source;
+        fragmentTracking.order=item;
+        fragmentTracking.sections=sections;
+        fragmentTracking.index=sectionIndex;
+        FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
 
 //        FragmentNavigation fragmentNavigation = new FragmentNavigation();
 //        fragmentNavigation.mDestination = destination;

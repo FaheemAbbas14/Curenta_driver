@@ -166,7 +166,7 @@ public class FragmentRequiredSteps extends Fragment {
             fragmentRequiredStepsBinding.imgNext.setImageResource(R.drawable.disabled_next);
             isAllComplete = false;
         }
-        if(userInfo.deviceId.equalsIgnoreCase("test")){
+        if( userInfo.deviceId !=null && userInfo.deviceId.equalsIgnoreCase("test")){
             String deviceId = Helper.getDeviceId(getApplicationContext());
             UserInfo.getInstance().deviceId = deviceId;
         }
