@@ -10,7 +10,7 @@
         <RelativeLayout
             android:id="@+id/rlMain"
             android:layout_width="match_parent"
-            android:layout_height="150dp">
+            android:layout_height="100dp">
 
             <androidx.coordinatorlayout.widget.CoordinatorLayout
                 android:id="@+id/llgradient"
@@ -31,7 +31,12 @@
             android:id="@+id/scrollview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="120dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="80dp"
             android:background="@drawable/white_top_rounded">
 
             <androidx.appcompat.widget.LinearLayoutCompat
@@ -49,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/archivosemibold"
                     android:gravity="center_vertical|left"
-                    android:text="A. Cancellation Reason"
+                    android:text="A. Who Recieved the order"
                     android:textColor="@color/labelgrey"
                     android:textSize="20sp" />
 
@@ -59,7 +64,8 @@
                     android:layout_marginLeft="27dp"
                     android:fontFamily="@font/archivoregular"
                     android:gravity="center_vertical|left"
-                    android:text="Please select the Cancellation reason\nfor this route"
+                    android:text="Please let us know who recieved the order
+from you"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
 
@@ -70,7 +76,7 @@
                     android:layout_marginTop="10dp">
 
                     <Spinner
-                        android:id="@+id/spnCancelReason"
+                        android:id="@+id/spnWhoRecieved"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:background="@drawable/spinnerbg"
@@ -86,59 +92,10 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|right"
-                        android:layout_marginRight="10sp"
+                        android:layout_marginRight="5sp"
                         android:contentDescription="@null"
                         android:src="@drawable/dropdown_icon" />
                 </FrameLayout>
-
-
-                <RadioGroup
-                    android:id="@+id/rdoWrongAddress"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <RadioButton
-                        android:id="@+id/rdoCallPatient"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:button="@drawable/rdoselector"
-                        android:checked="true"
-                        android:paddingLeft="10dp"
-                        android:text="I called the patient and gave me
-another adress"
-                        android:textColor="@color/labelgrey"
-                        android:textSize="17sp" />
-
-                    <RadioButton
-                        android:id="@+id/edoCallFacility"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:button="@drawable/rdoselector"
-                        android:paddingLeft="10dp"
-                        android:text="I called the facility and gave me
-another adress"
-                        android:textColor="@color/labelgrey"
-                        android:textSize="17sp" />
-
-
-                    <RadioButton
-                        android:id="@+id/edoNoAswer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:button="@drawable/rdoselector"
-                        android:paddingLeft="10dp"
-                        android:text="No one Answers"
-                        android:textColor="@color/labelgrey"
-                        android:textSize="17sp" />
-
-                </RadioGroup>
 
                 <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/edit_text"
@@ -147,13 +104,12 @@ another adress"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/spinnerbg"
                     android:gravity="center|left"
-                    android:hint="Please enter new address"
+                    android:hint="Please enter name"
                     android:inputType="text"
                     android:minHeight="30dp"
                     android:paddingLeft="10dp"
                     android:textColor="@color/labelgrey"
-                    android:textColorHint="@color/labellightgrey"
-                    android:visibility="gone" />
+                    android:textColorHint="@color/labellightgrey" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -161,7 +117,7 @@ another adress"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/archivosemibold"
                     android:gravity="center_vertical|left"
-                    android:text="B. Who ordered to Cancel"
+                    android:text="B. Relationship to patient"
                     android:textColor="@color/labelgrey"
                     android:textSize="20sp" />
 
@@ -171,74 +127,11 @@ another adress"
                     android:layout_marginLeft="27dp"
                     android:fontFamily="@font/archivoregular"
                     android:gravity="center_vertical|left"
-                    android:text="Please let us know Who asked you to
-return or redeliver this order"
+                    android:text="Please select the releationship of the one
+whi recieved the order to the patient"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
 
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp">
-
-                    <Spinner
-                        android:id="@+id/spnWhoOrder"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/spinnerbg"
-                        android:fontFamily="@font/archivoregular"
-                        android:gravity="center|left"
-                        android:text=""
-                        android:textColor="#828282"
-
-                        android:textSize="15sp"
-                        android:theme="@style/MatchSpinnerTheme1" />/>
-
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center|right"
-                        android:layout_marginRight="10sp"
-                        android:contentDescription="@null"
-                        android:src="@drawable/dropdown_icon" />
-                </FrameLayout>
-
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edtWhoOrder"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/spinnerbg"
-                    android:gravity="center|left"
-                    android:hint="Please enter employee name"
-                    android:inputType="text"
-                    android:minHeight="30dp"
-                    android:paddingLeft="10dp"
-                    android:textColor="@color/labelgrey"
-                    android:textColorHint="@color/labellightgrey"
-                    android:visibility="visible" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:fontFamily="@font/archivosemibold"
-                    android:gravity="center_vertical|left"
-                    android:text="C. Relationship to patient"
-                    android:textColor="@color/labelgrey"
-                    android:textSize="20sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="27dp"
-                    android:fontFamily="@font/archivoregular"
-                    android:gravity="center_vertical|left"
-                    android:text="We need to know the relationship with
-the one who asked you to cancel"
-                    android:textColor="@color/grey"
-                    android:textSize="14sp" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -262,7 +155,7 @@ the one who asked you to cancel"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center|right"
-                        android:layout_marginRight="10sp"
+                        android:layout_marginRight="5sp"
                         android:contentDescription="@null"
                         android:src="@drawable/dropdown_icon" />
                 </FrameLayout>
@@ -274,25 +167,65 @@ the one who asked you to cancel"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/spinnerbg"
                     android:gravity="center|left"
-                    android:hint="Please enter relation"
+                    android:hint="Please enter employee name"
                     android:inputType="text"
                     android:minHeight="30dp"
                     android:paddingLeft="10dp"
                     android:textColor="@color/labelgrey"
                     android:textColorHint="@color/labellightgrey"
-                    android:visibility="gone" />
+                    android:visibility="visible" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/archivosemibold"
+                    android:gravity="center_vertical|left"
+                    android:text="C. Time of Delivering "
+                    android:textColor="@color/labelgrey"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="27dp"
+                    android:fontFamily="@font/archivoregular"
+                    android:gravity="center_vertical|left"
+                    android:text="What's the exact time that you delivered
+the order to this person"
+                    android:textColor="@color/grey"
+                    android:textSize="14sp" />
+
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/edtTime"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/spinnerbg"
+                    android:editable="false"
+                    android:gravity="center|left"
+                    android:hint="Time of Delivery"
+                    android:inputType="none"
+                    android:minHeight="30dp"
+                    android:paddingLeft="10dp"
+                    android:textColor="@color/labelgrey"
+                    android:textColorHint="@color/labellightgrey" />
 
                 <ImageView
                     android:id="@+id/imgNext"
                     android:layout_width="65dp"
                     android:layout_height="65dp"
                     android:layout_gravity="right"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="16dp"
                     android:clickable="false"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txtRutNumberError"
                     app:srcCompat="@drawable/next_icon" />
-          <androidx.viewpager.widget.ViewPager
-              android:layout_width="match_parent"
-              android:layout_height="30dp"/>
+
+                <androidx.viewpager.widget.ViewPager
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </ScrollView>

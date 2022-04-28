@@ -3,7 +3,6 @@ package com.curenta.driver.fragments;
 import static android.app.Activity.RESULT_OK;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,7 +29,6 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 
 import com.curenta.driver.BuildConfig;
-import com.curenta.driver.DashboardActivity;
 import com.curenta.driver.R;
 import com.curenta.driver.adaptors.ImageAdapter;
 import com.curenta.driver.adaptors.RideDetailListAdapter;
@@ -41,7 +39,6 @@ import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.retrofit.RetrofitClient;
 import com.curenta.driver.retrofit.apiDTO.ConfirmDeliveryResponse;
-import com.curenta.driver.retrofit.apiDTO.ConfirmOrderResponse;
 import com.curenta.driver.utilities.CompressFile;
 import com.curenta.driver.utilities.FileUtils;
 import com.curenta.driver.utilities.FragmentUtils;
@@ -123,8 +120,17 @@ public class FragmentConfirmDelivery extends Fragment {
                         confirmPickup();
 
                     } else {
-                        RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                        confirmDelivery();
+                        FragmentConfirmDeliveryDetails fragmentConfirmDeliveryDetails = new FragmentConfirmDeliveryDetails();
+                        fragmentConfirmDeliveryDetails.enumPictureType = enumPictureType;
+                        fragmentConfirmDeliveryDetails.images = images;
+                        fragmentConfirmDeliveryDetails.imagesURIs = imagesURIs;
+                        fragmentConfirmDeliveryDetails.sections = sections;
+                        fragmentConfirmDeliveryDetails.index = index;
+                        fragmentConfirmDeliveryDetails.routeId = routeId;
+                        fragmentConfirmDeliveryDetails.order = order;
+                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentConfirmDeliveryDetails, R.id.fragContainer);
+
+
                     }
                 } else {
                     Toast.makeText(getContext(), "Issue while uploading photos.Please try again later", Toast.LENGTH_SHORT).show();
@@ -178,10 +184,10 @@ public class FragmentConfirmDelivery extends Fragment {
     }
 
     private void openCamera() {
-        boolean cameraPermission= Utility.checkCameraPermission(getContext());
-        boolean storagePermission= Utility.checkPermission(getContext());
-        boolean writePermission= Utility.checkWritePermission(getContext());
-        if(cameraPermission && storagePermission && writePermission) {
+        boolean cameraPermission = Utility.checkCameraPermission(getContext());
+        boolean storagePermission = Utility.checkPermission(getContext());
+        boolean writePermission = Utility.checkWritePermission(getContext());
+        if (cameraPermission && storagePermission && writePermission) {
             Intent pictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             File file;
             try {
@@ -314,6 +320,7 @@ public class FragmentConfirmDelivery extends Fragment {
             }
         }
     }
+
     private void cameraIntent() {
         boolean result = Utility.checkPermission(getContext());
         boolean cameraPermission = Utility.checkCameraPermission(getContext());
@@ -325,10 +332,10 @@ public class FragmentConfirmDelivery extends Fragment {
     }
 
     private void openImagesDocument() {
-        boolean cameraPermission= Utility.checkCameraPermission(getContext());
-        boolean storagePermission= Utility.checkPermission(getContext());
-        boolean writePermission= Utility.checkWritePermission(getContext());
-        if(cameraPermission && storagePermission && writePermission) {
+        boolean cameraPermission = Utility.checkCameraPermission(getContext());
+        boolean storagePermission = Utility.checkPermission(getContext());
+        boolean writePermission = Utility.checkWritePermission(getContext());
+        if (cameraPermission && storagePermission && writePermission) {
             Intent pictureIntent = new Intent(Intent.ACTION_GET_CONTENT);
             pictureIntent.setType("image/*");
             pictureIntent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -404,13 +411,13 @@ public class FragmentConfirmDelivery extends Fragment {
 //                }
 //                else {
 
-                    //Toast.makeText(getActivity(), "readable image", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getActivity(), "readable image", Toast.LENGTH_SHORT).show();
 
-                    //add in array list
-                    images.add(bitmap);
-                    imagesURIs.add(imageUri);
-                    setDataAdopter();
-              //  }
+                //add in array list
+                images.add(bitmap);
+                imagesURIs.add(imageUri);
+                setDataAdopter();
+                //  }
             } else {
                 Toast.makeText(getActivity(), "Could not set up the detector!", Toast.LENGTH_SHORT)
                         .show();
@@ -450,105 +457,6 @@ public class FragmentConfirmDelivery extends Fragment {
         }
     }
 
-
-    public void confirmDelivery() {
-        try {
-            boolean isInternetConnected = InternetChecker.isInternetAvailable();
-            if (isInternetConnected) {
-                dialog = new ProgressDialog(getContext(), R.style.AppCompatAlertDialogStyle);
-                dialog.setMessage("Please wait...");
-                dialog.setIndeterminate(true);
-                dialog.setCancelable(false);
-                dialog.show();
-                LoggedInUser user = LoggedInUser.getInstance();
-
-                RequestBody routeStepId = RequestBody.create(MediaType.parse("text/plain"),
-                        "" + order.routeStepId);
-                RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
-                        "" + routeId);
-//                RequestBody orderId = RequestBody.create(MediaType.parse("text/plain"),
-//                        "" + order.orderId);
-                Log.d("deliveryAPICall", " routeID " + routeId + " routeStepId " + order.routeStepId);
-                MultipartBody.Part[] pics = new MultipartBody.Part[images.size()];
-                for (int i = 0; i < images.size(); i++) {
-                    File ConfirmDeliveryPic = new File(imagesURIs.get(i).getPath());
-                    long length = ConfirmDeliveryPic.length();
-                    length = length / 1024;
-                    Log.d("filesize", "" + length);
-//                    if(length>800){
-//                        ConfirmDeliveryPic= CompressFile.getCompressedImageFile(ConfirmDeliveryPic,getContext());
-//                        length = ConfirmDeliveryPic.length();
-//                        length = length / 1024;
-//                        Log.d("filesize modified", "" + length);
-//                    }
-                    MultipartBody.Part ConfirmDeliveryImage = MultipartBody.Part.createFormData("ConfirmOrderImage", ConfirmDeliveryPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
-                            ConfirmDeliveryPic));
-                    pics[i] = ConfirmDeliveryImage;
-                }
-
-                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<ConfirmOrderResponse>() {
-                            @Override
-                            public void onSuccess(ConfirmOrderResponse response) {
-                                dialog.dismiss();
-                                if (response.responseCode == 1) {
-                                    Log.d("deliveryAPICall", "success " + response.toString());
-                                    //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
-                                    FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
-                                    sections.get(0).items.get(index).isCompleted = true;
-                                    Log.d("deliveryAPICall", "index " + index + " size " + (sections.get(0).items.size() - 1));
-                                    if (index < sections.get(0).items.size() - 1) {
-                                        sections.get(0).items.get(index + 1).isFocused = true;
-                                    } else {
-                                        fragmentThankYouAction.isCompleted = true;
-                                        enumPictureType = EnumPictureType.ORDER_COMPLETED;
-                                    }
-                                    if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
-
-                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_PICKUP;
-                                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
-
-                                    } else if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
-
-                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_DELIVER;
-                                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
-
-                                    } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
-                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_COMPLETED;
-                                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
-
-                                    }
-                                } else {
-                                    if (response.responseMessage.equalsIgnoreCase("no order found")) {
-                                        ((DashboardActivity) getActivity()).RideNewNotification(1);
-                                    } else if (response.responseMessage.equalsIgnoreCase("Route does not exist")) {
-                                        ((DashboardActivity) getActivity()).RideNewNotification(2);
-                                    } else {
-                                        Log.d("deliveryAPICall", "fail " + response.toString());
-                                        Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                dialog.dismiss();
-                                Log.d("deliveryAPICall", "failed " + e.toString());
-                                Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
-
-            }
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
-            Log.d("deliveryAPICall", "failed " + e.toString());
-        }
-    }
 
     public void confirmPickup() {
         try {

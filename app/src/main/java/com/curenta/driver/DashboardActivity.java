@@ -926,10 +926,11 @@ public class DashboardActivity extends AppCompatActivity implements NavigationVi
                                             rideInfoDto = new RideInfoDto();
                                         }
                                         DecimalFormat df = new DecimalFormat("0.00");
-                                        double outboundDistance = Helper.round((responseData.data.get(0).outboundDistance * 0.000621371), 2);
-                                        double inboundDistance = Helper.round((responseData.data.get(0).inboundDistance * 0.000621371), 2);
+                                        double outboundDistance = responseData.data.get(0).outboundDistance * 0.000621371;
+                                        double inboundDistance = responseData.data.get(0).inboundDistance * 0.000621371;
                                         Log.d("getRouteCall", "outboundDistance " + outboundDistance + " inboundDistance" + inboundDistance);
-                                        double totalAmount = Helper.round((responseData.data.get(0).outboundPricePerMile * outboundDistance) + (responseData.data.get(0).inboundPricePerMile * inboundDistance), 2);
+                                        double totalAmount =(responseData.data.get(0).outboundPricePerMile * outboundDistance) + (responseData.data.get(0).inboundPricePerMile * inboundDistance);
+                                        totalAmount=Helper.round(totalAmount,2);
                                         Log.d("getRouteCall", "outboundprice " + responseData.data.get(0).outboundPricePerMile + " inboundPrice" + responseData.data.get(0).inboundPricePerMile + " totalAmount" + totalAmount);
 //                                        double totalDistance = responseData.data.distance + responseData.data.returnTripDistance;
 //                                        double totalDuration = responseData.data.duration + responseData.data.returnTripDuration;

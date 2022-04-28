@@ -11,6 +11,7 @@
         <item name="colorOnSecondary">@color/black</item>
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+
         <!-- Customize your theme here. -->
     </style>
     <style name="AppCompatAlertDialogStyle" parent="Theme.AppCompat.Light.Dialog.Alert">
@@ -65,5 +66,16 @@
         <item name="pv_progressMode">indeterminate</item>
         <item name="cpd_inAnimDuration">0</item>
         <item name="cpd_outAnimDuration">@android:integer/config_mediumAnimTime</item>
+    </style>
+
+    <style name="MatchSpinnerStyle1" parent="android:style/Widget.ListView.DropDown">
+        <item name="android:textColor">#828282</item>
+        <item name="android:background">#F2F2F2</item>
+        <item name="android:divider">@color/white</item>
+        <item name="android:dividerHeight">2dp</item>
+    </style>
+
+    <style name="MatchSpinnerTheme1" >
+        <item name="android:dropDownListViewStyle">@style/MatchSpinnerStyle1</item>
     </style>
 </resources>
