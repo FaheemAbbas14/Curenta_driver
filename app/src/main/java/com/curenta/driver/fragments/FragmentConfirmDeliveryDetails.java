@@ -20,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.curenta.driver.BuildConfig;
 import com.curenta.driver.DashboardActivity;
 import com.curenta.driver.R;
+import com.curenta.driver.adaptors.CustomSpinnerAdopter;
 import com.curenta.driver.adaptors.RideDetailListAdapter;
 import com.curenta.driver.databinding.FragmentConfirmDeliveryDetailsBinding;
 import com.curenta.driver.dto.LoggedInUser;
@@ -33,6 +34,7 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
@@ -180,8 +182,16 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
         });
 
 
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), R.layout.cancel_spinner_item, whoOrder_list);
+        List<CustomSpinnerAdopter.SpinnerItem> list = new ArrayList<>();
+        for (String value : whoOrder_list) {
+            if (whoOrder.equalsIgnoreCase(value)) {
+                list.add(new CustomSpinnerAdopter.SpinnerItem(value, true));
+            } else {
+                list.add(new CustomSpinnerAdopter.SpinnerItem(value, false));
+            }
+        }
+        ArrayAdapter<CustomSpinnerAdopter.SpinnerItem> dataAdapter = new CustomSpinnerAdopter(getContext(), R.layout.cancel_spinner_item, list);
+
         //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(R.layout.cancel_spinner_item);
@@ -211,8 +221,16 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
         });
 
 
-        // Creating adapter for spinner
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), R.layout.cancel_spinner_item, relation_list);
+        List<CustomSpinnerAdopter.SpinnerItem> list = new ArrayList<>();
+        for (String value : relation_list) {
+            if (relation.equalsIgnoreCase(value)) {
+                list.add(new CustomSpinnerAdopter.SpinnerItem(value, true));
+            } else {
+                list.add(new CustomSpinnerAdopter.SpinnerItem(value, false));
+            }
+        }
+        ArrayAdapter<CustomSpinnerAdopter.SpinnerItem> dataAdapter = new CustomSpinnerAdopter(getContext(), R.layout.cancel_spinner_item, list);
+
         //dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Drop down layout style - list view with radio button
         dataAdapter.setDropDownViewResource(R.layout.cancel_spinner_item);
