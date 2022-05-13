@@ -208,7 +208,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
                 RideAcceptRequest requestDTO = new RideAcceptRequest(LoggedInUser.getInstance().driverId, rideInfoDto.routeId);
                 Gson gson = new Gson();
                 String request = gson.toJson(requestDTO);
-
+                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
                 RetrofitClient.getAPIClient().acceptRide(request)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -277,6 +277,7 @@ public class FragmentRidePopup extends Fragment implements ILocationChange, OnMa
         try {
             boolean isInternetConnected = InternetChecker.isInternetAvailable();
             if (isInternetConnected) {
+                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
                 RetrofitClient.getAPIClient().getRoutes(rideInfoDto.routeId, true, true, true)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

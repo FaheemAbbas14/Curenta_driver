@@ -110,7 +110,7 @@
                         android:checked="true"
                         android:paddingLeft="10dp"
                         android:text="I called the patient and gave me
-another adress"
+another address"
                         android:textColor="@color/labelgrey"
                         android:textSize="17sp" />
 
@@ -122,7 +122,7 @@ another adress"
                         android:button="@drawable/rdoselector"
                         android:paddingLeft="10dp"
                         android:text="I called the facility and gave me
-another adress"
+another address"
                         android:textColor="@color/labelgrey"
                         android:textSize="17sp" />
 
@@ -290,9 +290,10 @@ the one who asked you to cancel"
                     android:layout_marginTop="10dp"
                     android:clickable="false"
                     app:srcCompat="@drawable/next_icon" />
-          <androidx.viewpager.widget.ViewPager
-              android:layout_width="match_parent"
-              android:layout_height="30dp"/>
+
+                <androidx.viewpager.widget.ViewPager
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp" />
             </androidx.appcompat.widget.LinearLayoutCompat>
 
         </ScrollView>

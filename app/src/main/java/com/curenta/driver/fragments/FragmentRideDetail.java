@@ -62,11 +62,11 @@ public class FragmentRideDetail extends Fragment {
             @Override
             public void onClick(View v) {
                 if (routeId != null) {
-                    FragmentCancelOrder fragmentCancelOrder = new FragmentCancelOrder();
-                    fragmentCancelOrder.sections = sections;
-                    fragmentCancelOrder.routeId = routeId;
-                    fragmentCancelOrder.cancelTYpe = 1;
-                    FragmentUtils.getInstance().addFragment(getActivity(), fragmentCancelOrder, R.id.fragContainer);
+                    FragmentCancleRoute fragmentCancleRoute = new FragmentCancleRoute();
+                    fragmentCancleRoute.sections = sections;
+                    fragmentCancleRoute.routeId = routeId;
+                    fragmentCancleRoute.cancelTYpe = 1;
+                    FragmentUtils.getInstance().addFragment(getActivity(), fragmentCancleRoute, R.id.fragContainer);
 
                 }
             }

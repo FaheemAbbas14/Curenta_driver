@@ -53,12 +53,11 @@ public class CustomSpinnerAdopter extends ArrayAdapter<CustomSpinnerAdopter.Spin
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View row = inflater.inflate(R.layout.cancel_spinner_item, parent, false);
         TextView label = (TextView) row.findViewById(R.id.spnText);
-        RadioButton selected = (RadioButton) row.findViewById(R.id.rdoChecked);
+        View divider = (View) row.findViewById(R.id.divider);
         label.setText(objects.get(position).title);
-        selected.setChecked(objects.get(position).value);
-        if (position == 0) {//Special style for dropdown header
-            selected.setVisibility(View.GONE);
-        }
+        //if (position == 0) {//Special style for dropdown header
+            divider.setVisibility(View.GONE);
+       // }
 
         return row;
     }

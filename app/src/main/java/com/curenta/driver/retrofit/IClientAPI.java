@@ -107,7 +107,11 @@ public interface IClientAPI {
     @POST("/api/Route/ConfirmOrder")
     Single<ConfirmOrderResponse> confirmDelivery(@Part MultipartBody.Part[] DriverSelfiefile,
                                                  @Part("routeId") RequestBody RouteId,
-                                                 @Part("RouteStepId") RequestBody RouteStepId
+                                                 @Part("RouteStepId") RequestBody RouteStepId,
+                                                 @Part("ReceivedBy") RequestBody ReceivedBy,
+                                                 @Part("RelationOfReceiver") RequestBody RelationOfReceiver,
+                                                 @Part("TimeOfDelivery") RequestBody TimeOfDelivery
+
     );
     @Headers("Content-Type: application/json")
     @POST("api/Route/PickupRoute")

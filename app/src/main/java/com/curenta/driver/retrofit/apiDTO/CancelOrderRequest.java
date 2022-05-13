@@ -10,12 +10,17 @@ public class CancelOrderRequest {
     public String userEmail;
     public String cancelReason;
     public String userType="DRIVER";
-
-    public CancelOrderRequest(String routeId, String routeStepId, int userId, String userEmail, String cancelReason) {
+    public String cancelledBy;
+    public String relation;
+    public String newAddress;
+    public CancelOrderRequest(String routeId, String routeStepId, int userId, String userEmail, String cancelReason, String cancelledBy, String newAddress, String relation) {
         this.routeId = routeId;
         this.routeStepId = routeStepId;
         this.userId = userId;
         this.userEmail = userEmail;
         this.cancelReason = cancelReason;
+        this.cancelledBy = cancelledBy;
+        this.newAddress = newAddress;
+        this.relation = relation;
     }
 }

@@ -283,12 +283,18 @@ public class FragmentTakePhoto extends Fragment {
                         "" + order.routeStepId);
                 RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
                         "" + routeId);
+                RequestBody WhoOrder = RequestBody.create(MediaType.parse("text/plain"),
+                        "" );
+                RequestBody Relation = RequestBody.create(MediaType.parse("text/plain"),
+                        "" );
+                RequestBody DeliveryTime = RequestBody.create(MediaType.parse("text/plain"),
+                        "" );
 //                RequestBody orderId = RequestBody.create(MediaType.parse("text/plain"),
 //                        "" + order.orderId);
                 Log.d("deliveryAPICall", " routeID " + routeId+" routeStepId " + order.routeStepId);
                 MultipartBody.Part[] pics = {ConfirmDeliveryImage};
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId)
+                RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId,WhoOrder,Relation,DeliveryTime)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<ConfirmOrderResponse>() {

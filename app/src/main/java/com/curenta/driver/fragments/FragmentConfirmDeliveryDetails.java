@@ -149,8 +149,13 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                 if (fragmentConfirmDeliveryDetailsBinding.editText.getText().toString().equalsIgnoreCase("")) {
                     Toast.makeText(getActivity(), "Please enter who recieved", Toast.LENGTH_SHORT).show();
                 } else {
-                    whoOrder = fragmentConfirmDeliveryDetailsBinding.editText.getText().toString();
-                    relation = fragmentConfirmDeliveryDetailsBinding.edtRelation.getText().toString();
+                    if (!fragmentConfirmDeliveryDetailsBinding.edtRelation.getText().toString().equalsIgnoreCase("")) {
+                        relation = fragmentConfirmDeliveryDetailsBinding.edtRelation.getText().toString();
+                    }
+                    if (!fragmentConfirmDeliveryDetailsBinding.editText.getText().toString().equalsIgnoreCase("")) {
+                        whoOrder+="-"+ fragmentConfirmDeliveryDetailsBinding.editText.getText().toString();
+                    }
+                    deliveryTime = fragmentConfirmDeliveryDetailsBinding.edtTime.getText().toString();
 
                     RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
                     confirmDelivery();
@@ -170,7 +175,7 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
         fragmentConfirmDeliveryDetailsBinding.spnWhoRecieved.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                whoOrder = parent.getItemAtPosition(position).toString();
+                whoOrder = whoOrder_list.get(position);
 
 
             }
@@ -205,7 +210,7 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
         fragmentConfirmDeliveryDetailsBinding.spnRelation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                relation = parent.getItemAtPosition(position).toString();
+                relation =relation_list.get(position);
 
                 if (relation.equalsIgnoreCase("Other")) {
                     fragmentConfirmDeliveryDetailsBinding.edtRelation.setVisibility(View.VISIBLE);
@@ -254,6 +259,12 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                         "" + order.routeStepId);
                 RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
                         "" + routeId);
+                RequestBody WhoOrder = RequestBody.create(MediaType.parse("text/plain"),
+                        "" + whoOrder);
+                RequestBody Relation = RequestBody.create(MediaType.parse("text/plain"),
+                        "" + relation);
+                RequestBody DeliveryTime = RequestBody.create(MediaType.parse("text/plain"),
+                        "" + deliveryTime);
 //                RequestBody orderId = RequestBody.create(MediaType.parse("text/plain"),
 //                        "" + order.orderId);
                 Log.d("deliveryAPICall", " routeID " + routeId + " routeStepId " + order.routeStepId);
@@ -275,7 +286,7 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                 }
 
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId)
+                RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId, WhoOrder, Relation, DeliveryTime)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<ConfirmOrderResponse>() {

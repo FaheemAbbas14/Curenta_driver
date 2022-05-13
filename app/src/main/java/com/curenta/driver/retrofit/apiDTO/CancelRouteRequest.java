@@ -9,12 +9,16 @@ public class CancelRouteRequest {
     public String cancelReason="";
     public int userId;
     public String userEmail;
-
-
-    public CancelRouteRequest(String routeId, String cancelReason, int userId, String userEmail) {
+    public String cancelledBy;
+    public String relation;
+    public String newAddress;
+    public CancelRouteRequest(String routeId, String cancelReason, int userId, String userEmail, String cancelledBy, String relation, String newAddress) {
         this.routeId = routeId;
         this.cancelReason = cancelReason;
         this.userId = userId;
         this.userEmail = userEmail;
+        this.cancelledBy = cancelledBy;
+        this.relation = relation;
+        this.newAddress = newAddress;
     }
 }

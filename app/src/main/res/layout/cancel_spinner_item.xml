@@ -1,29 +1,27 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="30dp">
+    android:minHeight="30dp"
+    android:orientation="vertical">
 
-    <RadioButton
-        android:id="@+id/rdoChecked"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:clickable="false"
-        android:visibility="gone"
-        android:enabled="false"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true" />
 
     <TextView
         android:id="@+id/spnText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@id/rdoChecked"
         android:textColor="#828282"
         android:textSize="14sp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         tools:text="United Kingdom" />
 
-
-</RelativeLayout>
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="20dp"
+        android:background="@color/grey" />
+</androidx.appcompat.widget.LinearLayoutCompat>

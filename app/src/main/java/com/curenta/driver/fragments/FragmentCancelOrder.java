@@ -30,6 +30,7 @@ import com.curenta.driver.databinding.FragmentCancelOrderBinding;
 import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.retrofit.RetrofitClient;
+import com.curenta.driver.retrofit.apiDTO.CancelOrderRequest;
 import com.curenta.driver.retrofit.apiDTO.CancelRouteRequest;
 import com.curenta.driver.retrofit.apiDTO.CancelRouteResponse;
 import com.curenta.driver.utilities.FragmentUtils;
@@ -135,15 +136,15 @@ public class FragmentCancelOrder extends Fragment {
                     if (fragmentCancelOrderBinding.editText.getText().toString().equalsIgnoreCase("")) {
                         Toast.makeText(getActivity(), "Please enter reason", Toast.LENGTH_SHORT).show();
                     } else {
-                        reason = fragmentCancelOrderBinding.editText.getText().toString();
-                        newAddress = fragmentCancelOrderBinding.edtWhoOrder.getText().toString();
+
+                        newAddress = fragmentCancelOrderBinding.editText.getText().toString();
                         if (relation.equalsIgnoreCase("Other")) {
                             relation = fragmentCancelOrderBinding.edtRelation.getText().toString();
                         }
                         if (cancelTYpe == 1) {
                             cancelRoute(routeId);
                         } else {
-                            //cancelRoute(routeId, order.routeStepId);
+                            cancelRoute(routeId, order.routeStepId);
                         }
                     }
                 } else {
@@ -151,7 +152,7 @@ public class FragmentCancelOrder extends Fragment {
                         cancelRoute(routeId);
                     } else {
                         if (order != null) {
-                            //   cancelRoute(routeId, order.routeStepId);
+                            cancelRoute(routeId, order.routeStepId);
                         }
                     }
                 }
@@ -168,12 +169,15 @@ public class FragmentCancelOrder extends Fragment {
         fragmentCancelOrderBinding.spnCancelReason.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                reason = parent.getItemAtPosition(position).toString();
+                reason = reasons_list.get(position);
                 if (reason.equalsIgnoreCase("Wrong address")) {
                     fragmentCancelOrderBinding.rdoWrongAddress.setVisibility(View.VISIBLE);
                     fragmentCancelOrderBinding.editText.setVisibility(View.VISIBLE);
+                    fragmentCancelOrderBinding.editText.setHint("Please enter the new address");
                 } else if (reason.equalsIgnoreCase("Other")) {
                     fragmentCancelOrderBinding.editText.setVisibility(View.VISIBLE);
+                    fragmentCancelOrderBinding.rdoWrongAddress.setVisibility(View.GONE);
+                    fragmentCancelOrderBinding.editText.setHint("Please enter the reason");
                 } else {
                     fragmentCancelOrderBinding.rdoWrongAddress.setVisibility(View.GONE);
                     fragmentCancelOrderBinding.editText.setVisibility(View.GONE);
@@ -213,7 +217,7 @@ public class FragmentCancelOrder extends Fragment {
         fragmentCancelOrderBinding.spnWhoOrder.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                whoOrder = parent.getItemAtPosition(position).toString();
+                whoOrder = whoOrder_list.get(position);
 
 
             }
@@ -248,10 +252,11 @@ public class FragmentCancelOrder extends Fragment {
         fragmentCancelOrderBinding.spnRelation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                relation = parent.getItemAtPosition(position).toString();
+                relation = relation_list.get(position);
 
                 if (relation.equalsIgnoreCase("Other")) {
                     fragmentCancelOrderBinding.edtRelation.setVisibility(View.VISIBLE);
+                    fragmentCancelOrderBinding.edtRelation.setHint("Please enter the relation");
                 } else {
                     fragmentCancelOrderBinding.edtRelation.setVisibility(View.GONE);
                 }
@@ -281,65 +286,71 @@ public class FragmentCancelOrder extends Fragment {
         // attaching data adapter to spinner
         fragmentCancelOrderBinding.spnRelation.setAdapter(dataAdapter);
     }
-//    private void cancelRoute(String routeId, String routeStepId) {
-//        try {
-//            boolean isInternetConnected = InternetChecker.isInternetAvailable();
-//            if (isInternetConnected) {
-//                dialog = new ProgressDialog(getContext(), R.style.AppCompatAlertDialogStyle);
-//                dialog.setMessage("Please wait...");
-//                dialog.setIndeterminate(true);
-//                dialog.setCancelable(false);
-//                dialog.show();
-//                int radioButtonID = fragmentCancelOrderBinding.radio.getCheckedRadioButtonId();
-//                RadioButton radioButton = (RadioButton) fragmentCancelOrderBinding.radio.findViewById(radioButtonID);
-//                reason = (String) radioButton.getText();
-//                if (reason.equals("Other")) {
-//                    reason = fragmentCancelOrderBinding.editText.getText().toString();
-//                }
-//                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-//                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, reason);
-//                Gson gson = new Gson();
-//                String request = gson.toJson(requestDTO);
-//                RetrofitClient.getAPIClient().cancelRouteOrder(request)
-//                        .subscribeOn(Schedulers.io())
-//                        .observeOn(AndroidSchedulers.mainThread())
-//                        .subscribeWith(new DisposableSingleObserver<CancelRouteResponse>() {
-//                            @Override
-//                            public void onSuccess(CancelRouteResponse response) {
-//                                dialog.dismiss();
-//                                if (response.responseCode == 1) {
-//
-//                                    sections.get(0).items.get(index).isCompleted = true;
-//                                    sections.get(0).items.get(index).isCancled = true;
-//                                    Log.d("cancelRoute", "index " + index + " size " + (sections.get(0).items.size() - 1));
-//                                    launchDismissDlg();
-//
-//
-//                                } else {
-//                                    Log.d("cancelRoute", "fail " + response);
-//                                    Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
-//
-//                                }
-//                            }
-//
-//                            @Override
-//                            public void onError(Throwable e) {
-//                                dialog.dismiss();
-//                                Log.d("cancelRoute", "failed " + e.toString());
-//                                Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
-//                            }
-//                        });
-//            } else {
-//                Toast.makeText(getActivity().getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
-//
-//            }
-//        } catch (Exception e) {
-//            Toast.makeText(getActivity().getApplicationContext(), "Error while connecting to server", Toast.LENGTH_SHORT).show();
-//
-//            FirebaseCrashlytics.getInstance().recordException(e);
-//            Log.d("cancelRoute", "failed " + e.toString());
-//        }
-//    }
+
+    private void cancelRoute(String routeId, String routeStepId) {
+        try {
+            boolean isInternetConnected = InternetChecker.isInternetAvailable();
+            if (isInternetConnected) {
+                dialog = new ProgressDialog(getContext(), R.style.AppCompatAlertDialogStyle);
+                dialog.setMessage("Please wait...");
+                dialog.setIndeterminate(true);
+                dialog.setCancelable(false);
+                dialog.show();
+                if (reason.equalsIgnoreCase("Wrong address")) {
+                    int radioButtonID = fragmentCancelOrderBinding.rdoWrongAddress.getCheckedRadioButtonId();
+                    RadioButton radioButton = (RadioButton) fragmentCancelOrderBinding.rdoWrongAddress.findViewById(radioButtonID);
+                    reason = (String) radioButton.getText();
+                }
+                if (reason.equals("Other")) {
+                    reason = fragmentCancelOrderBinding.editText.getText().toString();
+                }
+                if (!fragmentCancelOrderBinding.edtWhoOrder.getText().toString().equalsIgnoreCase("")) {
+                    whoOrder += "-" + fragmentCancelOrderBinding.edtWhoOrder.getText().toString();
+                }
+                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
+                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, reason, whoOrder, newAddress, relation);
+                Gson gson = new Gson();
+                String request = gson.toJson(requestDTO);
+                RetrofitClient.getAPIClient().cancelRouteOrder(request)
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribeWith(new DisposableSingleObserver<CancelRouteResponse>() {
+                            @Override
+                            public void onSuccess(CancelRouteResponse response) {
+                                dialog.dismiss();
+                                if (response.responseCode == 1) {
+
+                                    sections.get(0).items.get(index).isCompleted = true;
+                                    sections.get(0).items.get(index).isCancled = true;
+                                    Log.d("cancelRoute", "index " + index + " size " + (sections.get(0).items.size() - 1));
+                                    launchDismissDlg();
+
+
+                                } else {
+                                    Log.d("cancelRoute", "fail " + response);
+                                    Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
+
+                                }
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+                                dialog.dismiss();
+                                Log.d("cancelRoute", "failed " + e.toString());
+                                Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            } else {
+                Toast.makeText(getActivity().getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
+
+            }
+        } catch (Exception e) {
+            Toast.makeText(getActivity().getApplicationContext(), "Error while connecting to server", Toast.LENGTH_SHORT).show();
+
+            FirebaseCrashlytics.getInstance().recordException(e);
+            Log.d("cancelRoute", "failed " + e.toString());
+        }
+    }
 
     private void cancelRoute(String routeId) {
         try {
@@ -350,14 +361,16 @@ public class FragmentCancelOrder extends Fragment {
                 dialog.setIndeterminate(true);
                 dialog.setCancelable(false);
                 dialog.show();
-                int radioButtonID = fragmentCancelOrderBinding.rdoWrongAddress.getCheckedRadioButtonId();
-                RadioButton radioButton = (RadioButton) fragmentCancelOrderBinding.rdoWrongAddress.findViewById(radioButtonID);
-                reason = (String) radioButton.getText();
+                if (reason.equalsIgnoreCase("Wrong address")) {
+                    int radioButtonID = fragmentCancelOrderBinding.rdoWrongAddress.getCheckedRadioButtonId();
+                    RadioButton radioButton = (RadioButton) fragmentCancelOrderBinding.rdoWrongAddress.findViewById(radioButtonID);
+                    reason = (String) radioButton.getText();
+                }
                 if (reason.equals("Other")) {
                     reason = fragmentCancelOrderBinding.editText.getText().toString();
                 }
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                CancelRouteRequest requestDTO = new CancelRouteRequest(routeId, reason, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email);
+                CancelRouteRequest requestDTO = new CancelRouteRequest(routeId, reason, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, whoOrder, relation, newAddress);
                 Gson gson = new Gson();
                 String request = gson.toJson(requestDTO);
                 RetrofitClient.getAPIClient().cancelRoute(request)
