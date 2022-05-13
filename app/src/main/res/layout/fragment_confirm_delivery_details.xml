@@ -197,7 +197,7 @@ the order to this person"
                     android:textSize="14sp" />
 
 
-                <androidx.appcompat.widget.AppCompatEditText
+                <TextView
                     android:id="@+id/edtTime"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
