@@ -80,13 +80,10 @@
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
-        <activity
-            android:name="com.pspdfkit.ui.PdfActivity"
-            android:windowSoftInputMode="adjustNothing" />
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"/>
+
         <activity
             android:name=".SplashScreen"
+            android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>

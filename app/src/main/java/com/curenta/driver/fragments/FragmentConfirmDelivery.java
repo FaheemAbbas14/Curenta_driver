@@ -160,7 +160,7 @@ public class FragmentConfirmDelivery extends Fragment {
     }
 
     private void selectImage() {
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery","Take Photo Without Scanner", "Cancel"};
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
         builder.setCancelable(false);
         builder.setTitle("Upload Photo!");
@@ -172,9 +172,9 @@ public class FragmentConfirmDelivery extends Fragment {
                 } else if (options[item].equals("Choose from Gallery")) {
                     openImagesDocument();
                 }
-//                else if (options[item].equals("Take Photo without Scanner")) {
-//                    cameraIntent();
-//                }
+                else if (options[item].equals("Take Photo Without Scanner")) {
+                    cameraIntent();
+                }
                 else if (options[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
