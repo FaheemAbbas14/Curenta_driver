@@ -27,6 +27,7 @@ import com.curenta.driver.R;
 import com.curenta.driver.adaptors.CustomSpinnerAdopter;
 import com.curenta.driver.adaptors.RideDetailListAdapter;
 import com.curenta.driver.databinding.FragmentCancelOrderBinding;
+import com.curenta.driver.dto.AppElement;
 import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.retrofit.RetrofitClient;
@@ -49,9 +50,10 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FragmentCancelOrder extends Fragment {
     public RideDetailListAdapter.Order order;
-    public ArrayList<RideDetailListAdapter.Section> sections;
+    public ArrayList<RideDetailListAdapter.RoutStep> sections;
     public int index;
     public String routeId;
+    public int routeIndex;
     FragmentCancelOrderBinding fragmentCancelOrderBinding;
     String reason = "", whoOrder = "", relation = "", newAddress = "";
     ProgressDialog dialog;
@@ -70,6 +72,7 @@ public class FragmentCancelOrder extends Fragment {
         } else {
             fragmentCancelOrderBinding.header.txtLabel.setText("Cancel Order");
         }
+        reasons_list.add("Select the reason");
         reasons_list.add("No one at home and Patient does not answer his phone");
         reasons_list.add("No one at home and Facility do not answer the phone");
         reasons_list.add("No one at home and Neither patient nor facility answer the phone");
@@ -80,11 +83,13 @@ public class FragmentCancelOrder extends Fragment {
         reasons_list.add("Patient order to redeliver tomorrow");
         reasons_list.add("Late delivery time and patient asked to redeliver tomorrow");
         reasons_list.add("Facility asked to redeliver tomorrow");
-        reasons_list.add("Other");
+        reasons_list.add("Others");
 
+        whoOrder_list.add("Select the person");
         whoOrder_list.add("Patient/ Family member");
         whoOrder_list.add("Facility employee");
 
+        relation_list.add("Select the relationship");
         relation_list.add("The patient him self ");
         relation_list.add("Wife");
         relation_list.add("Mother");
@@ -105,7 +110,7 @@ public class FragmentCancelOrder extends Fragment {
         relation_list.add("Receptionist");
         relation_list.add("Neighbor");
         relation_list.add("Med. Tech");
-        relation_list.add("Other");
+        relation_list.add("Others");
         fragmentCancelOrderBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,19 +137,19 @@ public class FragmentCancelOrder extends Fragment {
         fragmentCancelOrderBinding.imgNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (reason.equals("Other") || reason.equals("Wrong address")) {
+                if (reason.equals("Others") || reason.equals("Wrong address")) {
                     if (fragmentCancelOrderBinding.editText.getText().toString().equalsIgnoreCase("")) {
-                        Toast.makeText(getActivity(), "Please enter reason", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), "Mandatory field can not be empty", Toast.LENGTH_SHORT).show();
                     } else {
 
                         newAddress = fragmentCancelOrderBinding.editText.getText().toString();
-                        if (relation.equalsIgnoreCase("Other")) {
+                        if (relation.equalsIgnoreCase("Others")) {
                             relation = fragmentCancelOrderBinding.edtRelation.getText().toString();
                         }
                         if (cancelTYpe == 1) {
                             cancelRoute(routeId);
                         } else {
-                            cancelRoute(routeId, order.routeStepId);
+                            cancelRouteOrder(routeId, order.routeStepId);
                         }
                     }
                 } else {
@@ -152,7 +157,7 @@ public class FragmentCancelOrder extends Fragment {
                         cancelRoute(routeId);
                     } else {
                         if (order != null) {
-                            cancelRoute(routeId, order.routeStepId);
+                            cancelRouteOrder(routeId, order.routeStepId);
                         }
                     }
                 }
@@ -172,15 +177,15 @@ public class FragmentCancelOrder extends Fragment {
                 reason = reasons_list.get(position);
                 if (reason.equalsIgnoreCase("Wrong address")) {
                     fragmentCancelOrderBinding.rdoWrongAddress.setVisibility(View.VISIBLE);
-                    fragmentCancelOrderBinding.editText.setVisibility(View.VISIBLE);
+                    fragmentCancelOrderBinding.llAddress.setVisibility(View.VISIBLE);
                     fragmentCancelOrderBinding.editText.setHint("Please enter the new address");
-                } else if (reason.equalsIgnoreCase("Other")) {
-                    fragmentCancelOrderBinding.editText.setVisibility(View.VISIBLE);
+                } else if (reason.equalsIgnoreCase("Others")) {
+                    fragmentCancelOrderBinding.llAddress.setVisibility(View.VISIBLE);
                     fragmentCancelOrderBinding.rdoWrongAddress.setVisibility(View.GONE);
                     fragmentCancelOrderBinding.editText.setHint("Please enter the reason");
                 } else {
                     fragmentCancelOrderBinding.rdoWrongAddress.setVisibility(View.GONE);
-                    fragmentCancelOrderBinding.editText.setVisibility(View.GONE);
+                    fragmentCancelOrderBinding.llAddress.setVisibility(View.GONE);
                 }
 
 
@@ -218,7 +223,12 @@ public class FragmentCancelOrder extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 whoOrder = whoOrder_list.get(position);
-
+                if (!whoOrder.equalsIgnoreCase("Select the person")) {
+                    fragmentCancelOrderBinding.llWhoOrder.setVisibility(View.VISIBLE);
+                    fragmentCancelOrderBinding.edtWhoOrder.setHint("Please enter Person Who Order to Cancel");
+                } else {
+                    fragmentCancelOrderBinding.llWhoOrder.setVisibility(View.GONE);
+                }
 
             }
 
@@ -254,11 +264,11 @@ public class FragmentCancelOrder extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 relation = relation_list.get(position);
 
-                if (relation.equalsIgnoreCase("Other")) {
-                    fragmentCancelOrderBinding.edtRelation.setVisibility(View.VISIBLE);
+                if (relation.equalsIgnoreCase("Others")) {
+                    fragmentCancelOrderBinding.llRelation.setVisibility(View.VISIBLE);
                     fragmentCancelOrderBinding.edtRelation.setHint("Please enter the relation");
                 } else {
-                    fragmentCancelOrderBinding.edtRelation.setVisibility(View.GONE);
+                    fragmentCancelOrderBinding.llRelation.setVisibility(View.GONE);
                 }
             }
 
@@ -287,7 +297,7 @@ public class FragmentCancelOrder extends Fragment {
         fragmentCancelOrderBinding.spnRelation.setAdapter(dataAdapter);
     }
 
-    private void cancelRoute(String routeId, String routeStepId) {
+    private void cancelRouteOrder(String routeId, String routeStepId) {
         try {
             boolean isInternetConnected = InternetChecker.isInternetAvailable();
             if (isInternetConnected) {
@@ -296,19 +306,60 @@ public class FragmentCancelOrder extends Fragment {
                 dialog.setIndeterminate(true);
                 dialog.setCancelable(false);
                 dialog.show();
+                if (reason.equalsIgnoreCase("Select the reason")) {
+                    Toast.makeText(getActivity(), "Please select Cancellation reason", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    return;
+                }
                 if (reason.equalsIgnoreCase("Wrong address")) {
                     int radioButtonID = fragmentCancelOrderBinding.rdoWrongAddress.getCheckedRadioButtonId();
                     RadioButton radioButton = (RadioButton) fragmentCancelOrderBinding.rdoWrongAddress.findViewById(radioButtonID);
-                    reason = (String) radioButton.getText();
+                    reason += "-" + (String) radioButton.getText();
+                    reason += "-" + fragmentCancelOrderBinding.editText.getText().toString();
                 }
-                if (reason.equals("Other")) {
-                    reason = fragmentCancelOrderBinding.editText.getText().toString();
+                if (reason.equals("Others")) {
+                    if (fragmentCancelOrderBinding.editText.getText().toString().equalsIgnoreCase("")) {
+                        Toast.makeText(getActivity(), "Mandatory field can not be empty", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                        return;
+                    } else {
+                        reason = fragmentCancelOrderBinding.editText.getText().toString();
+                    }
+                }
+                if (whoOrder.contains("Select the person")) {
+                    Toast.makeText(getActivity(), "Please select Person Who Order to Cancel", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    return;
                 }
                 if (!fragmentCancelOrderBinding.edtWhoOrder.getText().toString().equalsIgnoreCase("")) {
                     whoOrder += "-" + fragmentCancelOrderBinding.edtWhoOrder.getText().toString();
+                } else {
+                    Toast.makeText(getActivity(), "Mandatory field can not be empty", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    return;
                 }
+                if (relation.equalsIgnoreCase("Select the relationship") ) {
+                    Toast.makeText(getActivity(), "Please select patient relationship", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    return;
+                }
+
+                if (relation.equals("Others") || relation.equalsIgnoreCase("")) {
+                    if (fragmentCancelOrderBinding.edtRelation.getText().toString().equalsIgnoreCase("")) {
+                        Toast.makeText(getActivity(), "Mandatory field can not be empty", Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                        return;
+                    } else {
+                        relation = fragmentCancelOrderBinding.edtRelation.getText().toString();
+                    }
+                }
+
+
+
+                Log.d("cancelRoute", "routeIndex " + routeIndex + "index " + index + " size " + (sections.get(0).orders.size() - 1));
+
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, reason, whoOrder, newAddress, relation);
+                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, reason, whoOrder, newAddress, relation, order.orderId);
                 Gson gson = new Gson();
                 String request = gson.toJson(requestDTO);
                 RetrofitClient.getAPIClient().cancelRouteOrder(request)
@@ -320,9 +371,9 @@ public class FragmentCancelOrder extends Fragment {
                                 dialog.dismiss();
                                 if (response.responseCode == 1) {
 
-                                    sections.get(0).items.get(index).isCompleted = true;
-                                    sections.get(0).items.get(index).isCancled = true;
-                                    Log.d("cancelRoute", "index " + index + " size " + (sections.get(0).items.size() - 1));
+                                    sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                    sections.get(routeIndex).orders.get(index).isCancled = true;
+                                    Log.d("cancelRoute", "routeIndex " + (routeIndex - 1) + "index " + index + " size " + (sections.get(0).orders.size() - 1));
                                     launchDismissDlg();
 
 
@@ -344,12 +395,14 @@ public class FragmentCancelOrder extends Fragment {
                 Toast.makeText(getActivity().getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
 
             }
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             Toast.makeText(getActivity().getApplicationContext(), "Error while connecting to server", Toast.LENGTH_SHORT).show();
 
             FirebaseCrashlytics.getInstance().recordException(e);
             Log.d("cancelRoute", "failed " + e.toString());
         }
+
     }
 
     private void cancelRoute(String routeId) {
@@ -366,7 +419,7 @@ public class FragmentCancelOrder extends Fragment {
                     RadioButton radioButton = (RadioButton) fragmentCancelOrderBinding.rdoWrongAddress.findViewById(radioButtonID);
                     reason = (String) radioButton.getText();
                 }
-                if (reason.equals("Other")) {
+                if (reason.equals("Others")) {
                     reason = fragmentCancelOrderBinding.editText.getText().toString();
                 }
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
@@ -445,8 +498,11 @@ public class FragmentCancelOrder extends Fragment {
                     }
 
                 } else {
-                    if (index < sections.get(0).items.size() - 1) {
-                        sections.get(0).items.get(index + 1).isFocused = true;
+                    if (routeIndex < sections.size() - 1) {
+                        sections.get(routeIndex + 1).isFocused = true;
+                        if (sections.get(routeIndex).orders.size() == 1) {
+                            AppElement.nextFocusIndex = routeIndex;
+                        }
                         try {
                             if (getActivity() != null && getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
@@ -457,7 +513,8 @@ public class FragmentCancelOrder extends Fragment {
 
                         }
                     } else {
-
+                        AppElement.nextFocusIndex = 0;
+                        AppElement.delivered.clear();
                         FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
                         fragmentThankYouAction.isCompleted = true;
                         fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_COMPLETED;

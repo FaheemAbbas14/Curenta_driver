@@ -61,7 +61,7 @@ public class FragmentTakePhoto extends Fragment {
     public EnumPictureType enumPictureType;
     public String routeId;
     public RideDetailListAdapter.Order order;
-    public ArrayList<RideDetailListAdapter.Section> sections = new ArrayList<>();
+    public ArrayList<RideDetailListAdapter.RoutStep> sections = new ArrayList<>();
     public int index = 0;
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -176,11 +176,11 @@ public class FragmentTakePhoto extends Fragment {
                         RetrofitClient.changeApiBaseUrl(BuildConfig.logindevURL);
                         uploadSelfie();
                     } else if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
-                        confirmPickup();
+                        //confirmPickup();
 
                     } else {
                         RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                        confirmDelivery();
+                      //  confirmDelivery();
                     }
 
 
@@ -266,162 +266,162 @@ public class FragmentTakePhoto extends Fragment {
         }
     }
 
-    public void confirmDelivery() {
-        try {
-            boolean isInternetConnected = InternetChecker.isInternetAvailable();
-            if (isInternetConnected) {
-                dialog = new ProgressDialog(getContext(), R.style.AppCompatAlertDialogStyle);
-                dialog.setMessage("Please wait...");
-                dialog.setIndeterminate(true);
-                dialog.setCancelable(false);
-                dialog.show();
-                LoggedInUser user = LoggedInUser.getInstance();
-                File ConfirmDeliveryPic = new File(imageUri.getPath());
-                MultipartBody.Part ConfirmDeliveryImage = MultipartBody.Part.createFormData("ConfirmDeliveryImage", ConfirmDeliveryPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
-                        ConfirmDeliveryPic));
-                RequestBody routeStepId = RequestBody.create(MediaType.parse("text/plain"),
-                        "" + order.routeStepId);
-                RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
-                        "" + routeId);
-                RequestBody WhoOrder = RequestBody.create(MediaType.parse("text/plain"),
-                        "" );
-                RequestBody Relation = RequestBody.create(MediaType.parse("text/plain"),
-                        "" );
-                RequestBody DeliveryTime = RequestBody.create(MediaType.parse("text/plain"),
-                        "" );
-//                RequestBody orderId = RequestBody.create(MediaType.parse("text/plain"),
-//                        "" + order.orderId);
-                Log.d("deliveryAPICall", " routeID " + routeId+" routeStepId " + order.routeStepId);
-                MultipartBody.Part[] pics = {ConfirmDeliveryImage};
-                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId,WhoOrder,Relation,DeliveryTime)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<ConfirmOrderResponse>() {
-                            @Override
-                            public void onSuccess(ConfirmOrderResponse response) {
-                                dialog.dismiss();
-                                if (response.responseCode == 1) {
-                                    Log.d("deliveryAPICall", "success " + response.toString());
-                                    //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
-                                    FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
-                                    sections.get(0).items.get(index).isCompleted = true;
-                                    Log.d("deliveryAPICall", "index " + index + " size " + (sections.get(0).items.size() - 1));
-                                    if (index < sections.get(0).items.size() - 1) {
-                                        sections.get(0).items.get(index + 1).isFocused = true;
-                                    } else {
-                                        fragmentThankYouAction.isCompleted = true;
-                                        enumPictureType = EnumPictureType.ORDER_COMPLETED;
-                                    }
-                                    if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
-
-                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_PICKUP;
-                                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
-
-                                    } else if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
-
-                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_DELIVER;
-                                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
-
-                                    } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
-                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_COMPLETED;
-                                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
-
-                                    }
-                                } else {
-                                    if (response.responseMessage.equalsIgnoreCase("no order found")) {
-                                        ((DashboardActivity) getActivity()).RideNewNotification(1);
-                                    }
-                                    else if (response.responseMessage.equalsIgnoreCase("Route does not exist")) {
-                                        ((DashboardActivity) getActivity()).RideNewNotification(2);
-                                    }
-                                    else {
-                                        Log.d("deliveryAPICall", "fail " + response.toString());
-                                        Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                dialog.dismiss();
-                                Log.d("deliveryAPICall", "failed " + e.toString());
-                                Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
-
-            }
-        } catch (Exception e) {
-            FirebaseCrashlytics.getInstance().recordException(e);
-            Log.d("deliveryAPICall", "failed " + e.toString());
-        }
-    }
-
-    public void confirmPickup() {
-        try {
-            boolean isInternetConnected = InternetChecker.isInternetAvailable();
-            if (isInternetConnected) {
-                dialog = new ProgressDialog(getContext(), R.style.AppCompatAlertDialogStyle);
-                dialog.setMessage("Please wait...");
-                dialog.setIndeterminate(true);
-                dialog.setCancelable(false);
-                dialog.show();
-                LoggedInUser user = LoggedInUser.getInstance();
-                File ConfirmPickupPic = new File(imageUri.getPath());
-                MultipartBody.Part ConfirmPickupmage = MultipartBody.Part.createFormData("pickupConfirmationImage", ConfirmPickupPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
-                        ConfirmPickupPic));
-
-                RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
-                        "" + routeId);
-                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                MultipartBody.Part[] pics ={ConfirmPickupmage};
-                RetrofitClient.getAPIClient().orderPickupWithImage(pics, routeID)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribeWith(new DisposableSingleObserver<ConfirmDeliveryResponse>() {
-                            @Override
-                            public void onSuccess(ConfirmDeliveryResponse response) {
-                                dialog.dismiss();
-                                if (response.responseCode == 1) {
-                                    Log.d("pickupAPICall", "success " + response.toString());
-                                    //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
-                                    FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
-                                    sections.get(0).items.get(index).isCompleted = true;
-                                    if (index < sections.get(0).items.size() - 1) {
-                                        sections.get(0).items.get(index + 1).isFocused = true;
-                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_PICKUP;
-                                    } else {
-                                        fragmentThankYouAction.isCompleted = true;
-                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_COMPLETED;
-                                    }
-                                    FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
-
-
-                                } else {
-                                    Log.d("pickupAPICall", "fail " + response.toString());
-                                    Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
-
-                                }
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-                                dialog.dismiss();
-                                Log.d("pickupAPICall", "failed " + e.toString());
-                                Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-            } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
-
-            }
-        } catch (Exception e) {
-            Toast.makeText(getActivity().getApplicationContext(), "Error while connecting to server", Toast.LENGTH_SHORT).show();
-
-            FirebaseCrashlytics.getInstance().recordException(e);
-            Log.d("pickupAPICall", "failed " + e.toString());
-        }
-    }
+//    public void confirmDelivery() {
+//        try {
+//            boolean isInternetConnected = InternetChecker.isInternetAvailable();
+//            if (isInternetConnected) {
+//                dialog = new ProgressDialog(getContext(), R.style.AppCompatAlertDialogStyle);
+//                dialog.setMessage("Please wait...");
+//                dialog.setIndeterminate(true);
+//                dialog.setCancelable(false);
+//                dialog.show();
+//                LoggedInUser user = LoggedInUser.getInstance();
+//                File ConfirmDeliveryPic = new File(imageUri.getPath());
+//                MultipartBody.Part ConfirmDeliveryImage = MultipartBody.Part.createFormData("ConfirmDeliveryImage", ConfirmDeliveryPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
+//                        ConfirmDeliveryPic));
+//                RequestBody routeStepId = RequestBody.create(MediaType.parse("text/plain"),
+//                        "" + order.routeStepId);
+//                RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
+//                        "" + routeId);
+//                RequestBody WhoOrder = RequestBody.create(MediaType.parse("text/plain"),
+//                        "" );
+//                RequestBody Relation = RequestBody.create(MediaType.parse("text/plain"),
+//                        "" );
+//                RequestBody DeliveryTime = RequestBody.create(MediaType.parse("text/plain"),
+//                        "" );
+////                RequestBody orderId = RequestBody.create(MediaType.parse("text/plain"),
+////                        "" + order.orderId);
+//                Log.d("deliveryAPICall", " routeID " + routeId+" routeStepId " + order.routeStepId);
+//                MultipartBody.Part[] pics = {ConfirmDeliveryImage};
+//                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
+//                RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId,WhoOrder,Relation,DeliveryTime)
+//                        .subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeWith(new DisposableSingleObserver<ConfirmOrderResponse>() {
+//                            @Override
+//                            public void onSuccess(ConfirmOrderResponse response) {
+//                                dialog.dismiss();
+//                                if (response.responseCode == 1) {
+//                                    Log.d("deliveryAPICall", "success " + response.toString());
+//                                    //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
+//                                    FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
+//                                    sections.get(index).isCompleted = true;
+//                                   // Log.d("deliveryAPICall", "index " + index + " size " + (sections.get(0).items.get(0).size() - 1));
+//                                    if (index < sections.size() - 1) {
+//                                        sections.get(index).isFocused = true;
+//                                    } else {
+//                                        fragmentThankYouAction.isCompleted = true;
+//                                        enumPictureType = EnumPictureType.ORDER_COMPLETED;
+//                                    }
+//                                    if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
+//
+//                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_PICKUP;
+//                                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
+//
+//                                    } else if (enumPictureType == EnumPictureType.ORDER_DELIVER) {
+//
+//                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_DELIVER;
+//                                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
+//
+//                                    } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
+//                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_COMPLETED;
+//                                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
+//
+//                                    }
+//                                } else {
+//                                    if (response.responseMessage.equalsIgnoreCase("no order found")) {
+//                                        ((DashboardActivity) getActivity()).RideNewNotification(1);
+//                                    }
+//                                    else if (response.responseMessage.equalsIgnoreCase("Route does not exist")) {
+//                                        ((DashboardActivity) getActivity()).RideNewNotification(2);
+//                                    }
+//                                    else {
+//                                        Log.d("deliveryAPICall", "fail " + response.toString());
+//                                        Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
+//                                    }
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onError(Throwable e) {
+//                                dialog.dismiss();
+//                                Log.d("deliveryAPICall", "failed " + e.toString());
+//                                Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//            } else {
+//                Toast.makeText(getActivity().getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        } catch (Exception e) {
+//            FirebaseCrashlytics.getInstance().recordException(e);
+//            Log.d("deliveryAPICall", "failed " + e.toString());
+//        }
+//    }
+//
+//    public void confirmPickup() {
+//        try {
+//            boolean isInternetConnected = InternetChecker.isInternetAvailable();
+//            if (isInternetConnected) {
+//                dialog = new ProgressDialog(getContext(), R.style.AppCompatAlertDialogStyle);
+//                dialog.setMessage("Please wait...");
+//                dialog.setIndeterminate(true);
+//                dialog.setCancelable(false);
+//                dialog.show();
+//                LoggedInUser user = LoggedInUser.getInstance();
+//                File ConfirmPickupPic = new File(imageUri.getPath());
+//                MultipartBody.Part ConfirmPickupmage = MultipartBody.Part.createFormData("pickupConfirmationImage", ConfirmPickupPic.getName(), RequestBody.create(MediaType.parse("image/jpeg"),
+//                        ConfirmPickupPic));
+//
+//                RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
+//                        "" + routeId);
+//                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
+//                MultipartBody.Part[] pics ={ConfirmPickupmage};
+//                RetrofitClient.getAPIClient().orderPickupWithImage(pics, routeID)
+//                        .subscribeOn(Schedulers.io())
+//                        .observeOn(AndroidSchedulers.mainThread())
+//                        .subscribeWith(new DisposableSingleObserver<ConfirmDeliveryResponse>() {
+//                            @Override
+//                            public void onSuccess(ConfirmDeliveryResponse response) {
+//                                dialog.dismiss();
+//                                if (response.responseCode == 1) {
+//                                    Log.d("pickupAPICall", "success " + response.toString());
+//                                    //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
+//                                    FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
+//                                    sections.get(index).isCompleted = true;
+//                                    if (index < sections.size() - 1) {
+//                                        sections.get(index).isFocused = true;
+//                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_PICKUP;
+//                                    } else {
+//                                        fragmentThankYouAction.isCompleted = true;
+//                                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_COMPLETED;
+//                                    }
+//                                    FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
+//
+//
+//                                } else {
+//                                    Log.d("pickupAPICall", "fail " + response.toString());
+//                                    Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
+//
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onError(Throwable e) {
+//                                dialog.dismiss();
+//                                Log.d("pickupAPICall", "failed " + e.toString());
+//                                Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
+//                            }
+//                        });
+//            } else {
+//                Toast.makeText(getActivity().getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
+//
+//            }
+//        } catch (Exception e) {
+//            Toast.makeText(getActivity().getApplicationContext(), "Error while connecting to server", Toast.LENGTH_SHORT).show();
+//
+//            FirebaseCrashlytics.getInstance().recordException(e);
+//            Log.d("pickupAPICall", "failed " + e.toString());
+//        }
+//    }
 }

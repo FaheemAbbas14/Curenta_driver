@@ -59,7 +59,7 @@
                     android:layout_marginLeft="27dp"
                     android:fontFamily="@font/archivoregular"
                     android:gravity="center_vertical|left"
-                    android:text="Please select the Cancellation reason\nfor this route"
+                    android:text="Please select the Cancellation reason\nfor this order"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
 
@@ -127,33 +127,44 @@ another address"
                         android:textSize="17sp" />
 
 
-                    <RadioButton
-                        android:id="@+id/edoNoAswer"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:button="@drawable/rdoselector"
-                        android:paddingLeft="10dp"
-                        android:text="No one Answers"
-                        android:textColor="@color/labelgrey"
-                        android:textSize="17sp" />
-
                 </RadioGroup>
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edit_text"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llAddress"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/spinnerbg"
-                    android:gravity="center|left"
-                    android:hint="Please enter new address"
                     android:inputType="text"
                     android:minHeight="30dp"
-                    android:paddingLeft="10dp"
-                    android:textColor="@color/labelgrey"
-                    android:textColorHint="@color/labellightgrey"
-                    android:visibility="gone" />
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="10">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edit_text"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="9.7"
+                        android:background="@android:color/transparent"
+                        android:gravity="center|left"
+                        android:hint="Please enter new address"
+                        android:inputType="text"
+                        android:paddingLeft="10dp"
+                        android:textColor="@color/labelgrey"
+                        android:textColorHint="@color/labellightgrey" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="*"
+                        android:textColor="@color/red_manadotry"
+                        android:textSize="16sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -161,7 +172,7 @@ another address"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/archivosemibold"
                     android:gravity="center_vertical|left"
-                    android:text="B. Who ordered to Cancel"
+                    android:text="B. Who ordered to Return or\n     Redeliver the Order"
                     android:textColor="@color/labelgrey"
                     android:textSize="20sp" />
 
@@ -204,20 +215,43 @@ return or redeliver this order"
                         android:src="@drawable/dropdown_icon" />
                 </FrameLayout>
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edtWhoOrder"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llWhoOrder"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/spinnerbg"
-                    android:gravity="center|left"
-                    android:hint="Please enter employee name"
                     android:inputType="text"
                     android:minHeight="30dp"
-                    android:paddingLeft="10dp"
-                    android:textColor="@color/labelgrey"
-                    android:textColorHint="@color/labellightgrey"
-                    android:visibility="visible" />
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="10">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edtWhoOrder"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="9.7"
+                        android:background="@android:color/transparent"
+                        android:gravity="center|left"
+                        android:hint="Please enter name"
+                        android:inputType="text"
+                        android:paddingLeft="10dp"
+                        android:textColor="@color/labelgrey"
+                        android:textColorHint="@color/labellightgrey"
+                        android:textSize="14sp" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="*"
+                        android:textColor="@color/red_manadotry"
+                        android:textSize="16sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -267,20 +301,44 @@ the one who asked you to cancel"
                         android:src="@drawable/dropdown_icon" />
                 </FrameLayout>
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edtRelation"
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llRelation"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/spinnerbg"
-                    android:gravity="center|left"
-                    android:hint="Please enter relation"
                     android:inputType="text"
                     android:minHeight="30dp"
-                    android:paddingLeft="10dp"
-                    android:textColor="@color/labelgrey"
-                    android:textColorHint="@color/labellightgrey"
-                    android:visibility="gone" />
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="10">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edtRelation"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="9.7"
+                        android:background="@android:color/transparent"
+                        android:gravity="center|left"
+                        android:hint="Please enter relationship"
+                        android:inputType="text"
+                        android:paddingLeft="10dp"
+                        android:textColor="@color/labelgrey"
+                        android:textColorHint="@color/labellightgrey"
+                        android:textSize="14sp" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="*"
+                        android:textColor="@color/red_manadotry"
+                        android:textSize="16sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
 
                 <ImageView
                     android:id="@+id/imgNext"

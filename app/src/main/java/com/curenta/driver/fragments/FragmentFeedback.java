@@ -65,7 +65,7 @@ public class FragmentFeedback extends Fragment {
     public EnumPictureType enumPictureType;
     boolean isFromCamera;
     public RideDetailListAdapter.Order order;
-    public ArrayList<RideDetailListAdapter.Section> sections = new ArrayList<>();
+    public ArrayList<RideDetailListAdapter.RoutStep> sections = new ArrayList<>();
     public int index = 0;
     ImageAdapter adpter;
 

@@ -42,6 +42,8 @@ public class FragmentThankYouAction extends Fragment {
             fragmentThankYouActionBinding.txtLabel2.setText("The receipt submitted Successfully, Thank you");
             fragmentThankYouActionBinding.txtLabel3.setText("The rest of the Clients are waiting for you ");
         } else if (enumPictureType == EnumPictureType.ORDER_COMPLETED) {
+            AppElement.nextFocusIndex=0;
+            AppElement.delivered.clear();
             fragmentThankYouActionBinding.txtLabel2.setText("Our clients are waiting for you");
             fragmentThankYouActionBinding.txtLabel3.setText("");
             fragmentThankYouActionBinding.txtLabel4.setText("You finished your route");

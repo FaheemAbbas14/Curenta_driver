@@ -23,6 +23,7 @@ import com.curenta.driver.R;
 import com.curenta.driver.adaptors.CustomSpinnerAdopter;
 import com.curenta.driver.adaptors.RideDetailListAdapter;
 import com.curenta.driver.databinding.FragmentConfirmDeliveryDetailsBinding;
+import com.curenta.driver.dto.AppElement;
 import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.retrofit.RetrofitClient;
@@ -45,6 +46,7 @@ import okhttp3.RequestBody;
 
 
 public class FragmentConfirmDeliveryDetails extends Fragment {
+    public int routeIndex;
     FragmentConfirmDeliveryDetailsBinding fragmentConfirmDeliveryDetailsBinding;
     public EnumPictureType enumPictureType;
     public String routeId;
@@ -52,7 +54,7 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
     ArrayList<Bitmap> images;
     ArrayList<Uri> imagesURIs;
 
-    public ArrayList<RideDetailListAdapter.Section> sections = new ArrayList<>();
+    public ArrayList<RideDetailListAdapter.RoutStep> sections = new ArrayList<RideDetailListAdapter.RoutStep>();
     public int index = 0;
     String whoOrder = "", relation = "";
     ProgressDialog dialog;
@@ -74,20 +76,30 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
         mTimePicker = new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                String am_pm;
-                if (selectedHour > 12) {
-                    am_pm = "PM";
-                    selectedHour = selectedHour - 12;
+                String hour = "", minute = "";
+//                if (selectedHour > 12) {
+//                    am_pm = "PM";
+//                    selectedHour = selectedHour - 12;
+//                } else {
+//                    am_pm = "AM";
+//                }
+                if (selectedHour < 10) {
+                    hour = "0" + selectedHour;
                 } else {
-                    am_pm = "AM";
+                    hour = "" + selectedHour;
                 }
-                deliveryTime = selectedHour + ":" + selectedMinute + " " + am_pm;
+                if (selectedMinute < 10) {
+                    minute = "0" + selectedMinute;
+                } else {
+                    minute = "" + selectedMinute;
+                }
+                deliveryTime = hour + ":" + minute;
 
                 fragmentConfirmDeliveryDetailsBinding.edtTime.setText(deliveryTime);
             }
 
 
-        }, hour, minute, false);//Yes 24 hour time
+        }, hour, minute, true);//Yes 24 hour time
         mTimePicker.setTitle("Select Delivery Time");
         fragmentConfirmDeliveryDetailsBinding.edtTime.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,9 +107,12 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                 mTimePicker.show();
             }
         });
+
+        whoOrder_list.add("Select the person");
         whoOrder_list.add("Patient/ Family member");
         whoOrder_list.add("Facility employee");
 
+        relation_list.add("Select the relationship");
         relation_list.add("The patient him self ");
         relation_list.add("Wife");
         relation_list.add("Mother");
@@ -118,7 +133,7 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
         relation_list.add("Receptionist");
         relation_list.add("Neighbor");
         relation_list.add("Med. Tech");
-        relation_list.add("Other");
+        relation_list.add("Others");
         fragmentConfirmDeliveryDetailsBinding.header.imgBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -145,23 +160,39 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
         fragmentConfirmDeliveryDetailsBinding.imgNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (fragmentConfirmDeliveryDetailsBinding.editText.getText().toString().equalsIgnoreCase("")) {
-                    Toast.makeText(getActivity(), "Please enter who recieved", Toast.LENGTH_SHORT).show();
+                if (whoOrder.contains("Select the person")) {
+                    Toast.makeText(getActivity(), "Please select Person Who received the order", Toast.LENGTH_SHORT).show();
+                    // dialog.dismiss();
+                    return;
+                }
+                if (!fragmentConfirmDeliveryDetailsBinding.editText.getText().toString().equalsIgnoreCase("")) {
+                    whoOrder += "-" + fragmentConfirmDeliveryDetailsBinding.editText.getText().toString();
                 } else {
-                    if (!fragmentConfirmDeliveryDetailsBinding.edtRelation.getText().toString().equalsIgnoreCase("")) {
-                        relation = fragmentConfirmDeliveryDetailsBinding.edtRelation.getText().toString();
-                    }
-                    if (!fragmentConfirmDeliveryDetailsBinding.editText.getText().toString().equalsIgnoreCase("")) {
-                        whoOrder+="-"+ fragmentConfirmDeliveryDetailsBinding.editText.getText().toString();
-                    }
-                    deliveryTime = fragmentConfirmDeliveryDetailsBinding.edtTime.getText().toString();
-
-                    RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                    confirmDelivery();
+                    Toast.makeText(getActivity(), "Mandatory field can not be empty", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
+                if (relation.equalsIgnoreCase("Select the relationship")) {
+                    Toast.makeText(getActivity(), "Please select Patient relationship", Toast.LENGTH_SHORT).show();
+                    //dialog.dismiss();
+                    return;
+                }
+                if (relation.equals("Others") || relation.equalsIgnoreCase("")) {
+                    if (fragmentConfirmDeliveryDetailsBinding.edtRelation.getText().toString().equalsIgnoreCase("")) {
+                        Toast.makeText(getActivity(), "Mandatory field can not be empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    } else {
+                        relation = fragmentConfirmDeliveryDetailsBinding.edtRelation.getText().toString();
+                    }
+                }
+
+                deliveryTime = fragmentConfirmDeliveryDetailsBinding.edtTime.getText().toString();
+
+                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
+                confirmDelivery();
             }
+
+
         });
         //initReasonDropdown();
         initWhoOrderDropdown();
@@ -176,7 +207,12 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 whoOrder = whoOrder_list.get(position);
-
+                if (!whoOrder.equalsIgnoreCase("Select the person")) {
+                    fragmentConfirmDeliveryDetailsBinding.llWhoRecieved.setVisibility(View.VISIBLE);
+                    fragmentConfirmDeliveryDetailsBinding.editText.setHint("Please enter Person Who Received Order");
+                } else {
+                    fragmentConfirmDeliveryDetailsBinding.llWhoRecieved.setVisibility(View.GONE);
+                }
 
             }
 
@@ -210,12 +246,12 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
         fragmentConfirmDeliveryDetailsBinding.spnRelation.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                relation =relation_list.get(position);
+                relation = relation_list.get(position);
 
-                if (relation.equalsIgnoreCase("Other")) {
-                    fragmentConfirmDeliveryDetailsBinding.edtRelation.setVisibility(View.VISIBLE);
+                if (relation.equalsIgnoreCase("Others")) {
+                    fragmentConfirmDeliveryDetailsBinding.llRelation.setVisibility(View.VISIBLE);
                 } else {
-                    fragmentConfirmDeliveryDetailsBinding.edtRelation.setVisibility(View.GONE);
+                    fragmentConfirmDeliveryDetailsBinding.llRelation.setVisibility(View.GONE);
                 }
             }
 
@@ -254,7 +290,8 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                 dialog.setCancelable(false);
                 dialog.show();
                 LoggedInUser user = LoggedInUser.getInstance();
-
+                RequestBody OrderId = RequestBody.create(MediaType.parse("text/plain"),
+                        "" + order.orderId);
                 RequestBody routeStepId = RequestBody.create(MediaType.parse("text/plain"),
                         "" + order.routeStepId);
                 RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
@@ -286,25 +323,42 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                 }
 
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId, WhoOrder, Relation, DeliveryTime)
+                RetrofitClient.getAPIClient().confirmDelivery(pics, routeID, routeStepId, OrderId, WhoOrder, Relation, DeliveryTime)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribeWith(new DisposableSingleObserver<ConfirmOrderResponse>() {
                             @Override
                             public void onSuccess(ConfirmOrderResponse response) {
                                 dialog.dismiss();
+                                Log.d("deliveryAPICall", "routeIndex " + routeIndex + "index " + index + " size " + (sections.get(routeIndex).orders.size()));
                                 if (response.responseCode == 1) {
                                     Log.d("deliveryAPICall", "success " + response.toString());
                                     //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                                     FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
-                                    sections.get(0).items.get(index).isCompleted = true;
-                                    Log.d("deliveryAPICall", "index " + index + " size " + (sections.get(0).items.size() - 1));
-                                    if (index < sections.get(0).items.size() - 1) {
-                                        sections.get(0).items.get(index + 1).isFocused = true;
+                                    if (routeIndex < sections.size() - 1) {
+
+                                        if (index >= sections.get(routeIndex).orders.size() - 1) {
+                                            Log.d("deliveryAPICall", "next route focused");
+                                            Log.d("deliveryAPICall", "routeIndex " + (routeIndex + 1) + "index " + index + " size " + (sections.get(routeIndex).orders.size()));
+                                            AppElement.delivered.add(routeIndex);
+                                            sections.get(routeIndex + 1).orders.get(0).isFocused = true;
+                                            AppElement.nextFocusIndex = routeIndex + 1;
+
+                                        } else {
+
+                                            Log.d("deliveryAPICall", "next order focused");
+                                            Log.d("deliveryAPICall", "routeIndex " + routeIndex + "index " + (index + 1) + " size " + (sections.get(routeIndex).orders.size()));
+                                            AppElement.nextFocusIndex = routeIndex;
+                                            sections.get(routeIndex).orders.get(index + 1).isFocused = true;
+                                        }
                                     } else {
                                         fragmentThankYouAction.isCompleted = true;
                                         enumPictureType = EnumPictureType.ORDER_COMPLETED;
                                     }
+                                    if (routeIndex < sections.get(routeIndex).orders.size() - 1) {
+                                        sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                    }
+
                                     if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
 
                                         fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_PICKUP;

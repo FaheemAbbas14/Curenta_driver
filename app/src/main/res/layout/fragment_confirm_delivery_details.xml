@@ -54,7 +54,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/archivosemibold"
                     android:gravity="center_vertical|left"
-                    android:text="A. Who Recieved the order"
+                    android:text="A. Who Received the order"
                     android:textColor="@color/labelgrey"
                     android:textSize="20sp" />
 
@@ -64,7 +64,7 @@
                     android:layout_marginLeft="27dp"
                     android:fontFamily="@font/archivoregular"
                     android:gravity="center_vertical|left"
-                    android:text="Please let us know who recieved the order
+                    android:text="Please let us know who received the order
 from you"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
@@ -72,7 +72,7 @@ from you"
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_marginTop="10dp">
 
                     <Spinner
@@ -97,19 +97,41 @@ from you"
                         android:src="@drawable/dropdown_icon" />
                 </FrameLayout>
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edit_text"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llWhoRecieved"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/spinnerbg"
-                    android:gravity="center|left"
-                    android:hint="Please enter name"
                     android:inputType="text"
                     android:minHeight="30dp"
-                    android:paddingLeft="10dp"
-                    android:textColor="@color/labelgrey"
-                    android:textColorHint="@color/labellightgrey" />
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="10">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edit_text"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="9.7"
+                        android:gravity="center|left"
+                        android:hint="Please enter name"
+                        android:inputType="text"
+                        android:paddingLeft="10dp"
+                        android:textColor="@color/labelgrey"
+                        android:textColorHint="@color/labellightgrey"
+                        android:textSize="14sp" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="*"
+                        android:textColor="@color/red_manadotry"
+                        android:textSize="16sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -117,7 +139,7 @@ from you"
                     android:layout_marginTop="10dp"
                     android:fontFamily="@font/archivosemibold"
                     android:gravity="center_vertical|left"
-                    android:text="B. Relationship to patient"
+                    android:text="B. Relationship to the patient"
                     android:textColor="@color/labelgrey"
                     android:textSize="20sp" />
 
@@ -127,15 +149,15 @@ from you"
                     android:layout_marginLeft="27dp"
                     android:fontFamily="@font/archivoregular"
                     android:gravity="center_vertical|left"
-                    android:text="Please select the releationship of the one
-whi recieved the order to the patient"
+                    android:text="Please select the relationship of the one
+who received the order to the patient"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
 
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="50dp"
                     android:layout_marginTop="10dp">
 
                     <Spinner
@@ -160,20 +182,42 @@ whi recieved the order to the patient"
                         android:src="@drawable/dropdown_icon" />
                 </FrameLayout>
 
-                <androidx.appcompat.widget.AppCompatEditText
-                    android:id="@+id/edtRelation"
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/llRelation"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/spinnerbg"
-                    android:gravity="center|left"
-                    android:hint="Please enter employee name"
                     android:inputType="text"
                     android:minHeight="30dp"
-                    android:paddingLeft="10dp"
-                    android:textColor="@color/labelgrey"
-                    android:textColorHint="@color/labellightgrey"
-                    android:visibility="visible" />
+                    android:orientation="horizontal"
+                    android:visibility="gone"
+                    android:weightSum="10">
+
+                    <androidx.appcompat.widget.AppCompatEditText
+                        android:id="@+id/edtRelation"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="9.7"
+                        android:background="@android:color/transparent"
+                        android:gravity="center|left"
+                        android:hint="Please enter relationship"
+                        android:inputType="text"
+                        android:paddingLeft="10dp"
+                        android:textColor="@color/labelgrey"
+                        android:textColorHint="@color/labellightgrey"
+                        android:textSize="14sp" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="*"
+                        android:textColor="@color/red_manadotry"
+                        android:textSize="16sp" />
+
+                </androidx.appcompat.widget.LinearLayoutCompat>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -192,25 +236,26 @@ whi recieved the order to the patient"
                     android:fontFamily="@font/archivoregular"
                     android:gravity="center_vertical|left"
                     android:text="What's the exact time that you delivered
-the order to this person"
+the order to this person (optional)"
                     android:textColor="@color/grey"
                     android:textSize="14sp" />
 
 
                 <TextView
                     android:id="@+id/edtTime"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_width="150dp"
+                    android:layout_height="40dp"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/spinnerbg"
                     android:editable="false"
                     android:gravity="center|left"
                     android:hint="Time of Delivery"
                     android:inputType="none"
-                    android:minHeight="30dp"
                     android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
                     android:textColor="@color/labelgrey"
-                    android:textColorHint="@color/labellightgrey" />
+                    android:textColorHint="@color/labellightgrey"
+                    android:textSize="14sp" />
 
                 <ImageView
                     android:id="@+id/imgNext"

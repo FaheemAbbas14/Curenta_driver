@@ -108,6 +108,7 @@ public interface IClientAPI {
     Single<ConfirmOrderResponse> confirmDelivery(@Part MultipartBody.Part[] DriverSelfiefile,
                                                  @Part("routeId") RequestBody RouteId,
                                                  @Part("RouteStepId") RequestBody RouteStepId,
+                                                 @Part("OrderId") RequestBody OrderId,
                                                  @Part("ReceivedBy") RequestBody ReceivedBy,
                                                  @Part("RelationOfReceiver") RequestBody RelationOfReceiver,
                                                  @Part("TimeOfDelivery") RequestBody TimeOfDelivery

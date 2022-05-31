@@ -25,6 +25,7 @@ import com.curenta.driver.DashboardActivity;
 import com.curenta.driver.R;
 import com.curenta.driver.adaptors.RideDetailListAdapter;
 import com.curenta.driver.databinding.FragmentCancleRouteBinding;
+import com.curenta.driver.dto.AppElement;
 import com.curenta.driver.dto.LoggedInUser;
 import com.curenta.driver.enums.EnumPictureType;
 import com.curenta.driver.retrofit.RetrofitClient;
@@ -46,7 +47,7 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FragmentCancleRoute extends Fragment {
     public RideDetailListAdapter.Order order;
-    public ArrayList<RideDetailListAdapter.Section> sections;
+    public ArrayList<RideDetailListAdapter.RoutStep> sections;
     public int index;
     public String routeId;
     FragmentCancleRouteBinding fragmentCancleRouteBinding;
@@ -167,7 +168,7 @@ public class FragmentCancleRoute extends Fragment {
                     reason = fragmentCancleRouteBinding.editText.getText().toString();
                 }
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, reason,"","","");
+                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, reason,"","","",order.orderId);
                 Gson gson = new Gson();
                 String request = gson.toJson(requestDTO);
                 RetrofitClient.getAPIClient().cancelRouteOrder(request)
@@ -178,10 +179,13 @@ public class FragmentCancleRoute extends Fragment {
                             public void onSuccess(CancelRouteResponse response) {
                                 dialog.dismiss();
                                 if (response.responseCode == 1) {
-
-                                    sections.get(0).items.get(index).isCompleted = true;
-                                    sections.get(0).items.get(index).isCancled = true;
-                                    Log.d("cancelRoute", "index " + index + " size " + (sections.get(0).items.size() - 1));
+                                    for (int i = 0; i < sections.get(index).orders.size(); i++) {
+                                        sections.get(index).orders.get(i).isCompleted = true;
+                                        sections.get(index).orders.get(i).isCancled = true;
+                                    }
+                                    AppElement.nextFocusIndex=0;
+                                    AppElement.delivered.clear();
+                                 //   Log.d("cancelRoute", "index " + index + " size " + (sections.get(0).items.size() - 1));
                                     launchDismissDlg();
 
 
@@ -302,8 +306,8 @@ public class FragmentCancleRoute extends Fragment {
                     }
 
                 } else {
-                    if (index < sections.get(0).items.size() - 1) {
-                        sections.get(0).items.get(index + 1).isFocused = true;
+                    if (index < sections.size() - 1) {
+                        sections.get(0).isFocused = true;
                         try {
                             if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();

@@ -76,62 +76,20 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:minHeight="50dp"
         android:orientation="horizontal"
         android:weightSum="10">
 
-        <Button
-            android:id="@+id/btnAction"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_marginLeft="10dp"
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-            android:layout_marginTop="5dp"
-            android:layout_weight="4"
-            android:background="@drawable/blue_rounded"
-            android:fontFamily="@font/archivobold"
-            android:text="Order Pickup"
-            android:textColor="@color/white" />
-
-        <TextView
-            android:id="@+id/txtCancelOrder"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_weight="5"
-            android:background="@android:color/transparent"
-            android:fontFamily="@font/archivoregular"
-            android:gravity="center"
-            android:textSize="12sp"
-            android:text="Facing an Issue"
-            android:textColor="@color/labelblue" />
-
-        <ImageView
-            android:id="@+id/imgCall"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:visibility="gone"
-            android:scaleType="centerCrop"
-            android:src="@drawable/call_icon">
-
-        </ImageView>
-        <ImageView
-            android:id="@+id/imgMessage"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="10dp"
-            android:visibility="gone"
-            android:scaleType="centerInside"
-            android:background="@drawable/blue_circle"
-            android:src="@drawable/message_icon">
-
-        </ImageView>
     </androidx.appcompat.widget.LinearLayoutCompat>
+
     <LinearLayout
-       android:id="@+id/llDeliveryNotes"
+        android:id="@+id/llDeliveryNotes"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
@@ -156,9 +114,9 @@
             android:background="@android:color/transparent"
             android:fontFamily="@font/archivobold"
             android:gravity="center"
-            android:textSize="12sp"
             android:text="Facing an Issue"
-            android:textColor="@color/labelblue" />
+            android:textColor="@color/labelblue"
+            android:textSize="12sp" />
 
 
     </LinearLayout>

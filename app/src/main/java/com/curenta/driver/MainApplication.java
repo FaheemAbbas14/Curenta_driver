@@ -12,11 +12,8 @@ import com.curenta.driver.dto.RideInfoDto;
 import com.curenta.driver.dto.UserInfo;
 import com.curenta.driver.interfaces.IRideNotification;
 import com.curenta.driver.utilities.Preferences;
-
-
 import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 import com.onesignal.OSNotification;
@@ -41,45 +38,47 @@ public class MainApplication extends Application {
     static IRideNotification iRideNotification;
     private Socket locationSocket;
     private Socket notificationSocket;
+
     {
         try {
             IO.Options options = new IO.Options();
-            locationSocket = IO.socket(BuildConfig.locationSocketIOPath,options);
+            locationSocket = IO.socket(BuildConfig.locationSocketIOPath, options);
             locationSocket.on(Socket.EVENT_CONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                 Log.d("sockets","location socket connected");
+                    Log.d("sockets", "location socket connected");
                 }
 
             }).on(Socket.EVENT_DISCONNECT, new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.d("sockets","location socket disconnected");
+                    Log.d("sockets", "location socket disconnected");
                 }
             }).on("error", new Emitter.Listener() {
                 @Override
                 public void call(Object... args) {
-                    Log.d("sockets","location socket error");
+                    Log.d("sockets", "location socket error");
                 }
             });
 
 
-
         } catch (URISyntaxException e) {
-            Log.d("sockets","location socket failure "+e.getMessage());
+            Log.d("sockets", "location socket failure " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
+
     {
         try {
             notificationSocket = IO.socket(BuildConfig.notificationSocketIOPath);
 
             // Log.d("sockets","notification socket connected");
         } catch (URISyntaxException e) {
-             Log.d("sockets","notification socket failure "+e.getMessage());
+            Log.d("sockets", "notification socket failure " + e.getMessage());
             throw new RuntimeException(e);
         }
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -101,7 +100,7 @@ public class MainApplication extends Application {
         notificationSocket.connect();
 
         // OneSignal Initialization
-     setupOnseSignal();
+        setupOnseSignal();
 
         OneSignal.setNotificationOpenedHandler(result -> {
 
@@ -119,20 +118,22 @@ public class MainApplication extends Application {
             Log.d("onesignalnotifications", "opened result: " + data);
             boolean status = Preferences.getInstance().getBoolean("isOnline", false);
             Log.d("onesignalnotifications", "isOnline " + status);
-            if (data != null && status ) {
+            if (data != null && status) {
                 Gson gson = new Gson();
                 RideInfoDto rideInfoDto = gson.fromJson(data.toString(), RideInfoDto.class);
-                if (iRideNotification != null ) {
-                    if(rideInfoDto.routeId != null) {
+                if (iRideNotification != null) {
+                    if (rideInfoDto.routeId != null) {
+                        AppElement.nextFocusIndex = -1;
                         Log.d("onesignalnotifications", "open using interface ");
                         iRideNotification.rideNotification(rideInfoDto);
-                    }
-                    else{
-                        if(notoficationid!=null) {
+                    } else {
+                        if (notoficationid != null) {
+                            AppElement.nextFocusIndex = -1;
                             iRideNotification.RideNewNotification(Integer.parseInt(notoficationid));
                         }
                     }
                 } else {
+                    AppElement.nextFocusIndex = -1;
                     Log.d("onesignalnotifications", "open using activity ");
                     Intent next = new Intent(getContext(), DashboardActivity.class);
                     Bundle bundle = new Bundle();
@@ -165,17 +166,19 @@ public class MainApplication extends Application {
             if (data != null && status) {
                 Gson gson = new Gson();
                 RideInfoDto rideInfoDto = gson.fromJson(data.toString(), RideInfoDto.class);
-                if (iRideNotification != null ) {
-                    if(rideInfoDto.routeId != null) {
+                if (iRideNotification != null) {
+                    if (rideInfoDto.routeId != null) {
+                        AppElement.nextFocusIndex = -1;
                         Log.d("onesignalnotifications", "open using interface ");
                         iRideNotification.rideNotification(rideInfoDto);
-                    }
-                    else{
-                        if(notoficationid!=null) {
+                    } else {
+                        if (notoficationid != null) {
+                            AppElement.nextFocusIndex = -1;
                             iRideNotification.RideNewNotification(Integer.parseInt(notoficationid));
                         }
                     }
                 } else {
+                    AppElement.nextFocusIndex = -1;
                     Log.d("onesignalnotifications", "open using activity ");
                     Intent next = new Intent(getContext(), DashboardActivity.class);
                     Bundle bundle = new Bundle();
@@ -190,7 +193,7 @@ public class MainApplication extends Application {
         OneSignal.unsubscribeWhenNotificationsAreDisabled(true);
         OneSignal.pauseInAppMessages(true);
         OneSignal.setLocationShared(false);
-        AppElement.cw=new ContextWrapper(this);
+        AppElement.cw = new ContextWrapper(this);
         new ANRWatchDog().start();
         if (BuildConfig.DEBUG == false) {
             new ANRWatchDog(10000 /*timeout*/).start();
@@ -199,16 +202,19 @@ public class MainApplication extends Application {
         new ANRWatchDog().setANRListener(new ANRWatchDog.ANRListener() {
             @Override
             public void onAppNotResponding(ANRError error) {
-                FirebaseCrashlytics.getInstance().log("ANR: "+error.getMessage());
+                FirebaseCrashlytics.getInstance().log("ANR: " + error.getMessage());
             }
         }).start();
     }
-    public Socket getLocationSocket(){
+
+    public Socket getLocationSocket() {
         return locationSocket;
     }
-    public Socket getNotificationSocket(){
+
+    public Socket getNotificationSocket() {
         return notificationSocket;
     }
+
     public static void setupOnseSignal() {
 
         OneSignal.initWithContext(getContext());

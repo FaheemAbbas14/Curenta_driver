@@ -71,6 +71,7 @@ import okhttp3.RequestBody;
 
 public class FragmentConfirmDelivery extends Fragment {
 
+    public int routeIndex;
     FragmentConfirmDeliveryBinding fragmentConfirmDeliveryBinding;
     ArrayList<Bitmap> images;
     ArrayList<Uri> imagesURIs;
@@ -82,7 +83,7 @@ public class FragmentConfirmDelivery extends Fragment {
     public EnumPictureType enumPictureType;
     public String routeId;
     public RideDetailListAdapter.Order order;
-    public ArrayList<RideDetailListAdapter.Section> sections = new ArrayList<>();
+    public ArrayList<RideDetailListAdapter.RoutStep> sections = new ArrayList<RideDetailListAdapter.RoutStep>();
     public int index = 0;
     ImageAdapter adpter;
     private static final String TAG = "ConfirmDelivery";
@@ -127,6 +128,7 @@ public class FragmentConfirmDelivery extends Fragment {
                         fragmentConfirmDeliveryDetails.sections = sections;
                         fragmentConfirmDeliveryDetails.index = index;
                         fragmentConfirmDeliveryDetails.routeId = routeId;
+                        fragmentConfirmDeliveryDetails.routeIndex = order.routeStepIndex;
                         fragmentConfirmDeliveryDetails.order = order;
                         FragmentUtils.getInstance().addFragment(getActivity(), fragmentConfirmDeliveryDetails, R.id.fragContainer);
 
@@ -160,7 +162,7 @@ public class FragmentConfirmDelivery extends Fragment {
     }
 
     private void selectImage() {
-        final CharSequence[] options = {"Take Photo", "Choose from Gallery","Take Photo Without Scanner", "Cancel"};
+        final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Take Photo Without Scanner", "Cancel"};
         androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(getActivity(), R.style.AppCompatAlertDialogStyle);
         builder.setCancelable(false);
         builder.setTitle("Upload Photo!");
@@ -171,11 +173,9 @@ public class FragmentConfirmDelivery extends Fragment {
                     openCamera();
                 } else if (options[item].equals("Choose from Gallery")) {
                     openImagesDocument();
-                }
-                else if (options[item].equals("Take Photo Without Scanner")) {
+                } else if (options[item].equals("Take Photo Without Scanner")) {
                     cameraIntent();
-                }
-                else if (options[item].equals("Cancel")) {
+                } else if (options[item].equals("Cancel")) {
                     dialog.dismiss();
                 }
             }
@@ -487,12 +487,15 @@ public class FragmentConfirmDelivery extends Fragment {
                             public void onSuccess(ConfirmDeliveryResponse response) {
                                 dialog.dismiss();
                                 if (response.responseCode == 1) {
+                                    if (routeIndex < 0) {
+                                        routeIndex = 0;
+                                    }
                                     Log.d("pickupAPICall", "success " + response.toString());
                                     //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                                     FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
-                                    sections.get(0).items.get(index).isCompleted = true;
-                                    if (index < sections.get(0).items.size() - 1) {
-                                        sections.get(0).items.get(index + 1).isFocused = true;
+                                    sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                    if (index < sections.size() - 1) {
+                                        sections.get(index + 1).isFocused = true;
                                         fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_PICKUP;
                                     } else {
                                         fragmentThankYouAction.isCompleted = true;

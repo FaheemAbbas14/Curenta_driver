@@ -1,6 +1,7 @@
 package com.curenta.driver.utilities;
 
 import android.app.Activity;
+import android.content.Context;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -29,7 +30,7 @@ public class FragmentUtils {
     private FragmentUtils() {
     }
 
-    public synchronized void addFragment(Activity act, Fragment fragment, int fragment_container) {
+    public synchronized void addFragment(Context act, Fragment fragment, int fragment_container) {
         this.activity = (AppCompatActivity) act;
         try {
             if (activity!=null) {

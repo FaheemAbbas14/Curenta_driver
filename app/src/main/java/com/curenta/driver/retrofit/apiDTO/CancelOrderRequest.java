@@ -13,7 +13,9 @@ public class CancelOrderRequest {
     public String cancelledBy;
     public String relation;
     public String newAddress;
-    public CancelOrderRequest(String routeId, String routeStepId, int userId, String userEmail, String cancelReason, String cancelledBy, String newAddress, String relation) {
+    public String orderId;
+
+    public CancelOrderRequest(String routeId, String routeStepId, int userId, String userEmail, String cancelReason, String cancelledBy, String newAddress, String relation, String orderId) {
         this.routeId = routeId;
         this.routeStepId = routeStepId;
         this.userId = userId;
@@ -22,5 +24,6 @@ public class CancelOrderRequest {
         this.cancelledBy = cancelledBy;
         this.newAddress = newAddress;
         this.relation = relation;
+        this.orderId = orderId;
     }
 }

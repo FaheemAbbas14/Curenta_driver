@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment;
 
 import com.curenta.driver.databinding.ActivityLoginBinding;
 import com.curenta.driver.dto.UserInfo;
-import com.curenta.driver.fragments.FragmentTutorial;
 import com.curenta.driver.fragments.LoginFragment;
 import com.curenta.driver.fragments.RegistrationFragment;
 import com.curenta.driver.utilities.FragmentUtils;

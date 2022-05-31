@@ -68,7 +68,7 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
     private static final String TAG = "FragmentTRacking";
     public RideDetailListAdapter.Order order;
     public int index;
-    public ArrayList<RideDetailListAdapter.Section> sections;
+    public ArrayList<RideDetailListAdapter.RoutStep> sections;
     FragmentTrackingBinding fragmentTrackingBinding;
     private GoogleMap mMap;
     static GPSTracker gpsTracker;
