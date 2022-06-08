@@ -184,7 +184,10 @@ public class RouteListAdopter extends RecyclerView.Adapter<RouteListAdopter.View
 
             sections.get(sectionIndex).isArrived = true;
             for (int i = 0; i < sections.get(sectionIndex).orders.size(); i++) {
-                sections.get(sectionIndex).orders.get(i).isArrived = true;
+                if (!sections.get(sectionIndex).orders.get(i).isCompleted) {
+                    sections.get(sectionIndex).orders.get(i).isArrived = true;
+                    break;
+                }
             }
             notifyDataSetChanged();
         }

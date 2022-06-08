@@ -268,9 +268,11 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
 //        mMap.addMarker(new MarkerOptions()
 //                .position(origin)
 //                .title("A"));
-        mMap.addMarker(new MarkerOptions()
-                .position(dest)
-                .title("B"));
+        if (mMap != null) {
+            mMap.addMarker(new MarkerOptions()
+                    .position(dest)
+                    .title("B"));
+        }
         // Origin of route
         String str_origin = "origin=" + origin.latitude + "," + origin.longitude;
 

@@ -1,60 +1,75 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.appcompat.widget.LinearLayoutCompat
-xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="50dp"
-android:orientation="horizontal"
-android:weightSum="10">
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:orientation="horizontal"
+    android:weightSum="10">
 
-<Button
-    android:id="@+id/btnAction"
-    android:layout_width="wrap_content"
-    android:layout_height="40dp"
-    android:layout_marginLeft="10dp"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/patientName"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:fontFamily="@font/archivobold"
+        android:layout_marginLeft="13dp"
+        android:paddingRight="10dp"
+        android:maxWidth="150dp"
+        android:gravity="center|left"
+        android:text="Patient Name"
+        android:textColor="@color/labelgrey"
+        android:textSize="10sp">
 
-    android:layout_marginTop="5dp"
-    android:layout_weight="4"
-    android:background="@drawable/blue_rounded"
-    android:fontFamily="@font/archivobold"
-    android:text="Order Pickup"
-    android:textColor="@color/white" />
+    </androidx.appcompat.widget.AppCompatTextView>
 
-<TextView
-    android:id="@+id/txtCancelOrder"
-    android:layout_width="0dp"
-    android:layout_height="match_parent"
-    android:layout_marginLeft="10dp"
-    android:layout_weight="5.5"
-    android:visibility="gone"
-    android:background="@android:color/transparent"
-    android:fontFamily="@font/archivoregular"
-    android:gravity="center"
-    android:textSize="12sp"
-    android:text="Facing an Issue"
-    android:textColor="@color/labelblue" />
+    <Button
+        android:id="@+id/btnAction"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:paddingRight="20dp"
+        android:paddingLeft="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/blue_rounded"
+        android:fontFamily="@font/archivobold"
+        android:gravity="center"
+        android:text="Order Pickup"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
 
-<ImageView
-    android:id="@+id/imgCall"
-    android:layout_width="40dp"
-    android:layout_height="40dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginLeft="10dp"
-    android:visibility="gone"
-    android:scaleType="centerCrop"
-    android:src="@drawable/call_icon">
+    <TextView
+        android:id="@+id/txtCancelOrder"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:background="@android:color/transparent"
+        android:fontFamily="@font/archivoregular"
+        android:gravity="center"
+        android:text="Facing an Issue"
+        android:textColor="@color/labelblue"
+        android:textSize="10sp"
+        android:visibility="gone" />
 
-</ImageView>
-<ImageView
-    android:id="@+id/imgMessage"
-    android:layout_width="40dp"
-    android:layout_height="40dp"
-    android:layout_marginTop="10dp"
-    android:layout_marginLeft="10dp"
-    android:visibility="gone"
-    android:scaleType="centerInside"
-    android:background="@drawable/blue_circle"
-    android:src="@drawable/message_icon">
+    <ImageView
+        android:id="@+id/imgCall"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/call_icon"
+        android:visibility="gone">
 
-</ImageView>
+    </ImageView>
+
+    <ImageView
+        android:id="@+id/imgMessage"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/blue_circle"
+        android:scaleType="centerInside"
+        android:src="@drawable/message_icon"
+        android:visibility="gone">
+
+    </ImageView>
 </androidx.appcompat.widget.LinearLayoutCompat>

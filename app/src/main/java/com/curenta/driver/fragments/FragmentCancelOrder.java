@@ -379,7 +379,7 @@ public class FragmentCancelOrder extends Fragment {
 
                                 } else {
                                     Log.d("cancelRoute", "fail " + response);
-                                    Toast.makeText(getActivity().getApplicationContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getContext(), response.responseMessage, Toast.LENGTH_SHORT).show();
 
                                 }
                             }
@@ -388,11 +388,11 @@ public class FragmentCancelOrder extends Fragment {
                             public void onError(Throwable e) {
                                 dialog.dismiss();
                                 Log.d("cancelRoute", "failed " + e.toString());
-                                Toast.makeText(getActivity().getApplicationContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Server error please try again", Toast.LENGTH_SHORT).show();
                             }
                         });
             } else {
-                Toast.makeText(getActivity().getApplicationContext(), "Internet not available", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Internet not available", Toast.LENGTH_SHORT).show();
 
             }
         } catch (
@@ -513,13 +513,32 @@ public class FragmentCancelOrder extends Fragment {
 
                         }
                     } else {
-                        AppElement.nextFocusIndex = 0;
-                        AppElement.delivered.clear();
-                        FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
-                        fragmentThankYouAction.isCompleted = true;
-                        fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_COMPLETED;
-                        FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
+                        sections.get(routeIndex).orders.get(index).isCompleted = true;
+                        boolean allCompleted = true;
+                        for (RideDetailListAdapter.Order order1 : sections.get(routeIndex).orders) {
+                            if (!order1.isCompleted) {
+                                allCompleted = false;
+                            }
+                        }
+                        if(allCompleted) {
+                            AppElement.nextFocusIndex = 0;
+                            AppElement.delivered.clear();
+                            FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
+                            fragmentThankYouAction.isCompleted = true;
+                            fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_COMPLETED;
+                            FragmentUtils.getInstance().addFragment(getActivity(), fragmentThankYouAction, R.id.fragContainer);
+                        }
+                        else{
+                            try {
+                                if (getActivity() != null && getActivity().getSupportFragmentManager() != null) {
+                                    getActivity().getSupportFragmentManager().popBackStack();
+                                }
+                            } catch (IllegalStateException ex) {
 
+                            } catch (Exception ex) {
+
+                            }
+                        }
                     }
 
                 }

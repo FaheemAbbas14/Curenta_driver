@@ -118,6 +118,7 @@ from you"
                         android:hint="Please enter name"
                         android:inputType="text"
                         android:paddingLeft="10dp"
+                        android:background="@android:color/transparent"
                         android:textColor="@color/labelgrey"
                         android:textColorHint="@color/labellightgrey"
                         android:textSize="14sp" />

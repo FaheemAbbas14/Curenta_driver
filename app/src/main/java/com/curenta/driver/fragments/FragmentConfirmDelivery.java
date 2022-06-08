@@ -117,7 +117,8 @@ public class FragmentConfirmDelivery extends Fragment {
             @Override
             public void onClick(View v) {
                 if (order != null && order.routeStepId != null && routeId != null) {
-                    if (enumPictureType == EnumPictureType.ORDER_PICKUP) {
+                    if (!AppElement.isPickupCompleted) {
+                        AppElement.isPickupCompleted=true;
                         confirmPickup();
 
                     } else {

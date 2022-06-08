@@ -73,6 +73,7 @@ public class OrdersListAdopter extends RecyclerView.Adapter<OrdersListAdopter.Vi
     public void onBindViewHolder(OrdersListAdopter.ViewHolder ivh, int itemIndex) {
         final RideDetailListAdapter.Order order = orders.get(itemIndex);
         Log.d("routeOrders", "name " + order.name + " isArrived " + order.isArrived + " position " + position);
+        ivh.name.setText(order.name);
         ivh.action.setText(order.buttonText);
         ivh.action.setEnabled(false);
         ivh.cancel.setEnabled(false);
@@ -101,13 +102,13 @@ public class OrdersListAdopter extends RecyclerView.Adapter<OrdersListAdopter.Vi
             ivh.message.setVisibility(View.INVISIBLE);
         }
         if (order.routeStepIndex == 0) {
+            ivh.name.setVisibility(View.GONE);
             ivh.cancel.setVisibility(View.INVISIBLE);
             ivh.call.setVisibility(View.INVISIBLE);
             ivh.message.setVisibility(View.INVISIBLE);
         }
         if (order.isCompleted) {
             if (position == 0) {
-
                 ivh.action.setBackgroundResource(R.drawable.rounded_green);
                 ivh.action.setText("Order Pickup Completed");
             } else if (order.isCancled) {
@@ -120,6 +121,7 @@ public class OrdersListAdopter extends RecyclerView.Adapter<OrdersListAdopter.Vi
                 ivh.action.setText("Delivered");
 
             }
+
             ivh.cancel.setVisibility(View.INVISIBLE);
             ivh.call.setVisibility(View.INVISIBLE);
             ivh.message.setVisibility(View.INVISIBLE);
@@ -141,14 +143,14 @@ public class OrdersListAdopter extends RecyclerView.Adapter<OrdersListAdopter.Vi
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView cancel;
+        TextView cancel, name;
         Button action;
         // ImageView icon;
         ImageView call, message;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            //   icon = (ImageView) itemView.findViewById(R.id.imgIcon);
+            name = (TextView) itemView.findViewById(R.id.patientName);
             call = (ImageView) itemView.findViewById(R.id.imgCall);
             message = (ImageView) itemView.findViewById(R.id.imgMessage);
             cancel = (TextView) itemView.findViewById(R.id.txtCancelOrder);
@@ -168,18 +170,19 @@ public class OrdersListAdopter extends RecyclerView.Adapter<OrdersListAdopter.Vi
             } else {
                 position = 0;
             }
-            RideDetailListAdapter.Order item = sections.get(position).orders.get(adapterPosition);
-            Log.d("routePostion", "" + adapterPosition + " position " + position + " name " + item.name + " adapterPosition " + adapterPosition);
-            if (v == action) {
-                onActionClicked(item, adapterPosition);
-            } else if (v == cancel) {
-                onCancelClick(item, adapterPosition);
-            } else if (v == call) {
-                onCallClick(item, adapterPosition);
-            } else if (v == message) {
-                onMessageClick(item, adapterPosition);
+            if (position < sections.size() && adapterPosition < sections.get(position).orders.size()) {
+                RideDetailListAdapter.Order item = sections.get(position).orders.get(adapterPosition);
+                Log.d("routePostion", "" + adapterPosition + " position " + position + " name " + item.name + " adapterPosition " + adapterPosition);
+                if (v == action) {
+                    onActionClicked(item, adapterPosition);
+                } else if (v == cancel) {
+                    onCancelClick(item, adapterPosition);
+                } else if (v == call) {
+                    onCallClick(item, adapterPosition);
+                } else if (v == message) {
+                    onMessageClick(item, adapterPosition);
+                }
             }
-
         }
 
     }

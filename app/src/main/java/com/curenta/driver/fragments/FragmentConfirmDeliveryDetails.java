@@ -187,9 +187,10 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                 }
 
                 deliveryTime = fragmentConfirmDeliveryDetailsBinding.edtTime.getText().toString();
-
-                RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                confirmDelivery();
+                if (order != null) {
+                    RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
+                    confirmDelivery();
+                }
             }
 
 
@@ -335,6 +336,7 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                                     Log.d("deliveryAPICall", "success " + response.toString());
                                     //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                                     FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
+
                                     if (routeIndex < sections.size() - 1) {
 
                                         if (index >= sections.get(routeIndex).orders.size() - 1) {
@@ -352,8 +354,19 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                                             sections.get(routeIndex).orders.get(index + 1).isFocused = true;
                                         }
                                     } else {
-                                        fragmentThankYouAction.isCompleted = true;
-                                        enumPictureType = EnumPictureType.ORDER_COMPLETED;
+                                        sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                        boolean allCompleted = true;
+                                        for (RideDetailListAdapter.Order order1 : sections.get(routeIndex).orders) {
+                                            if (!order1.isCompleted) {
+                                                allCompleted = false;
+                                            }
+                                        }
+                                        if (allCompleted) {
+                                            fragmentThankYouAction.isCompleted = true;
+                                            enumPictureType = EnumPictureType.ORDER_COMPLETED;
+                                        } else {
+                                            enumPictureType = EnumPictureType.ORDER_DELIVER;
+                                        }
                                     }
                                     if (routeIndex < sections.get(routeIndex).orders.size() - 1) {
                                         sections.get(routeIndex).orders.get(index).isCompleted = true;

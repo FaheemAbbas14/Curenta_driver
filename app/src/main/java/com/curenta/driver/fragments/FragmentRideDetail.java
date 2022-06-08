@@ -34,6 +34,7 @@ public class FragmentRideDetail extends Fragment {
     boolean isAnyFocused = false;
     ProgressDialog dialog;
 
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         fragmentRideDetailBinding = DataBindingUtil.inflate(
@@ -87,11 +88,15 @@ public class FragmentRideDetail extends Fragment {
 
         //   rideDetailListAdopter.notifyAllSectionsDataSetChanged();
         int focusIndex = 0;
+        boolean allCompleted = true;
         for (RideDetailListAdapter.RoutStep section : sections) {
             boolean isCompleted = true;
             for (RideDetailListAdapter.Order order : section.orders) {
+                Log.d("deliveryAPICall", "" + order.name + " completed " + order.isCompleted);
+
                 if (!order.isCompleted) {
                     isCompleted = false;
+                    allCompleted = false;
                 }
             }
             if (isCompleted) {
@@ -103,6 +108,12 @@ public class FragmentRideDetail extends Fragment {
         if (AppElement.nextFocusIndex < focusIndex) {
             AppElement.nextFocusIndex = focusIndex;
         }
+        if (!allCompleted && AppElement.nextFocusIndex >= sections.size()) {
+            AppElement.nextFocusIndex = AppElement.nextFocusIndex - 1;
+        }
+        if (!AppElement.isPickupCompleted) {
+            AppElement.nextFocusIndex = 0;
+        }
         if (AppElement.nextFocusIndex > 0) {
             for (int i = 0; i < AppElement.nextFocusIndex; i++) {
                 sections.get(i).isArrived = false;
@@ -113,9 +124,18 @@ public class FragmentRideDetail extends Fragment {
             }
             if (AppElement.nextFocusIndex < sections.size()) {
                 sections.get(AppElement.nextFocusIndex).isFocused = true;
+                sections.get(AppElement.nextFocusIndex).isArrived = true;
                 if (sections.get(AppElement.nextFocusIndex).orders.size() == 1) {
                     sections.get(AppElement.nextFocusIndex).orders.get(0).isCompleted = false;
                 }
+                for (int i = 0; i < sections.get(AppElement.nextFocusIndex).orders.size(); i++) {
+                    if (!sections.get(AppElement.nextFocusIndex).orders.get(i).isCompleted) {
+                        sections.get(AppElement.nextFocusIndex).orders.get(i).isArrived = true;
+                        break;
+                    }
+                }
+                Log.d("deliveryAPICall", "" + AppElement.nextFocusIndex + " arrived " + sections.get(AppElement.nextFocusIndex).isArrived);
+
             }
         }
         RouteListAdopter routeListAdopter = new RouteListAdopter(getContext(), routeId, sections);
@@ -130,21 +150,23 @@ public class FragmentRideDetail extends Fragment {
     public void appendSection(GetRoutesResponse data) {
         //  RideDetailListAdapter.RoutStep section = new RideDetailListAdapter.RoutStep();
         //apending pickup
-        boolean isPickupCompleted = false;
+        // boolean isPickupCompleted = false;
         boolean isPickupFocused = true;
         isAnyFocused = true;
         String pickText = "Order Pickup";
         int index = 0;
         if (data.data.get(0).routeStatus.equalsIgnoreCase("InRoute")) {
-            isPickupCompleted = true;
+            AppElement.isPickupCompleted = true;
             isPickupFocused = false;
             isAnyFocused = false;
             pickText = "Order Pickup Completed";
 
+        } else {
+            AppElement.isPickupCompleted = false;
         }
         AppElement.pharmacyContact = data.data.get(0).pickupAddress.phoneNumberPrimary;
         ArrayList<RideDetailListAdapter.Order> pickuporders = new ArrayList<>();
-        pickuporders.add(new RideDetailListAdapter.Order(data.data.get(0).pickupAddress.name, data.data.get(0).pickupAddress.fullAddress, pickText, isPickupCompleted, false, data.data.get(0).pickupAddress.pickupAddressId, false, data.data.get(0).pickupAddress.latitude, data.data.get(0).pickupAddress.longitude, "", "", 0, 0, null, isPickupFocused, index));
+        pickuporders.add(new RideDetailListAdapter.Order(data.data.get(0).pickupAddress.name, data.data.get(0).pickupAddress.fullAddress, pickText, AppElement.isPickupCompleted, false, data.data.get(0).pickupAddress.pickupAddressId, false, data.data.get(0).pickupAddress.latitude, data.data.get(0).pickupAddress.longitude, "", "", 0, 0, null, isPickupFocused, index));
         RideDetailListAdapter.RoutStep routeStepDto = new RideDetailListAdapter.RoutStep(data.data.get(0).pickupAddress.name, data.data.get(0).pickupAddress.fullAddress, pickuporders, data.data.get(0).routeSteps.get(0).routeStepsId, isPickupFocused, false);
         sections.add(routeStepDto);
         int client = 0;
@@ -184,7 +206,7 @@ public class FragmentRideDetail extends Fragment {
                             buttonText = "Canceled";
 
                         }
-                        if (isPickupCompleted != false && !isOrdercompleted && !isAnyFocused) {
+                        if (AppElement.isPickupCompleted != false && !isOrdercompleted && !isAnyFocused) {
                             isOrderfocused = true;
                             isAnyFocused = true;
                             AppElement.nextFocusIndex = client - 1;

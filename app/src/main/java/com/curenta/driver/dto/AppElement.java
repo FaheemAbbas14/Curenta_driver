@@ -28,4 +28,5 @@ public class AppElement {
     public static ArrayList<Uri> imagesURIs = new ArrayList<>();
     public static int nextFocusIndex = -1;
     public static ArrayList<Integer> delivered = new ArrayList<>();
+    public static  boolean isPickupCompleted = false;
 }
