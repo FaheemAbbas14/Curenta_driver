@@ -290,9 +290,9 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                 dialog.show();
                 LoggedInUser user = LoggedInUser.getInstance();
                 RequestBody OrderId = RequestBody.create(MediaType.parse("text/plain"),
-                        "" + order.orderId);
+                        "" + AppElement.sections.get(AppElement.routeStepIndex).orders.get(AppElement.orderIndex).orderId);
                 RequestBody routeStepId = RequestBody.create(MediaType.parse("text/plain"),
-                        "" + order.routeStepId);
+                        "" + AppElement.sections.get(AppElement.routeStepIndex).routeStepId);
                 RequestBody routeID = RequestBody.create(MediaType.parse("text/plain"),
                         "" + routeId);
                 RequestBody WhoOrder = RequestBody.create(MediaType.parse("text/plain"),
@@ -303,7 +303,7 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                         "" + deliveryTime);
 //                RequestBody orderId = RequestBody.create(MediaType.parse("text/plain"),
 //                        "" + order.orderId);
-                Log.d("deliveryAPICall", " routeID " + routeId + " routeStepId " + order.routeStepId+" orderid "+order.orderId);
+                Log.d("deliveryAPICall", " routeID " + routeId + " routeStepId " + AppElement.sections.get(AppElement.routeStepIndex).routeStepId+" orderid "+AppElement.sections.get(AppElement.routeStepIndex).orders.get(AppElement.orderIndex).orderId);
                 MultipartBody.Part[] pics = new MultipartBody.Part[images.size()];
                 for (int i = 0; i < images.size(); i++) {
                     File ConfirmDeliveryPic = new File(imagesURIs.get(i).getPath());

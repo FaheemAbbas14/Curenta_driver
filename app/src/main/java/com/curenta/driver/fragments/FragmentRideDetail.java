@@ -86,7 +86,8 @@ public class FragmentRideDetail extends Fragment {
         for (RideDetailListAdapter.RoutStep section : AppElement.sections) {
             boolean isCompleted = true;
             for (int i = 0; i < section.orders.size(); i++) {
-                Log.d("deliveryAPICall", "" + section.orders.get(i).name + " completed " + section.orders.get(i).isCompleted);
+                Log.d("deliveryAPICall", "" + section.orders.get(i).name+" "+i + " completed " + section.orders.get(i).isCompleted);
+                Log.d("deliveryAPICall", " orderid " + section.orders.get(i).orderId);
 
                 if (!section.orders.get(i).isCompleted) {
                     isCompleted = false;

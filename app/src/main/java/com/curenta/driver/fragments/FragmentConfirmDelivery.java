@@ -125,7 +125,7 @@ public class FragmentConfirmDelivery extends Fragment {
                         fragmentConfirmDeliveryDetails.enumPictureType = enumPictureType;
                         fragmentConfirmDeliveryDetails.images = images;
                         fragmentConfirmDeliveryDetails.imagesURIs = imagesURIs;
-                        fragmentConfirmDeliveryDetails.index = index;
+                        fragmentConfirmDeliveryDetails.index = AppElement.orderIndex;
                         fragmentConfirmDeliveryDetails.routeId = routeId;
                         fragmentConfirmDeliveryDetails.routeIndex = order.routeStepIndex;
                         fragmentConfirmDeliveryDetails.order = order;
