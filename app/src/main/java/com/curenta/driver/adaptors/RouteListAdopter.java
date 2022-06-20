@@ -170,7 +170,6 @@ public class RouteListAdopter extends RecyclerView.Adapter<RouteListAdopter.View
             fragmentTracking.mDestination = destination;
             fragmentTracking.mOrigin = source;
             fragmentTracking.order = item;
-            fragmentTracking.sections = sections;
             fragmentTracking.index = sectionIndex;
             FragmentUtils.getInstance().addFragment(context, fragmentTracking, R.id.fragContainer);
 

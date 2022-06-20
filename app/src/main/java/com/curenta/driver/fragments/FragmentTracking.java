@@ -68,7 +68,6 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
     private static final String TAG = "FragmentTRacking";
     public RideDetailListAdapter.Order order;
     public int index;
-    public ArrayList<RideDetailListAdapter.RoutStep> sections;
     FragmentTrackingBinding fragmentTrackingBinding;
     private GoogleMap mMap;
     static GPSTracker gpsTracker;
@@ -144,13 +143,12 @@ public class FragmentTracking extends Fragment implements ILocationChange, OnMap
                 FragmentConfirmDelivery fragmentConfirmDelivery = new FragmentConfirmDelivery();
                 if (index == 0) {
                     fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_PICKUP;
-                } else if (index == sections.size() - 1) {
+                } else if (index == AppElement.sections.size() - 1) {
                     fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_COMPLETED;
                 } else {
                     fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_DELIVER;
                 }
                 fragmentConfirmDelivery.order = order;
-                fragmentConfirmDelivery.sections = sections;
                 fragmentConfirmDelivery.index = index;
                 fragmentConfirmDelivery.routeId = AppElement.routeId;
                 FragmentUtils.getInstance().addFragment(getActivity(), fragmentConfirmDelivery, R.id.fragContainer);

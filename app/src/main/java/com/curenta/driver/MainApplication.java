@@ -123,17 +123,16 @@ public class MainApplication extends Application {
                 RideInfoDto rideInfoDto = gson.fromJson(data.toString(), RideInfoDto.class);
                 if (iRideNotification != null) {
                     if (rideInfoDto.routeId != null) {
-                        AppElement.nextFocusIndex = -1;
+                        AppElement.sections.clear();
                         Log.d("onesignalnotifications", "open using interface ");
                         iRideNotification.rideNotification(rideInfoDto);
                     } else {
                         if (notoficationid != null) {
-                            AppElement.nextFocusIndex = -1;
+                            AppElement.sections.clear();
                             iRideNotification.RideNewNotification(Integer.parseInt(notoficationid));
                         }
                     }
                 } else {
-                    AppElement.nextFocusIndex = -1;
                     Log.d("onesignalnotifications", "open using activity ");
                     Intent next = new Intent(getContext(), DashboardActivity.class);
                     Bundle bundle = new Bundle();
@@ -168,17 +167,16 @@ public class MainApplication extends Application {
                 RideInfoDto rideInfoDto = gson.fromJson(data.toString(), RideInfoDto.class);
                 if (iRideNotification != null) {
                     if (rideInfoDto.routeId != null) {
-                        AppElement.nextFocusIndex = -1;
+                        AppElement.sections.clear();
                         Log.d("onesignalnotifications", "open using interface ");
                         iRideNotification.rideNotification(rideInfoDto);
                     } else {
                         if (notoficationid != null) {
-                            AppElement.nextFocusIndex = -1;
+                            AppElement.sections.clear();
                             iRideNotification.RideNewNotification(Integer.parseInt(notoficationid));
                         }
                     }
                 } else {
-                    AppElement.nextFocusIndex = -1;
                     Log.d("onesignalnotifications", "open using activity ");
                     Intent next = new Intent(getContext(), DashboardActivity.class);
                     Bundle bundle = new Bundle();

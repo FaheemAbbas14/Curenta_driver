@@ -1,6 +1,5 @@
 package com.curenta.driver.fragments;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,14 +25,10 @@ import java.util.ArrayList;
 public class FragmentRideDetail extends Fragment {
 
     FragmentRideDetailBinding fragmentRideDetailBinding;
-    RideDetailListAdapter rideDetailListAdopter;
     public static final boolean SHOW_ADAPTER_POSITIONS = true;
-    ArrayList<RideDetailListAdapter.RoutStep> sections = new ArrayList<>();
     public GetRoutesResponse getRouteResponse;
     public String routeId;
     boolean isAnyFocused = false;
-    ProgressDialog dialog;
-
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -65,7 +60,6 @@ public class FragmentRideDetail extends Fragment {
             public void onClick(View v) {
                 if (routeId != null) {
                     FragmentCancleRoute fragmentCancleRoute = new FragmentCancleRoute();
-                    fragmentCancleRoute.sections = sections;
                     fragmentCancleRoute.routeId = routeId;
                     fragmentCancleRoute.cancelTYpe = 1;
                     FragmentUtils.getInstance().addFragment(getActivity(), fragmentCancleRoute, R.id.fragContainer);
@@ -73,12 +67,12 @@ public class FragmentRideDetail extends Fragment {
                 }
             }
         });
-        if (sections.size() == 0) {
+        if (AppElement.sections.size() == 0) {
             if (getRouteResponse != null && getRouteResponse.data != null) {
                 appendSection(getRouteResponse);
             }
         }
-        Log.d("ridelistadopter", "total orders " + sections.size());
+        Log.d("ridelistadopter", "total orders " + AppElement.sections.size());
 
         ((DashboardActivity) getActivity()).isBackAllowed = false;
 //        fragmentRideDetailBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -89,60 +83,78 @@ public class FragmentRideDetail extends Fragment {
         //   rideDetailListAdopter.notifyAllSectionsDataSetChanged();
         int focusIndex = 0;
         boolean allCompleted = true;
-        for (RideDetailListAdapter.RoutStep section : sections) {
+        for (RideDetailListAdapter.RoutStep section : AppElement.sections) {
             boolean isCompleted = true;
-            for (RideDetailListAdapter.Order order : section.orders) {
-                Log.d("deliveryAPICall", "" + order.name + " completed " + order.isCompleted);
+            for (int i = 0; i < section.orders.size(); i++) {
+                Log.d("deliveryAPICall", "" + section.orders.get(i).name + " completed " + section.orders.get(i).isCompleted);
 
-                if (!order.isCompleted) {
+                if (!section.orders.get(i).isCompleted) {
                     isCompleted = false;
                     allCompleted = false;
+                    AppElement.orderIndex = i;
+                    break;
                 }
             }
+
             if (isCompleted) {
                 focusIndex++;
                 Log.d("deliveryAPICall", "" + section.orders.get(0).routeStepIndex + " focusIndex " + focusIndex);
+            } else {
+                break;
             }
 
         }
-        if (AppElement.nextFocusIndex < focusIndex) {
-            AppElement.nextFocusIndex = focusIndex;
-        }
-        if (!allCompleted && AppElement.nextFocusIndex >= sections.size()) {
-            AppElement.nextFocusIndex = AppElement.nextFocusIndex - 1;
-        }
-        if (!AppElement.isPickupCompleted) {
-            AppElement.nextFocusIndex = 0;
-        }
-        if (AppElement.nextFocusIndex > 0) {
-            for (int i = 0; i < AppElement.nextFocusIndex; i++) {
-                sections.get(i).isArrived = false;
-                sections.get(i).isFocused = false;
-                if (AppElement.delivered.contains(i)) {
-                    sections.get(i).orders.get(0).isCompleted = true;
-                }
-            }
-            if (AppElement.nextFocusIndex < sections.size()) {
-                sections.get(AppElement.nextFocusIndex).isFocused = true;
-                sections.get(AppElement.nextFocusIndex).isArrived = true;
-                if (sections.get(AppElement.nextFocusIndex).orders.size() == 1) {
-                    sections.get(AppElement.nextFocusIndex).orders.get(0).isCompleted = false;
-                }
-                for (int i = 0; i < sections.get(AppElement.nextFocusIndex).orders.size(); i++) {
-                    if (!sections.get(AppElement.nextFocusIndex).orders.get(i).isCompleted) {
-                        sections.get(AppElement.nextFocusIndex).orders.get(i).isArrived = true;
-                        break;
-                    }
-                }
-                Log.d("deliveryAPICall", "" + AppElement.nextFocusIndex + " arrived " + sections.get(AppElement.nextFocusIndex).isArrived);
+        if (focusIndex < AppElement.sections.size()) {
 
+            AppElement.sections.get(focusIndex).isFocused = true;
+            AppElement.sections.get(focusIndex).isArrived = true;
+            for (int i = 0; i < AppElement.sections.get(focusIndex).orders.size(); i++) {
+                if (!AppElement.sections.get(focusIndex).orders.get(i).isCompleted) {
+                    AppElement.sections.get(focusIndex).orders.get(i).isArrived = true;
+                    break;
+                }
             }
         }
-        RouteListAdopter routeListAdopter = new RouteListAdopter(getContext(), routeId, sections);
+//        if (AppElement.nextFocusIndex < focusIndex) {
+//            AppElement.nextFocusIndex = focusIndex;
+//        }
+//        if (!allCompleted && AppElement.nextFocusIndex >= sections.size()) {
+//            AppElement.nextFocusIndex = AppElement.nextFocusIndex - 1;
+//        }
+//        if (!AppElement.isPickupCompleted) {
+//            AppElement.nextFocusIndex = 0;
+//        }
+//        if (AppElement.nextFocusIndex > 0) {
+//            for (int i = 0; i < AppElement.nextFocusIndex; i++) {
+//                sections.get(i).isArrived = false;
+//                sections.get(i).isFocused = false;
+//                if (AppElement.delivered.contains(i)) {
+//                    sections.get(i).orders.get(0).isCompleted = true;
+//                }
+//            }
+//            if (AppElement.nextFocusIndex < sections.size()) {
+//                sections.get(AppElement.nextFocusIndex).isFocused = true;
+//                sections.get(AppElement.nextFocusIndex).isArrived = true;
+//                if (sections.get(AppElement.nextFocusIndex).orders.size() == 1) {
+//                    sections.get(AppElement.nextFocusIndex).orders.get(0).isCompleted = false;
+//                }
+//                for (int i = 0; i < sections.get(AppElement.nextFocusIndex).orders.size(); i++) {
+//                    if (!sections.get(AppElement.nextFocusIndex).orders.get(i).isCompleted) {
+//                        sections.get(AppElement.nextFocusIndex).orders.get(i).isArrived = true;
+//                        break;
+//                    }
+//                }
+//                Log.d("deliveryAPICall", "" + AppElement.nextFocusIndex + " arrived " + sections.get(AppElement.nextFocusIndex).isArrived);
+//
+//            }
+//        }
+        AppElement.routeStepIndex = focusIndex;
+        ArrayList<RideDetailListAdapter.RoutStep> section = AppElement.sections;
+        RouteListAdopter routeListAdopter = new RouteListAdopter(getContext(), routeId, AppElement.sections);
         fragmentRideDetailBinding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         fragmentRideDetailBinding.recyclerView.setAdapter(routeListAdopter);
         routeListAdopter.notifyDataSetChanged();
-        Log.d("deliveryAPICall", "adopter set " + AppElement.nextFocusIndex);
+        Log.d("deliveryAPICall", "adopter set ");
 
         return fragmentRideDetailBinding.getRoot();
     }
@@ -151,6 +163,7 @@ public class FragmentRideDetail extends Fragment {
         //  RideDetailListAdapter.RoutStep section = new RideDetailListAdapter.RoutStep();
         //apending pickup
         // boolean isPickupCompleted = false;
+        ArrayList<RideDetailListAdapter.RoutStep> sections = new ArrayList<>();
         boolean isPickupFocused = true;
         isAnyFocused = true;
         String pickText = "Order Pickup";
@@ -170,14 +183,15 @@ public class FragmentRideDetail extends Fragment {
         RideDetailListAdapter.RoutStep routeStepDto = new RideDetailListAdapter.RoutStep(data.data.get(0).pickupAddress.name, data.data.get(0).pickupAddress.fullAddress, pickuporders, data.data.get(0).routeSteps.get(0).routeStepsId, isPickupFocused, false);
         sections.add(routeStepDto);
         int client = 0;
-        index++;
+
         for (int i = 0; i < data.data.size(); i++) {
             Log.d("ridelistadopter", "Order no " + i + " steps " + data.data.get(i).routeSteps.size());
 //            for (int j=0;j<data.data.get(i).routeSteps.size();j++){
             String name = null, address = null;
 
             for (GetRoutesResponse.RouteStep routeStep : data.data.get(i).routeSteps) {
-
+                index++;
+                Log.d("routeStepindex", "" + index + " name " + routeStep.routeStepsId);
                 boolean isOrderfocused = false;
 
                 ArrayList<RideDetailListAdapter.Order> orders = new ArrayList<>();
@@ -209,7 +223,6 @@ public class FragmentRideDetail extends Fragment {
                         if (AppElement.isPickupCompleted != false && !isOrdercompleted && !isAnyFocused) {
                             isOrderfocused = true;
                             isAnyFocused = true;
-                            AppElement.nextFocusIndex = client - 1;
                         }
                         orders.add(new RideDetailListAdapter.Order(order.patientName, order.deliveryAddress, buttonText, isOrdercompleted, false, order.orderId, isCancelled, order.latitude, order.longitude, routeStep.routeStepsId, "", order.patientId, order.facilityId, order.deliveryNote, isOrderfocused, index));
 
@@ -219,12 +232,13 @@ public class FragmentRideDetail extends Fragment {
                 Log.d("ridelistadopter", "routeStep " + routeStep.routeStepsId + " orders " + orders.size());
                 RideDetailListAdapter.RoutStep routeStepdata = new RideDetailListAdapter.RoutStep(name, address, orders, routeStep.routeStepsId, isOrderfocused, false);
                 sections.add(routeStepdata);
-                index++;
+
             }
 
 
             //}
         }
+        AppElement.sections = sections;
         Log.d("deliveryAPICall", "append set ");
         //  sections.add(section);
     }

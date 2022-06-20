@@ -83,7 +83,6 @@ public class FragmentConfirmDelivery extends Fragment {
     public EnumPictureType enumPictureType;
     public String routeId;
     public RideDetailListAdapter.Order order;
-    public ArrayList<RideDetailListAdapter.RoutStep> sections = new ArrayList<RideDetailListAdapter.RoutStep>();
     public int index = 0;
     ImageAdapter adpter;
     private static final String TAG = "ConfirmDelivery";
@@ -126,7 +125,6 @@ public class FragmentConfirmDelivery extends Fragment {
                         fragmentConfirmDeliveryDetails.enumPictureType = enumPictureType;
                         fragmentConfirmDeliveryDetails.images = images;
                         fragmentConfirmDeliveryDetails.imagesURIs = imagesURIs;
-                        fragmentConfirmDeliveryDetails.sections = sections;
                         fragmentConfirmDeliveryDetails.index = index;
                         fragmentConfirmDeliveryDetails.routeId = routeId;
                         fragmentConfirmDeliveryDetails.routeIndex = order.routeStepIndex;
@@ -494,9 +492,9 @@ public class FragmentConfirmDelivery extends Fragment {
                                     Log.d("pickupAPICall", "success " + response.toString());
                                     //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                                     FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
-                                    sections.get(routeIndex).orders.get(index).isCompleted = true;
-                                    if (index < sections.size() - 1) {
-                                        sections.get(index + 1).isFocused = true;
+                                    AppElement.sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                    if (index < AppElement.sections.size() - 1) {
+                                        AppElement.sections.get(index + 1).isFocused = true;
                                         fragmentThankYouAction.enumPictureType = EnumPictureType.ORDER_PICKUP;
                                     } else {
                                         fragmentThankYouAction.isCompleted = true;

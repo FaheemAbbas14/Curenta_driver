@@ -53,8 +53,6 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
     public RideDetailListAdapter.Order order;
     ArrayList<Bitmap> images;
     ArrayList<Uri> imagesURIs;
-
-    public ArrayList<RideDetailListAdapter.RoutStep> sections = new ArrayList<RideDetailListAdapter.RoutStep>();
     public int index = 0;
     String whoOrder = "", relation = "";
     ProgressDialog dialog;
@@ -305,7 +303,7 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                         "" + deliveryTime);
 //                RequestBody orderId = RequestBody.create(MediaType.parse("text/plain"),
 //                        "" + order.orderId);
-                Log.d("deliveryAPICall", " routeID " + routeId + " routeStepId " + order.routeStepId);
+                Log.d("deliveryAPICall", " routeID " + routeId + " routeStepId " + order.routeStepId+" orderid "+order.orderId);
                 MultipartBody.Part[] pics = new MultipartBody.Part[images.size()];
                 for (int i = 0; i < images.size(); i++) {
                     File ConfirmDeliveryPic = new File(imagesURIs.get(i).getPath());
@@ -331,32 +329,47 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                             @Override
                             public void onSuccess(ConfirmOrderResponse response) {
                                 dialog.dismiss();
-                                Log.d("deliveryAPICall", "routeIndex " + routeIndex + "index " + index + " size " + (sections.get(routeIndex).orders.size()));
+                                Log.d("deliveryAPICall", "routeIndex " + routeIndex + "index " + index + " size " + (AppElement.sections.get(routeIndex).orders.size()));
                                 if (response.responseCode == 1) {
                                     Log.d("deliveryAPICall", "success " + response.toString());
                                     //  Toast.makeText(getActivity().getApplicationContext(), "Success", Toast.LENGTH_SHORT).show();
                                     FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
 
-                                    if (routeIndex < sections.size() - 1) {
+                                    if (routeIndex < AppElement.sections.size() - 1) {
 
-                                        if (index >= sections.get(routeIndex).orders.size() - 1) {
+                                        if (index >= AppElement.sections.get(routeIndex).orders.size() - 1) {
                                             Log.d("deliveryAPICall", "next route focused");
-                                            Log.d("deliveryAPICall", "routeIndex " + (routeIndex + 1) + "index " + index + " size " + (sections.get(routeIndex).orders.size()));
+                                            Log.d("deliveryAPICall", "routeIndex " + (routeIndex + 1) + "index " + index + " size " + (AppElement.sections.get(routeIndex).orders.size()));
                                             AppElement.delivered.add(routeIndex);
-                                            sections.get(routeIndex + 1).orders.get(0).isFocused = true;
-                                            AppElement.nextFocusIndex = routeIndex + 1;
+                                            AppElement.sections.get(routeIndex + 1).orders.get(0).isFocused = true;
+                                            if(index< AppElement.sections.get(routeIndex).orders.size()) {
+                                                AppElement.sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                            }
+                                            else{
+                                                AppElement.sections.get(routeIndex).orders.get(AppElement.sections.get(routeIndex).orders.size()-1).isCompleted = true;
+                                            }
 
                                         } else {
 
                                             Log.d("deliveryAPICall", "next order focused");
-                                            Log.d("deliveryAPICall", "routeIndex " + routeIndex + "index " + (index + 1) + " size " + (sections.get(routeIndex).orders.size()));
-                                            AppElement.nextFocusIndex = routeIndex;
-                                            sections.get(routeIndex).orders.get(index + 1).isFocused = true;
+                                            Log.d("deliveryAPICall", "routeIndex " + routeIndex + " order index " + index  + " size " + (AppElement.sections.get(routeIndex).orders.size()));
+                                            if(index< AppElement.sections.get(routeIndex).orders.size()) {
+                                                AppElement.sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                            }
+                                            else{
+                                                AppElement.sections.get(routeIndex).orders.get(AppElement.sections.get(routeIndex).orders.size()-1).isCompleted = true;
+                                            }
+                                            AppElement.sections.get(routeIndex).orders.get(index + 1).isFocused = true;
                                         }
                                     } else {
-                                        sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                        if(index< AppElement.sections.get(routeIndex).orders.size()) {
+                                            AppElement.sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                        }
+                                        else{
+                                            AppElement.sections.get(routeIndex).orders.get(AppElement.sections.get(routeIndex).orders.size()-1).isCompleted = true;
+                                        }
                                         boolean allCompleted = true;
-                                        for (RideDetailListAdapter.Order order1 : sections.get(routeIndex).orders) {
+                                        for (RideDetailListAdapter.Order order1 : AppElement.sections.get(routeIndex).orders) {
                                             if (!order1.isCompleted) {
                                                 allCompleted = false;
                                             }
@@ -368,8 +381,8 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                                             enumPictureType = EnumPictureType.ORDER_DELIVER;
                                         }
                                     }
-                                    if (routeIndex < sections.get(routeIndex).orders.size() - 1) {
-                                        sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                    if (routeIndex < AppElement.sections.get(routeIndex).orders.size() - 1) {
+                                        AppElement.sections.get(routeIndex).orders.get(index).isCompleted = true;
                                     }
 
                                     if (enumPictureType == EnumPictureType.ORDER_PICKUP) {

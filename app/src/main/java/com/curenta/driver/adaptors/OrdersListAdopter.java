@@ -163,13 +163,10 @@ public class OrdersListAdopter extends RecyclerView.Adapter<OrdersListAdopter.Vi
 
         @Override
         public void onClick(View v) {
-            int adapterPosition = getAdapterPosition();
-            Log.d("routePostion", "" + adapterPosition + " position " + position + " adapterPosition " + adapterPosition);
-            if (AppElement.nextFocusIndex >= 0) {
-                position = AppElement.nextFocusIndex;
-            } else {
-                position = 0;
-            }
+            int adapterPosition = AppElement.orderIndex;
+            position = AppElement.routeStepIndex;
+            Log.d("routePostion", "" + adapterPosition + " position " + position+ " adapterPosition " + adapterPosition);
+
             if (position < sections.size() && adapterPosition < sections.get(position).orders.size()) {
                 RideDetailListAdapter.Order item = sections.get(position).orders.get(adapterPosition);
                 Log.d("routePostion", "" + adapterPosition + " position " + position + " name " + item.name + " adapterPosition " + adapterPosition);
@@ -190,10 +187,9 @@ public class OrdersListAdopter extends RecyclerView.Adapter<OrdersListAdopter.Vi
     static void onCancelClick(RideDetailListAdapter.Order item, int sectionIndex) {
         FragmentCancelOrder fragmentCancelOrder = new FragmentCancelOrder();
         fragmentCancelOrder.order = item;
-        fragmentCancelOrder.sections = sections;
-        fragmentCancelOrder.index = sectionIndex;
+        fragmentCancelOrder.index = AppElement.orderIndex;
         fragmentCancelOrder.routeId = routeId;
-        fragmentCancelOrder.routeIndex = AppElement.nextFocusIndex;
+        fragmentCancelOrder.routeIndex = AppElement.routeStepIndex;
         fragmentCancelOrder.cancelTYpe = 2;
         FragmentUtils.getInstance().addFragment(context, fragmentCancelOrder, R.id.fragContainer);
 
@@ -211,33 +207,30 @@ public class OrdersListAdopter extends RecyclerView.Adapter<OrdersListAdopter.Vi
 
 
     static void onActionClicked(RideDetailListAdapter.Order item, int sectionIndex) {
-        Log.d("deliveryAPICall", "name " + item.name + " route index " + item.routeStepIndex + " order index " + sectionIndex);
+        Log.d("deliveryAPICall", "name " + item.name + " route index " + AppElement.routeStepIndex + " order index " + AppElement.orderIndex);
         // Toast.makeText(MainApplication.getContext(), "Action clicked " + sectionIndex, Toast.LENGTH_SHORT).show();
-        if (AppElement.nextFocusIndex <= 0) {
+        if (AppElement.routeStepIndex <= 0) {
             FragmentConfirmDelivery fragmentConfirmDelivery = new FragmentConfirmDelivery();
             fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_PICKUP;
             fragmentConfirmDelivery.order = item;
             fragmentConfirmDelivery.routeId = routeId;
-            fragmentConfirmDelivery.sections = sections;
-            fragmentConfirmDelivery.routeIndex = AppElement.nextFocusIndex;
-            fragmentConfirmDelivery.index = sectionIndex;
+            fragmentConfirmDelivery.routeIndex = AppElement.routeStepIndex;
+            fragmentConfirmDelivery.index = AppElement.orderIndex;
             FragmentUtils.getInstance().addFragment(context, fragmentConfirmDelivery, R.id.fragContainer);
         } else if (item.routeStepIndex == sections.size() - 1) {
             FragmentConfirmDelivery fragmentConfirmDelivery = new FragmentConfirmDelivery();
             fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_COMPLETED;
             fragmentConfirmDelivery.order = item;
             fragmentConfirmDelivery.routeId = routeId;
-            fragmentConfirmDelivery.sections = sections;
-            fragmentConfirmDelivery.routeIndex = AppElement.nextFocusIndex;
-            fragmentConfirmDelivery.index = sectionIndex;
+            fragmentConfirmDelivery.routeIndex = AppElement.routeStepIndex;
+            fragmentConfirmDelivery.index = AppElement.orderIndex;
             FragmentUtils.getInstance().addFragment(context, fragmentConfirmDelivery, R.id.fragContainer);
         } else {
             FragmentConfirmDelivery fragmentConfirmDelivery = new FragmentConfirmDelivery();
             fragmentConfirmDelivery.enumPictureType = EnumPictureType.ORDER_DELIVER;
             fragmentConfirmDelivery.order = item;
-            fragmentConfirmDelivery.sections = sections;
-            fragmentConfirmDelivery.index = sectionIndex;
-            fragmentConfirmDelivery.routeIndex = AppElement.nextFocusIndex;
+            fragmentConfirmDelivery.index = AppElement.orderIndex;
+            fragmentConfirmDelivery.routeIndex = AppElement.routeStepIndex;
             fragmentConfirmDelivery.routeId = routeId;
             FragmentUtils.getInstance().addFragment(context, fragmentConfirmDelivery, R.id.fragContainer);
         }

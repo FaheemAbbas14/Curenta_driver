@@ -38,8 +38,6 @@ import com.curenta.driver.utilities.Preferences;
 import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.gson.Gson;
 
-import java.util.ArrayList;
-
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
@@ -47,7 +45,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FragmentCancleRoute extends Fragment {
     public RideDetailListAdapter.Order order;
-    public ArrayList<RideDetailListAdapter.RoutStep> sections;
     public int index;
     public String routeId;
     FragmentCancleRouteBinding fragmentCancleRouteBinding;
@@ -65,7 +62,7 @@ public class FragmentCancleRoute extends Fragment {
             @Override
             public void onClick(View v) {
                 try {
-                    if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
+                    if (getActivity() != null && getActivity().getSupportFragmentManager() != null) {
                         getActivity().getSupportFragmentManager().popBackStack();
                     }
                 } catch (IllegalStateException ex) {
@@ -168,7 +165,7 @@ public class FragmentCancleRoute extends Fragment {
                     reason = fragmentCancleRouteBinding.editText.getText().toString();
                 }
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, reason,"","","",order.orderId);
+                CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, reason, "", "", "", order.orderId);
                 Gson gson = new Gson();
                 String request = gson.toJson(requestDTO);
                 RetrofitClient.getAPIClient().cancelRouteOrder(request)
@@ -179,13 +176,14 @@ public class FragmentCancleRoute extends Fragment {
                             public void onSuccess(CancelRouteResponse response) {
                                 dialog.dismiss();
                                 if (response.responseCode == 1) {
-                                    for (int i = 0; i < sections.get(index).orders.size(); i++) {
-                                        sections.get(index).orders.get(i).isCompleted = true;
-                                        sections.get(index).orders.get(i).isCancled = true;
+                                    for (int i = 0; i < AppElement.sections.get(index).orders.size(); i++) {
+                                        AppElement.sections.get(index).orders.get(i).isCompleted = true;
+                                        AppElement.sections.get(index).orders.get(i).isCancled = true;
                                     }
-                                    AppElement.nextFocusIndex=0;
                                     AppElement.delivered.clear();
-                                 //   Log.d("cancelRoute", "index " + index + " size " + (sections.get(0).items.size() - 1));
+                                    AppElement.sections.clear();
+
+                                    //   Log.d("cancelRoute", "index " + index + " size " + (sections.get(0).items.size() - 1));
                                     launchDismissDlg();
 
 
@@ -231,7 +229,7 @@ public class FragmentCancleRoute extends Fragment {
                     reason = fragmentCancleRouteBinding.editText.getText().toString();
                 }
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
-                CancelRouteRequest requestDTO = new CancelRouteRequest(routeId, reason, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email,"","","");
+                CancelRouteRequest requestDTO = new CancelRouteRequest(routeId, reason, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, "", "", "");
                 Gson gson = new Gson();
                 String request = gson.toJson(requestDTO);
                 RetrofitClient.getAPIClient().cancelRoute(request)
@@ -295,7 +293,7 @@ public class FragmentCancleRoute extends Fragment {
                     try {
                         for (int i = 0; i < getActivity().getSupportFragmentManager().getBackStackEntryCount(); i++) {
 
-                            if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
+                            if (getActivity() != null && getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
                             }
                         }
@@ -306,10 +304,10 @@ public class FragmentCancleRoute extends Fragment {
                     }
 
                 } else {
-                    if (index < sections.size() - 1) {
-                        sections.get(0).isFocused = true;
+                    if (index < AppElement.sections.size() - 1) {
+                        AppElement.sections.get(0).isFocused = true;
                         try {
-                            if (getActivity()!=null && getActivity().getSupportFragmentManager() != null) {
+                            if (getActivity() != null && getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
                             }
                         } catch (IllegalStateException ex) {

@@ -1,8 +1,8 @@
 package com.curenta.driver.dto;
 
 import android.content.ContextWrapper;
-import android.graphics.Bitmap;
-import android.net.Uri;
+
+import com.curenta.driver.adaptors.RideDetailListAdapter;
 
 import java.util.ArrayList;
 
@@ -24,9 +24,9 @@ public class AppElement {
     public static String duration = "";
     public static String pharmacyContact;
     public static String patientContact;
-    public static ArrayList<Bitmap> images = new ArrayList<>();
-    public static ArrayList<Uri> imagesURIs = new ArrayList<>();
-    public static int nextFocusIndex = -1;
     public static ArrayList<Integer> delivered = new ArrayList<>();
-    public static  boolean isPickupCompleted = false;
+    public static boolean isPickupCompleted = false;
+    public static int routeStepIndex = 0;
+    public static int orderIndex = 0;
+    public static ArrayList<RideDetailListAdapter.RoutStep> sections = new ArrayList<>();
 }

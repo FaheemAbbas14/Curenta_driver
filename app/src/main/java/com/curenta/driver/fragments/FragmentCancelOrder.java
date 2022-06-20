@@ -50,7 +50,6 @@ import io.reactivex.schedulers.Schedulers;
 
 public class FragmentCancelOrder extends Fragment {
     public RideDetailListAdapter.Order order;
-    public ArrayList<RideDetailListAdapter.RoutStep> sections;
     public int index;
     public String routeId;
     public int routeIndex;
@@ -356,7 +355,7 @@ public class FragmentCancelOrder extends Fragment {
 
 
 
-                Log.d("cancelRoute", "routeIndex " + routeIndex + "index " + index + " size " + (sections.get(0).orders.size() - 1));
+                Log.d("cancelRoute", "routeIndex " + routeIndex + "index " + index + " size " + (AppElement.sections.get(0).orders.size() - 1));
 
                 RetrofitClient.changeApiBaseUrl(BuildConfig.curentaordertriagingURL);
                 CancelOrderRequest requestDTO = new CancelOrderRequest(routeId, routeStepId, LoggedInUser.getInstance().driverId, LoggedInUser.getInstance().email, reason, whoOrder, newAddress, relation, order.orderId);
@@ -370,10 +369,17 @@ public class FragmentCancelOrder extends Fragment {
                             public void onSuccess(CancelRouteResponse response) {
                                 dialog.dismiss();
                                 if (response.responseCode == 1) {
+                                    if(index< AppElement.sections.get(routeIndex).orders.size()) {
+                                        AppElement.sections.get(routeIndex).orders.get(index).isCompleted = true;
+                                        AppElement.sections.get(routeIndex).orders.get(index).isCancled = true;
 
-                                    sections.get(routeIndex).orders.get(index).isCompleted = true;
-                                    sections.get(routeIndex).orders.get(index).isCancled = true;
-                                    Log.d("cancelRoute", "routeIndex " + (routeIndex - 1) + "index " + index + " size " + (sections.get(0).orders.size() - 1));
+                                    }
+                                    else{
+                                        AppElement.sections.get(routeIndex).orders.get(AppElement.sections.get(routeIndex).orders.size()-1).isCompleted = true;
+                                        AppElement.sections.get(routeIndex).orders.get(AppElement.sections.get(routeIndex).orders.size()-1).isCancled = true;
+
+                                    }
+                                    Log.d("cancelRoute", "routeIndex " + (routeIndex - 1) + "index " + index + " size " + (AppElement.sections.get(0).orders.size() - 1));
                                     launchDismissDlg();
 
 
@@ -498,11 +504,9 @@ public class FragmentCancelOrder extends Fragment {
                     }
 
                 } else {
-                    if (routeIndex < sections.size() - 1) {
-                        sections.get(routeIndex + 1).isFocused = true;
-                        if (sections.get(routeIndex).orders.size() == 1) {
-                            AppElement.nextFocusIndex = routeIndex;
-                        }
+                    if (routeIndex < AppElement.sections.size() - 1) {
+                        AppElement.sections.get(routeIndex + 1).isFocused = true;
+
                         try {
                             if (getActivity() != null && getActivity().getSupportFragmentManager() != null) {
                                 getActivity().getSupportFragmentManager().popBackStack();
@@ -513,15 +517,15 @@ public class FragmentCancelOrder extends Fragment {
 
                         }
                     } else {
-                        sections.get(routeIndex).orders.get(index).isCompleted = true;
+                        AppElement.sections.get(routeIndex).orders.get(index).isCompleted = true;
                         boolean allCompleted = true;
-                        for (RideDetailListAdapter.Order order1 : sections.get(routeIndex).orders) {
+                        for (RideDetailListAdapter.Order order1 : AppElement.sections.get(routeIndex).orders) {
                             if (!order1.isCompleted) {
                                 allCompleted = false;
                             }
                         }
                         if(allCompleted) {
-                            AppElement.nextFocusIndex = 0;
+                            AppElement.sections.clear();
                             AppElement.delivered.clear();
                             FragmentThankYouAction fragmentThankYouAction = new FragmentThankYouAction();
                             fragmentThankYouAction.isCompleted = true;
