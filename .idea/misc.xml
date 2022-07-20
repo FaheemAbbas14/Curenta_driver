@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="app/src/main/res/drawable/ridepopuprounded.xml" value="0.1815" />
+        <entry key="app/src/main/res/drawable/round_grey_button.xml" value="0.1815" />
+        <entry key="app/src/main/res/drawable/rounded_green.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/rounded_green_button.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/rounded_red.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/white_grey_border.xml" value="0.1815" />
+        <entry key="app/src/main/res/drawable/white_rounded.xml" value="0.1815" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.18072916666666666" />
+        <entry key="app/src/main/res/layout/cancel_spinner_item.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_bank_details.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_cancel_order.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_cancle_route.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_change_password.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_chat.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_confirm_delivery_details.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/fragment_vehical_info.xml" value="0.18072916666666666" />
+        <entry key="app/src/main/res/layout/header_content.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/list_item_simple_item.xml" value="0.18072916666666666" />
+        <entry key="app/src/main/res/layout/orders_lits_item.xml" value="0.1796875" />
+        <entry key="app/src/main/res/layout/ride_detail_item.xml" value="0.18072916666666666" />
+      </map>
+    </option>
+  </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK" />
+</project>
