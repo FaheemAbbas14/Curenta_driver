@@ -313,8 +313,8 @@ public class FragmentCancelOrder extends Fragment {
                 if (reason.equalsIgnoreCase("Wrong address")) {
                     int radioButtonID = fragmentCancelOrderBinding.rdoWrongAddress.getCheckedRadioButtonId();
                     RadioButton radioButton = (RadioButton) fragmentCancelOrderBinding.rdoWrongAddress.findViewById(radioButtonID);
-                    reason += "-" + (String) radioButton.getText();
-                    reason += "-" + fragmentCancelOrderBinding.editText.getText().toString();
+                    reason += " - " + (String) radioButton.getText();
+                    reason += " - " + fragmentCancelOrderBinding.editText.getText().toString();
                 }
                 if (reason.equals("Others")) {
                     if (fragmentCancelOrderBinding.editText.getText().toString().equalsIgnoreCase("")) {
@@ -331,7 +331,7 @@ public class FragmentCancelOrder extends Fragment {
                     return;
                 }
                 if (!fragmentCancelOrderBinding.edtWhoOrder.getText().toString().equalsIgnoreCase("")) {
-                    whoOrder += "-" + fragmentCancelOrderBinding.edtWhoOrder.getText().toString();
+                    whoOrder += " - " + fragmentCancelOrderBinding.edtWhoOrder.getText().toString();
                 } else {
                     Toast.makeText(getActivity(), "Mandatory field can not be empty", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();

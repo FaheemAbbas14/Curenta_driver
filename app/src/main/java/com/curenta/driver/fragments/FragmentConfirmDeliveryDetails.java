@@ -164,7 +164,7 @@ public class FragmentConfirmDeliveryDetails extends Fragment {
                     return;
                 }
                 if (!fragmentConfirmDeliveryDetailsBinding.editText.getText().toString().equalsIgnoreCase("")) {
-                    whoOrder += "-" + fragmentConfirmDeliveryDetailsBinding.editText.getText().toString();
+                    whoOrder += " - " + fragmentConfirmDeliveryDetailsBinding.editText.getText().toString();
                 } else {
                     Toast.makeText(getActivity(), "Mandatory field can not be empty", Toast.LENGTH_SHORT).show();
                     return;
